@@ -18,15 +18,15 @@ export function LandingScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#1a1f3a" />
+      <StatusBar barStyle="light-content" backgroundColor="#0a0a0a" />
       
-      {/* Header */}
+      {/* Header with Massive Logo */}
       <View style={styles.header}>
-        <View style={styles.logoSection}>
-          <View style={styles.logoCircle}>
-            <Text style={styles.logoIcon}>🎓</Text>
+        <View style={styles.massiveLogoSection}>
+          <View style={styles.massiveLogoCircle}>
+            <Text style={styles.massiveLogoIcon}>🎓</Text>
           </View>
-          <Text style={styles.logoText}>proofr</Text>
+          <Text style={styles.massiveLogoText}>proofr</Text>
         </View>
         <TouchableOpacity style={styles.profileButton}>
           <Text style={styles.profileIcon}>👤</Text>
@@ -47,8 +47,8 @@ export function LandingScreen() {
               <Text style={styles.cardEmoji}>🔍</Text>
             </View>
             <View style={styles.cardContent}>
-              <Text style={styles.cardTitle}>Find Help</Text>
-              <Text style={styles.cardSubtitle}>Browse consultants & services</Text>
+              <Text style={[styles.cardTitle, styles.primaryCardTitle]}>Find a Consultant</Text>
+              <Text style={[styles.cardSubtitle, styles.primaryCardSubtitle]}>Browse top students from Harvard, MIT & more</Text>
             </View>
             <Text style={styles.cardArrow}>→</Text>
           </TouchableOpacity>
@@ -56,14 +56,14 @@ export function LandingScreen() {
 
         <TextLink href="/become-consultant">
           <TouchableOpacity style={[styles.actionCard, styles.secondaryCard]}>
-            <View style={styles.cardIcon}>
+            <View style={[styles.cardIcon, styles.secondaryCardIcon]}>
               <Text style={styles.cardEmoji}>💼</Text>
             </View>
             <View style={styles.cardContent}>
-              <Text style={styles.cardTitle}>Offer Services</Text>
-              <Text style={styles.cardSubtitle}>Help students & earn money</Text>
+              <Text style={[styles.cardTitle, styles.secondaryCardTitle]}>Earn as Consultant</Text>
+              <Text style={[styles.cardSubtitle, styles.secondaryCardSubtitle]}>Help students & earn $50+ per session</Text>
             </View>
-            <Text style={styles.cardArrow}>→</Text>
+            <Text style={[styles.cardArrow, styles.secondaryCardArrow]}>→</Text>
           </TouchableOpacity>
         </TextLink>
       </View>
@@ -128,33 +128,38 @@ export function LandingScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1a1f3a',
+    backgroundColor: '#0a0a0a', // Much darker
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
-    paddingVertical: 16,
+    paddingVertical: 12,
   },
-  logoSection: {
+  massiveLogoSection: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
   },
-  logoCircle: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#06b6d4',
+  massiveLogoCircle: {
+    width: 72, // Slightly smaller to fit better
+    height: 72,
+    borderRadius: 36,
+    backgroundColor: '#0891b2', // Darker shade
     alignItems: 'center',
     justifyContent: 'center',
+    shadowColor: '#0891b2',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.5,
+    shadowRadius: 12,
+    elevation: 12,
   },
-  logoIcon: {
-    fontSize: 20,
+  massiveLogoIcon: {
+    fontSize: 34, // Adjusted to fit the smaller circle
   },
-  logoText: {
-    fontSize: 24,
+  massiveLogoText: {
+    fontSize: 42, // Slightly smaller to fit better
     fontWeight: '700',
     color: 'white',
   },
@@ -171,73 +176,96 @@ const styles = StyleSheet.create({
   },
   welcomeSection: {
     paddingHorizontal: 20,
-    paddingVertical: 24,
+    paddingVertical: 16,
     alignItems: 'center',
   },
   welcomeText: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: '600',
     color: 'white',
     textAlign: 'center',
-    marginBottom: 8,
+    marginBottom: 6,
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: 15,
     color: '#94a3b8',
     textAlign: 'center',
+    marginBottom: 4,
   },
   actionCards: {
     paddingHorizontal: 20,
-    gap: 16,
-    marginBottom: 32,
+    gap: 12,
+    marginBottom: 24,
   },
   actionCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 20,
+    padding: 16,
     borderRadius: 16,
-    gap: 16,
+    gap: 12,
   },
   primaryCard: {
-    backgroundColor: 'white',
+    backgroundColor: 'linear-gradient(135deg, #06b6d4, #0891b2)',
+    backgroundColor: '#06b6d4', // Fallback for React Native
+    shadowColor: '#06b6d4',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.3,
+    shadowRadius: 16,
+    elevation: 12,
   },
   secondaryCard: {
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.2)',
+    borderWidth: 2,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
   },
   cardIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: '#f1f5f9',
+    width: 56, // Larger icons
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
     alignItems: 'center',
     justifyContent: 'center',
   },
+  secondaryCardIcon: {
+    backgroundColor: 'rgba(6, 182, 212, 0.2)',
+  },
   cardEmoji: {
-    fontSize: 24,
+    fontSize: 28, // Larger emojis
   },
   cardContent: {
     flex: 1,
   },
   cardTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#1a1f3a',
-    marginBottom: 4,
+    fontSize: 20, // Larger title
+    fontWeight: '700', // Bolder
+    marginBottom: 6,
+  },
+  primaryCardTitle: {
+    color: 'white',
+  },
+  secondaryCardTitle: {
+    color: 'white',
   },
   cardSubtitle: {
     fontSize: 14,
-    color: '#64748b',
+    lineHeight: 20,
+  },
+  primaryCardSubtitle: {
+    color: 'rgba(255, 255, 255, 0.9)',
+  },
+  secondaryCardSubtitle: {
+    color: 'rgba(255, 255, 255, 0.8)',
   },
   cardArrow: {
-    fontSize: 20,
+    fontSize: 24, // Larger arrow
+    fontWeight: '700',
+  },
+  secondaryCardArrow: {
     color: '#06b6d4',
-    fontWeight: '600',
   },
   servicesSection: {
     paddingHorizontal: 20,
-    marginBottom: 32,
+    marginBottom: 24,
   },
   sectionTitle: {
     fontSize: 18,
@@ -273,7 +301,7 @@ const styles = StyleSheet.create({
   },
   consultantsSection: {
     paddingHorizontal: 20,
-    marginBottom: 32,
+    marginBottom: 24,
   },
   consultantsList: {
     gap: 12,
@@ -330,11 +358,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     paddingHorizontal: 20,
-    paddingVertical: 24,
+    paddingVertical: 20,
     backgroundColor: 'rgba(255, 255, 255, 0.05)',
     marginHorizontal: 20,
     borderRadius: 16,
-    marginBottom: 20,
+    marginBottom: 16,
   },
   statItem: {
     alignItems: 'center',
