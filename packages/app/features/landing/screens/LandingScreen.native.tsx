@@ -1,215 +1,301 @@
 import React from 'react'
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native'
-import { Hero } from '../components/Hero/Hero.native'
+import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, StatusBar } from 'react-native'
+import { TextLink } from 'solito/link'
 
 export function LandingScreen() {
-  const universities = ['Harvard', 'Stanford', 'MIT', 'Yale', 'Princeton', 'Columbia']
-  const consultants = [
-    { name: 'Sarah C.', school: 'Harvard', service: 'Essays', price: 25, rating: '4.9' },
-    { name: 'Marcus K.', school: 'Stanford', service: 'Interviews', price: 40, rating: '4.8' },
-    { name: 'Emily R.', school: 'MIT', service: 'Strategy', price: 35, rating: '5.0' },
+  const services = [
+    { title: 'Essay Reviews', icon: '📝', color: '#4f46e5', count: '200+' },
+    { title: 'Mock Interviews', icon: '🎤', color: '#059669', count: '150+' },
+    { title: 'App Strategy', icon: '🎯', color: '#dc2626', count: '100+' },
+    { title: 'Resume Help', icon: '📄', color: '#7c3aed', count: '80+' },
+  ]
+
+  const topConsultants = [
+    { initial: 'A', name: 'Ashley H.', school: 'Stanford', rating: '5.0', color: '#ef4444' },
+    { initial: 'I', name: 'Imane A.', school: 'MIT', rating: '4.9', color: '#8b5cf6' },
+    { initial: 'C', name: 'Cameron K.', school: 'Duke', rating: '4.8', color: '#3b82f6' },
   ]
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      {/* Hero Section */}
-      <View style={styles.heroContainer}>
-        <Hero />
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#1a1f3a" />
+      
+      {/* Header */}
+      <View style={styles.header}>
+        <View style={styles.logoSection}>
+          <View style={styles.logoCircle}>
+            <Text style={styles.logoIcon}>🎓</Text>
+          </View>
+          <Text style={styles.logoText}>proofr</Text>
+        </View>
+        <TouchableOpacity style={styles.profileButton}>
+          <Text style={styles.profileIcon}>👤</Text>
+        </TouchableOpacity>
       </View>
 
-      {/* Trust Bar */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Featured Universities</Text>
-        <ScrollView 
-          horizontal 
-          showsHorizontalScrollIndicator={false}
-          style={styles.universityScroll}
-        >
-          {universities.map((university, index) => (
-            <View key={university} style={styles.universityChip}>
-              <View style={styles.universityLogo}>
-                <Text style={styles.universityInitial}>
-                  {university.substring(0, 1)}
-                </Text>
-              </View>
-              <Text style={styles.universityName}>{university}</Text>
+      {/* Welcome Section */}
+      <View style={styles.welcomeSection}>
+        <Text style={styles.welcomeText}>What can we help you with?</Text>
+        <Text style={styles.subtitle}>Connect with top university students</Text>
+      </View>
+
+      {/* Main Action Cards */}
+      <View style={styles.actionCards}>
+        <TextLink href="/browse">
+          <TouchableOpacity style={[styles.actionCard, styles.primaryCard]}>
+            <View style={styles.cardIcon}>
+              <Text style={styles.cardEmoji}>🔍</Text>
             </View>
-          ))}
-        </ScrollView>
+            <View style={styles.cardContent}>
+              <Text style={styles.cardTitle}>Find Help</Text>
+              <Text style={styles.cardSubtitle}>Browse consultants & services</Text>
+            </View>
+            <Text style={styles.cardArrow}>→</Text>
+          </TouchableOpacity>
+        </TextLink>
+
+        <TextLink href="/become-consultant">
+          <TouchableOpacity style={[styles.actionCard, styles.secondaryCard]}>
+            <View style={styles.cardIcon}>
+              <Text style={styles.cardEmoji}>💼</Text>
+            </View>
+            <View style={styles.cardContent}>
+              <Text style={styles.cardTitle}>Offer Services</Text>
+              <Text style={styles.cardSubtitle}>Help students & earn money</Text>
+            </View>
+            <Text style={styles.cardArrow}>→</Text>
+          </TouchableOpacity>
+        </TextLink>
       </View>
 
-      {/* Quick How It Works */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>How It Works</Text>
-        <View style={styles.stepsContainer}>
-          <View style={styles.step}>
-            <Text style={styles.stepEmoji}>🔍</Text>
-            <Text style={styles.stepText}>Browse consultants by school & service</Text>
-          </View>
-          <View style={styles.step}>
-            <Text style={styles.stepEmoji}>📅</Text>
-            <Text style={styles.stepText}>Book & pay securely through our platform</Text>
-          </View>
-          <View style={styles.step}>
-            <Text style={styles.stepEmoji}>✨</Text>
-            <Text style={styles.stepText}>Get personalized guidance & feedback</Text>
-          </View>
+      {/* Services Grid */}
+      <View style={styles.servicesSection}>
+        <Text style={styles.sectionTitle}>Popular Services</Text>
+        <View style={styles.servicesGrid}>
+          {services.map((service, index) => (
+            <TouchableOpacity key={index} style={[styles.serviceCard, { borderLeftColor: service.color }]}>
+              <Text style={styles.serviceIcon}>{service.icon}</Text>
+              <Text style={styles.serviceTitle}>{service.title}</Text>
+              <Text style={styles.serviceCount}>{service.count} experts</Text>
+            </TouchableOpacity>
+          ))}
         </View>
       </View>
 
-      {/* Sample Consultants */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Popular Consultants</Text>
-        <ScrollView 
-          horizontal 
-          showsHorizontalScrollIndicator={false}
-          style={styles.consultantScroll}
-        >
-          {consultants.map((consultant, index) => (
-            <View key={index} style={styles.consultantCard}>
-              <View style={styles.consultantHeader}>
-                <View style={styles.consultantAvatar}>
-                  <Text style={styles.consultantInitial}>
-                    {consultant.name.split(' ')[0][0]}
-                  </Text>
-                </View>
-                <View style={styles.consultantInfo}>
-                  <Text style={styles.consultantName}>{consultant.name}</Text>
-                  <Text style={styles.consultantSchool}>{consultant.school}</Text>
-                </View>
-                <View style={styles.ratingBadge}>
-                  <Text style={styles.rating}>⭐ {consultant.rating}</Text>
-                </View>
+      {/* Top Consultants */}
+      <View style={styles.consultantsSection}>
+        <Text style={styles.sectionTitle}>Top Rated</Text>
+        <View style={styles.consultantsList}>
+          {topConsultants.map((consultant, index) => (
+            <TouchableOpacity key={index} style={styles.consultantItem}>
+              <View style={[styles.consultantAvatar, { backgroundColor: consultant.color + '20' }]}>
+                <Text style={[styles.consultantInitial, { color: consultant.color }]}>
+                  {consultant.initial}
+                </Text>
               </View>
-              <Text style={styles.consultantService}>{consultant.service}</Text>
-              <View style={styles.consultantFooter}>
-                <Text style={styles.price}>From ${consultant.price}</Text>
-                <TouchableOpacity style={styles.viewButton}>
-                  <Text style={styles.viewButtonText}>View</Text>
-                </TouchableOpacity>
+              <View style={styles.consultantInfo}>
+                <Text style={styles.consultantName}>{consultant.name}</Text>
+                <Text style={styles.consultantSchool}>{consultant.school}</Text>
               </View>
-            </View>
+              <View style={styles.ratingBadge}>
+                <Text style={styles.star}>⭐</Text>
+                <Text style={styles.ratingText}>{consultant.rating}</Text>
+              </View>
+            </TouchableOpacity>
           ))}
-        </ScrollView>
+        </View>
       </View>
 
-      {/* CTA Section */}
-      <View style={styles.ctaSection}>
-        <Text style={styles.ctaTitle}>Ready to Get Started?</Text>
-        <Text style={styles.ctaSubtitle}>
-          Join thousands of students who've successfully navigated college admissions with Proofr
-        </Text>
-        <TouchableOpacity style={styles.ctaButton}>
-          <Text style={styles.ctaButtonText}>Find Your Consultant</Text>
-        </TouchableOpacity>
-        <Text style={styles.ctaNote}>
-          ⚡ Get started today • 💰 Affordable pricing • 🎯 Proven results
-        </Text>
+      {/* Bottom Stats */}
+      <View style={styles.statsSection}>
+        <View style={styles.statItem}>
+          <Text style={styles.statNumber}>10K+</Text>
+          <Text style={styles.statLabel}>Students Helped</Text>
+        </View>
+        <View style={styles.statItem}>
+          <Text style={styles.statNumber}>500+</Text>
+          <Text style={styles.statLabel}>Expert Consultants</Text>
+        </View>
+        <View style={styles.statItem}>
+          <Text style={styles.statNumber}>94%</Text>
+          <Text style={styles.statLabel}>Success Rate</Text>
+        </View>
       </View>
-    </ScrollView>
+    </SafeAreaView>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: '#1a1f3a',
   },
-  heroContainer: {
-    height: 600, // Fixed height for hero
-  },
-  section: {
-    padding: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#f1f5f9',
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#1e293b',
-    marginBottom: 16,
-  },
-  universityScroll: {
-    marginHorizontal: -20,
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     paddingHorizontal: 20,
+    paddingVertical: 16,
   },
-  universityChip: {
-    alignItems: 'center',
-    marginRight: 16,
-    minWidth: 60,
-  },
-  universityLogo: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#e2e8f0',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 8,
-  },
-  universityInitial: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#475569',
-  },
-  universityName: {
-    fontSize: 12,
-    color: '#64748b',
-    textAlign: 'center',
-  },
-  stepsContainer: {
-    gap: 16,
-  },
-  step: {
+  logoSection: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
   },
-  stepEmoji: {
+  logoCircle: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#06b6d4',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  logoIcon: {
+    fontSize: 20,
+  },
+  logoText: {
     fontSize: 24,
+    fontWeight: '700',
+    color: 'white',
   },
-  stepText: {
-    flex: 1,
-    fontSize: 16,
-    color: '#475569',
-    lineHeight: 22,
+  profileButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  consultantScroll: {
-    marginHorizontal: -20,
+  profileIcon: {
+    fontSize: 20,
+  },
+  welcomeSection: {
     paddingHorizontal: 20,
+    paddingVertical: 24,
+    alignItems: 'center',
   },
-  consultantCard: {
-    width: 280,
-    backgroundColor: 'white',
-    borderRadius: 16,
-    padding: 16,
-    marginRight: 16,
-    borderWidth: 1,
-    borderColor: '#e2e8f0',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
+  welcomeText: {
+    fontSize: 24,
+    fontWeight: '600',
+    color: 'white',
+    textAlign: 'center',
+    marginBottom: 8,
   },
-  consultantHeader: {
+  subtitle: {
+    fontSize: 16,
+    color: '#94a3b8',
+    textAlign: 'center',
+  },
+  actionCards: {
+    paddingHorizontal: 20,
+    gap: 16,
+    marginBottom: 32,
+  },
+  actionCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 12,
+    padding: 20,
+    borderRadius: 16,
+    gap: 16,
+  },
+  primaryCard: {
+    backgroundColor: 'white',
+  },
+  secondaryCard: {
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.2)',
+  },
+  cardIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#f1f5f9',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  cardEmoji: {
+    fontSize: 24,
+  },
+  cardContent: {
+    flex: 1,
+  },
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#1a1f3a',
+    marginBottom: 4,
+  },
+  cardSubtitle: {
+    fontSize: 14,
+    color: '#64748b',
+  },
+  cardArrow: {
+    fontSize: 20,
+    color: '#06b6d4',
+    fontWeight: '600',
+  },
+  servicesSection: {
+    paddingHorizontal: 20,
+    marginBottom: 32,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: 'white',
+    marginBottom: 16,
+  },
+  servicesGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 12,
+  },
+  serviceCard: {
+    width: '48%',
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    borderRadius: 12,
+    padding: 16,
+    borderLeftWidth: 4,
+  },
+  serviceIcon: {
+    fontSize: 24,
+    marginBottom: 8,
+  },
+  serviceTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: 'white',
+    marginBottom: 4,
+  },
+  serviceCount: {
+    fontSize: 12,
+    color: '#94a3b8',
+  },
+  consultantsSection: {
+    paddingHorizontal: 20,
+    marginBottom: 32,
+  },
+  consultantsList: {
+    gap: 12,
+  },
+  consultantItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    borderRadius: 12,
+    padding: 16,
+    gap: 12,
   },
   consultantAvatar: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#dbeafe',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 12,
   },
   consultantInitial: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#2563eb',
   },
   consultantInfo: {
     flex: 1,
@@ -217,83 +303,51 @@ const styles = StyleSheet.create({
   consultantName: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#1e293b',
+    color: 'white',
   },
   consultantSchool: {
     fontSize: 14,
-    color: '#64748b',
+    color: '#94a3b8',
   },
   ratingBadge: {
-    backgroundColor: '#fef3c7',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-  },
-  rating: {
-    fontSize: 12,
-    color: '#92400e',
-    fontWeight: '500',
-  },
-  consultantService: {
-    fontSize: 14,
-    color: '#64748b',
-    marginBottom: 12,
-  },
-  consultantFooter: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    backgroundColor: 'rgba(251, 191, 36, 0.2)',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+    gap: 4,
   },
-  price: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#16a34a',
+  star: {
+    fontSize: 12,
   },
-  viewButton: {
-    backgroundColor: '#2563eb',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 12,
-  },
-  viewButtonText: {
-    color: 'white',
+  ratingText: {
+    fontSize: 12,
     fontWeight: '600',
-    fontSize: 14,
+    color: '#fbbf24',
   },
-  ctaSection: {
-    backgroundColor: '#1e293b',
-    padding: 24,
+  statsSection: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingHorizontal: 20,
+    paddingVertical: 24,
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    marginHorizontal: 20,
+    borderRadius: 16,
+    marginBottom: 20,
+  },
+  statItem: {
     alignItems: 'center',
   },
-  ctaTitle: {
-    fontSize: 24,
+  statNumber: {
+    fontSize: 20,
     fontWeight: '700',
-    color: 'white',
-    textAlign: 'center',
-    marginBottom: 8,
+    color: '#06b6d4',
+    marginBottom: 4,
   },
-  ctaSubtitle: {
-    fontSize: 16,
-    color: '#94a3b8',
-    textAlign: 'center',
-    marginBottom: 24,
-    lineHeight: 24,
-  },
-  ctaButton: {
-    backgroundColor: '#06b6d4',
-    paddingHorizontal: 32,
-    paddingVertical: 16,
-    borderRadius: 12,
-    marginBottom: 16,
-  },
-  ctaButtonText: {
-    color: 'white',
-    fontSize: 18,
-    fontWeight: '600',
-  },
-  ctaNote: {
+  statLabel: {
     fontSize: 12,
-    color: '#64748b',
+    color: '#94a3b8',
     textAlign: 'center',
   },
 })
