@@ -1,0 +1,130 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  # Install and cache dependencies
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'yarn'
+      - run: yarn install --frozen-lockfile
+
+  # Lint and type check
+  lint:
+    runs-on: ubuntu-latest
+    needs: install
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'yarn'
+      - run: yarn install --frozen-lockfile
+      - name: Lint Next.js
+        run: |
+          cd apps/next
+          if grep -q '"lint"' package.json; then
+            yarn lint
+          fi
+      - name: TypeScript check
+        run: |
+          cd apps/next && npx tsc --noEmit
+          cd ../expo && npx tsc --noEmit
+
+  # Run tests if they exist
+  test:
+    runs-on: ubuntu-latest
+    needs: install
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'yarn'
+      - run: yarn install --frozen-lockfile
+      - name: Run tests
+        run: |
+          if grep -q '"test"' package.json; then
+            yarn test --watchAll=false
+          else
+            echo "No tests configured"
+          fi
+
+  # Build Next.js app
+  build-web:
+    runs-on: ubuntu-latest
+    needs: [lint, test]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'yarn'
+      - run: yarn install --frozen-lockfile
+      - name: Build Next.js
+        run: |
+          cd apps/next
+          yarn build
+
+  # Deploy to Vercel (only on main branch)
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build-web
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          working-directory: apps/next
+          vercel-args: '--prod'
+
+  # Notify Teams
+  notify:
+    runs-on: ubuntu-latest
+    needs: [deploy]
+    if: always() && github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - name: Notify Teams on success
+        if: needs.deploy.result == 'success'
+        run: |
+          curl -H "Content-Type: application/json" -d '{
+            "text": "✅ Proofr deployment successful!",
+            "sections": [{
+              "activityTitle": "Deployment Complete",
+              "activitySubtitle": "Main branch deployed to production",
+              "facts": [
+                {"name": "Branch", "value": "main"},
+                {"name": "Status", "value": "Success"},
+                {"name": "Commit", "value": "${{ github.sha }}"}
+              ]
+            }]
+          }' ${{ secrets.TEAMS_WEBHOOK_URL }}
+
+      - name: Notify Teams on failure
+        if: needs.deploy.result == 'failure'
+        run: |
+          curl -H "Content-Type: application/json" -d '{
+            "text": "❌ Proofr deployment failed!",
+            "sections": [{
+              "activityTitle": "Deployment Failed",
+              "activitySubtitle": "Main branch deployment encountered errors",
+              "facts": [
+                {"name": "Branch", "value": "main"},
+                {"name": "Status", "value": "Failed"},
+                {"name": "Commit", "value": "${{ github.sha }}"}
+              ]
+            }]
+          }' ${{ secrets.TEAMS_WEBHOOK_URL }}
