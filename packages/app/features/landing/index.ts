@@ -1,0 +1,7 @@
+export * from './screens'
+export * from './components/Hero'
+export * from './components/TrustBar' 
+export * from './components/HowItWorks'
+export * from './components/ConsultantProfiles'
+export * from './components/Testimonials'
+export * from './components/CTASection'
