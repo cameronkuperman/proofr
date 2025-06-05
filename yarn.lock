@@ -3001,6 +3001,11 @@ __metadata:
     "@react-navigation/native-stack": "npm:^7.2.1"
     dripsy: "npm:^4.3.3"
     moti: "npm:^0.30.0"
+    react: "npm:^19.0.0"
+    react-native: "npm:0.79.2"
+    react-native-reanimated: "npm:~3.17.4"
+    react-native-safe-area-context: "npm:5.4.0"
+    react-native-screens: "npm:~4.11.1"
     solito: "npm:4.4.1"
   languageName: unknown
   linkType: soft
@@ -7198,12 +7203,14 @@ __metadata:
   dependencies:
     "@types/node": "npm:17.0.21"
     app: "npm:*"
+    eslint: "npm:^8.21.0"
     eslint-config-next: "npm:13.2.0"
     next: "npm:^15.2.3"
     raf: "npm:^3.4.1"
     react: "npm:^19.0.0"
     react-dom: "npm:^19.0.0"
     react-native-web: "npm:^0.20.0"
+    typescript: "npm:^5.2.2"
   languageName: unknown
   linkType: soft
 
@@ -7882,6 +7889,23 @@ __metadata:
   checksum: 10/c52536521a4d21eff4f2f2aa4572446cad227464066365a7167e52ccf8d9839c099f9afec1aba0eed3d5a2514b3e79e0b3e7a1dc326b9acde6b75d27ed74b1a9
   languageName: node
   linkType: hard
+
+"proofr@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "proofr@workspace:."
+  dependencies:
+    "@types/react": "npm:~19.0.10"
+    "@types/react-native-web": "npm:^0"
+    eslint: "npm:^8.21.0"
+    expo: "npm:^53.0.0"
+    react: "npm:^19.0.0"
+    react-dom: "npm:^19.0.0"
+    react-native: "npm:0.79.2"
+    react-native-web: "npm:^0.20.0"
+    turbo: "npm:^2.4.4"
+    typescript: "npm:^5.2.2"
+  languageName: unknown
+  linkType: soft
 
 "prop-types@npm:^15.8.1":
   version: 15.8.1
@@ -8888,20 +8912,6 @@ __metadata:
   checksum: 10/ab3af97aeb162f32c80e176c717ccf16a11a6ebb4656a62b94c0f96495ea2a1f4a8206c04b54438558485d83d0c5f61920c07a1a5d3963892a589b40cc6107dd
   languageName: node
   linkType: hard
-
-"solito-blank@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "solito-blank@workspace:."
-  dependencies:
-    "@types/react": "npm:~19.0.10"
-    "@types/react-native-web": "npm:^0"
-    eslint: "npm:^8.21.0"
-    expo: "npm:^53.0.0"
-    react-native-web: "npm:^0.20.0"
-    turbo: "npm:^2.4.4"
-    typescript: "npm:^5.2.2"
-  languageName: unknown
-  linkType: soft
 
 "solito@npm:4.4.1":
   version: 4.4.1
