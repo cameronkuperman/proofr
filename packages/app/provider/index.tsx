@@ -1,3 +1,4 @@
+import React from 'react'
 import { SafeArea } from 'app/provider/safe-area'
 import { NavigationProvider } from './navigation'
 
