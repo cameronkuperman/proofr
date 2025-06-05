@@ -1,4 +1,7 @@
 'use client'
 
-// Testing CI/CD workflow 
-export { HomeScreen as default } from 'app/features/home/screen'
+import { LandingScreen } from 'app/features/landing/screens/LandingScreen.web'
+
+export default function HomePage() {
+  return <LandingScreen />
+}
