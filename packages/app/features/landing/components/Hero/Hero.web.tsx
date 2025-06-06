@@ -54,17 +54,18 @@ export function Hero() {
       {/* Navigation Header */}
       <header style={{
         backgroundColor: 'rgba(255, 255, 255, 0.95)',
-        backdropFilter: 'blur(10px)',
+        backdropFilter: 'blur(12px)',
         borderBottom: '1px solid rgba(26, 26, 46, 0.1)',
         position: 'sticky',
         top: 0,
-        zIndex: 50
+        zIndex: 50,
+        boxShadow: '0 2px 12px rgba(0,0,0,0.04)'
       }}>
         <div style={{
           maxWidth: '1400px',
           margin: '0 auto',
           padding: '0 40px',
-          height: '85px',
+          height: '80px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between'
@@ -73,30 +74,23 @@ export function Hero() {
           <div style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '14px'
+            gap: '16px'
           }}>
-            <div style={{
-              width: '44px',
-              height: '44px',
-              background: 'linear-gradient(135deg, #1a1a2e 0%, #16a085 50%, #e74c3c 100%)',
-              borderRadius: '12px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              boxShadow: '0 4px 12px rgba(26, 26, 46, 0.15)'
-            }}>
-              <span style={{
-                color: 'white',
-                fontSize: '20px',
-                fontWeight: '600'
-              }}>🎓</span>
-            </div>
+            <img 
+              src="/images/proofr-logo.png" 
+              alt="Proofr Logo"
+              style={{
+                height: '95px',
+                width: 'auto',
+                filter: 'drop-shadow(0 6px 20px rgba(0,0,0,0.2))'
+              }}
+            />
             <span style={{
-              fontSize: '32px',
+              fontSize: '36px',
               fontWeight: '700',
               color: '#1a1a2e',
               fontFamily: 'Georgia, serif',
-              letterSpacing: '-0.5px'
+              letterSpacing: '-1px'
             }}>proofr</span>
           </div>
 
@@ -104,36 +98,39 @@ export function Hero() {
           <nav style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '48px'
+            gap: '40px'
           }}>
             <a href="/browse" style={{
               color: '#4a5568',
               textDecoration: 'none',
-              fontSize: '17px',
-              fontWeight: '400',
+              fontSize: '16px',
+              fontWeight: '500',
               fontFamily: 'Georgia, serif',
-              transition: 'color 0.2s'
+              transition: 'color 0.3s ease'
             }}>Browse Consultants</a>
             <a href="/how-it-works" style={{
               color: '#4a5568', 
               textDecoration: 'none',
-              fontSize: '17px',
-              fontWeight: '400',
-              fontFamily: 'Georgia, serif'
+              fontSize: '16px',
+              fontWeight: '500',
+              fontFamily: 'Georgia, serif',
+              transition: 'color 0.3s ease'
             }}>How It Works</a>
             <a href="/become-consultant" style={{
               color: '#4a5568',
               textDecoration: 'none', 
-              fontSize: '17px',
-              fontWeight: '400',
-              fontFamily: 'Georgia, serif'
+              fontSize: '16px',
+              fontWeight: '500',
+              fontFamily: 'Georgia, serif',
+              transition: 'color 0.3s ease'
             }}>Become a Consultant</a>
             <a href="/about" style={{
               color: '#4a5568',
               textDecoration: 'none',
-              fontSize: '17px', 
-              fontWeight: '400',
-              fontFamily: 'Georgia, serif'
+              fontSize: '16px', 
+              fontWeight: '500',
+              fontFamily: 'Georgia, serif',
+              transition: 'color 0.3s ease'
             }}>About</a>
           </nav>
 
@@ -147,10 +144,11 @@ export function Hero() {
               background: 'none',
               border: 'none',
               color: '#4a5568',
-              fontSize: '17px',
-              fontWeight: '400',
+              fontSize: '16px',
+              fontWeight: '500',
               cursor: 'pointer',
-              fontFamily: 'Georgia, serif'
+              fontFamily: 'Georgia, serif',
+              transition: 'color 0.3s ease'
             }}>Sign In</button>
             <button style={{
               backgroundColor: '#1a1a2e',
@@ -158,12 +156,12 @@ export function Hero() {
               border: 'none',
               padding: '14px 28px',
               borderRadius: '12px',
-              fontSize: '17px',
+              fontSize: '16px',
               fontWeight: '600',
               cursor: 'pointer',
               fontFamily: 'Georgia, serif',
               transition: 'all 0.3s ease',
-              boxShadow: '0 4px 12px rgba(26, 26, 46, 0.25)'
+              boxShadow: '0 6px 20px rgba(26, 26, 46, 0.25)'
             }}>Get Started</button>
           </div>
         </div>
@@ -173,7 +171,7 @@ export function Hero() {
       <section style={{
         maxWidth: '1400px',
         margin: '0 auto',
-        padding: '120px 40px 80px 40px'
+        padding: '80px 40px 60px 40px'
       }}>
         <div style={{
           display: 'grid',
@@ -182,48 +180,61 @@ export function Hero() {
           alignItems: 'start'
         }}>
           {/* Left Column - Text Content & Search */}
-          <div style={{ paddingTop: '40px' }}>
+          <div style={{ paddingTop: '20px' }}>
+            {/* Large Logo Badge */}
             <div style={{
-              display: 'inline-block',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '14px',
               backgroundColor: '#16a085',
               color: 'white',
-              padding: '10px 20px',
-              borderRadius: '25px',
-              fontSize: '15px',
-              fontWeight: '500',
+              padding: '12px 24px',
+              borderRadius: '28px',
+              fontSize: '16px',
+              fontWeight: '600',
               marginBottom: '32px',
               fontFamily: 'Georgia, serif',
-              letterSpacing: '0.3px'
+              letterSpacing: '0.5px',
+              boxShadow: '0 8px 25px rgba(22, 160, 133, 0.3)'
             }}>
+              <img 
+                src="/images/proofr-logo.png" 
+                alt="Proofr"
+                style={{
+                  height: '50px',
+                  width: 'auto',
+                  filter: 'brightness(0) invert(1)'
+                }}
+              />
               The College Admissions Marketplace
             </div>
 
             <h1 style={{
-              fontSize: '72px',
-              fontWeight: '300',
+              fontSize: '64px',
+              fontWeight: '600',
               lineHeight: '1.1',
               color: '#1a1a2e',
               margin: '0 0 28px 0',
-              letterSpacing: '-1px',
+              letterSpacing: '-1.2px',
               fontFamily: 'Georgia, serif'
             }}>
               Get Into Your{' '}
               <span style={{
                 color: '#16a085',
-                fontWeight: '400'
+                fontWeight: '700'
               }}>Dream School</span>
             </h1>
 
             <p style={{
-              fontSize: '24px',
+              fontSize: '20px',
               color: '#4a5568',
               lineHeight: '1.5',
-              margin: '0 0 50px 0',
+              margin: '0 0 44px 0',
               maxWidth: '520px',
               fontFamily: 'Georgia, serif',
               fontWeight: '300'
             }}>
-              Connect with current students at Harvard, Stanford, MIT & top universities. Get personalized admissions guidance at affordable freelance rates.
+              Connect with current students at Harvard, Stanford, MIT & top universities. Get personalized admissions guidance at affordable rates.
             </p>
 
             {/* Search Bar */}
@@ -231,17 +242,17 @@ export function Hero() {
               backgroundColor: 'white',
               border: '1px solid rgba(26, 26, 46, 0.12)',
               borderRadius: '16px',
-              padding: '8px',
-              marginBottom: '50px',
+              padding: '6px',
+              marginBottom: '44px',
               display: 'flex',
               alignItems: 'center',
-              boxShadow: '0 8px 25px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.06)',
+              boxShadow: '0 10px 30px rgba(0,0,0,0.08), 0 3px 10px rgba(0,0,0,0.05)',
               transition: 'all 0.3s ease'
             }}>
               <div style={{
-                padding: '0 20px',
+                padding: '0 18px',
                 color: '#16a085',
-                fontSize: '20px'
+                fontSize: '18px'
               }}>
                 🔍
               </div>
@@ -252,8 +263,8 @@ export function Hero() {
                   flex: 1,
                   border: 'none',
                   outline: 'none',
-                  fontSize: '17px',
-                  padding: '18px 12px',
+                  fontSize: '16px',
+                  padding: '16px 10px',
                   color: '#1a1a2e',
                   backgroundColor: 'transparent',
                   fontFamily: 'Georgia, serif'
@@ -263,9 +274,9 @@ export function Hero() {
                 backgroundColor: '#1a1a2e',
                 color: 'white',
                 border: 'none',
-                padding: '16px 28px',
+                padding: '14px 24px',
                 borderRadius: '12px',
-                fontSize: '17px',
+                fontSize: '16px',
                 fontWeight: '600',
                 cursor: 'pointer',
                 fontFamily: 'Georgia, serif',
@@ -279,13 +290,13 @@ export function Hero() {
             <div style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '16px',
-              marginBottom: '60px',
+              gap: '14px',
+              marginBottom: '52px',
               flexWrap: 'wrap'
             }}>
               <span style={{ 
                 color: '#4a5568', 
-                fontSize: '17px',
+                fontSize: '16px',
                 fontFamily: 'Georgia, serif'
               }}>Popular:</span>
               {['Essay Reviews', 'Mock Interviews', 'Application Strategy', 'Resume Help'].map((service) => (
@@ -293,13 +304,13 @@ export function Hero() {
                   backgroundColor: 'transparent',
                   border: '1px solid rgba(22, 160, 133, 0.3)',
                   color: '#16a085',
-                  padding: '10px 18px',
-                  borderRadius: '25px',
-                  fontSize: '15px',
+                  padding: '8px 16px',
+                  borderRadius: '24px',
+                  fontSize: '14px',
                   cursor: 'pointer',
                   fontFamily: 'Georgia, serif',
                   transition: 'all 0.3s ease',
-                  fontWeight: '400'
+                  fontWeight: '500'
                 }}>
                   {service}
                 </button>
@@ -308,20 +319,20 @@ export function Hero() {
 
             <div style={{
               display: 'flex',
-              gap: '24px',
-              marginBottom: '70px'
+              gap: '20px',
+              marginBottom: '60px'
             }}>
               <button style={{
                 backgroundColor: '#1a1a2e',
                 color: 'white',
                 border: 'none',
-                padding: '20px 40px',
-                borderRadius: '16px',
-                fontSize: '19px',
+                padding: '18px 36px',
+                borderRadius: '14px',
+                fontSize: '17px',
                 fontWeight: '600',
                 cursor: 'pointer',
                 fontFamily: 'Georgia, serif',
-                boxShadow: '0 8px 25px rgba(26, 26, 46, 0.25)',
+                boxShadow: '0 10px 30px rgba(26, 26, 46, 0.25)',
                 transition: 'all 0.3s ease'
               }}>Find a Consultant</button>
               
@@ -329,9 +340,9 @@ export function Hero() {
                 backgroundColor: 'transparent',
                 color: '#1a1a2e',
                 border: '2px solid #1a1a2e',
-                padding: '18px 40px',
-                borderRadius: '16px',
-                fontSize: '19px',
+                padding: '16px 36px',
+                borderRadius: '14px',
+                fontSize: '17px',
                 fontWeight: '600',
                 cursor: 'pointer',
                 fontFamily: 'Georgia, serif',
@@ -341,42 +352,42 @@ export function Hero() {
 
             <div style={{
               display: 'flex',
-              gap: '60px',
+              gap: '50px',
               color: '#4a5568'
             }}>
               <div>
                 <div style={{ 
-                  fontSize: '32px', 
+                  fontSize: '28px', 
                   fontWeight: '700', 
                   color: '#1a1a2e',
                   fontFamily: 'Georgia, serif'
                 }}>94%</div>
                 <div style={{ 
-                  fontSize: '15px',
+                  fontSize: '14px',
                   fontFamily: 'Georgia, serif'
                 }}>Success Rate</div>
               </div>
               <div>
                 <div style={{ 
-                  fontSize: '32px', 
+                  fontSize: '28px', 
                   fontWeight: '700', 
                   color: '#1a1a2e',
                   fontFamily: 'Georgia, serif'
                 }}>500+</div>
                 <div style={{ 
-                  fontSize: '15px',
+                  fontSize: '14px',
                   fontFamily: 'Georgia, serif'
                 }}>Expert Consultants</div>
               </div>
               <div>
                 <div style={{ 
-                  fontSize: '32px', 
+                  fontSize: '28px', 
                   fontWeight: '700', 
                   color: '#1a1a2e',
                   fontFamily: 'Georgia, serif'
                 }}>10K+</div>
                 <div style={{ 
-                  fontSize: '15px',
+                  fontSize: '14px',
                   fontFamily: 'Georgia, serif'
                 }}>Students Helped</div>
               </div>
@@ -393,31 +404,56 @@ export function Hero() {
             {consultants.map((consultant, index) => (
               <div key={consultant.name} style={{
                 backgroundColor: '#ffffff',
-                borderRadius: '20px',
-                padding: '36px 32px',
-                boxShadow: '0 12px 40px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.04)',
-                border: '1px solid rgba(26, 26, 46, 0.06)',
+                borderRadius: '16px',
+                padding: '32px 28px',
+                boxShadow: `
+                  0 1px 3px rgba(0,0,0,0.12),
+                  0 4px 8px rgba(0,0,0,0.05),
+                  0 8px 16px rgba(0,0,0,0.04),
+                  0 2px 6px rgba(26,26,46,0.06),
+                  inset 0 1px 0 rgba(255,255,255,0.8)
+                `,
+                border: '1px solid rgba(26, 26, 46, 0.08)',
                 position: 'relative',
                 transition: 'all 0.4s ease',
                 cursor: 'pointer',
-                background: 'linear-gradient(145deg, #ffffff 0%, #fcfcfc 100%)',
+                background: `
+                  linear-gradient(145deg, #ffffff 0%, #fefefe 50%, #fdfdfd 100%),
+                  linear-gradient(to bottom, rgba(255,255,255,0.9) 0%, rgba(250,250,250,0.3) 100%)
+                `,
                 minHeight: '320px',
                 display: 'flex',
-                flexDirection: 'column'
+                flexDirection: 'column',
+                animation: `slideInUp 0.6s ease-out ${index * 0.1}s both`,
+                transformOrigin: 'bottom'
               }}>
+                <style jsx>{`
+                  @keyframes slideInUp {
+                    0% {
+                      opacity: 0;
+                      transform: translateY(30px) scale(0.95);
+                    }
+                    100% {
+                      opacity: 1;
+                      transform: translateY(0) scale(1);
+                    }
+                  }
+                `}</style>
+                
                 {/* Online Status */}
                 <div style={{
                   position: 'absolute',
-                  top: '24px',
-                  right: '24px',
+                  top: '20px',
+                  right: '20px',
                   backgroundColor: '#16a085',
                   color: 'white',
-                  padding: '8px 16px',
-                  borderRadius: '15px',
-                  fontSize: '12px',
+                  padding: '6px 12px',
+                  borderRadius: '12px',
+                  fontSize: '11px',
                   fontWeight: '600',
                   fontFamily: 'Georgia, serif',
-                  letterSpacing: '0.5px'
+                  letterSpacing: '0.5px',
+                  boxShadow: '0 2px 8px rgba(22, 160, 133, 0.3)'
                 }}>
                   Online
                 </div>
@@ -426,23 +462,23 @@ export function Hero() {
                 <div style={{
                   display: 'flex',
                   alignItems: 'center',
-                  marginBottom: '24px'
+                  marginBottom: '20px'
                 }}>
                   <div style={{
-                    width: '64px',
-                    height: '64px',
+                    width: '56px',
+                    height: '56px',
                     borderRadius: '50%',
                     backgroundColor: consultant.avatar,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    marginRight: '18px',
-                    boxShadow: '0 6px 20px rgba(0,0,0,0.15)',
+                    marginRight: '16px',
+                    boxShadow: '0 4px 16px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08)',
                     border: '3px solid #ffffff'
                   }}>
                     <span style={{
                       color: 'white',
-                      fontSize: '20px',
+                      fontSize: '18px',
                       fontWeight: '700',
                       fontFamily: 'Georgia, serif'
                     }}>
@@ -451,16 +487,16 @@ export function Hero() {
                   </div>
                   <div>
                     <h3 style={{
-                      fontSize: '22px',
+                      fontSize: '20px',
                       fontWeight: '600',
                       color: '#1a1a2e',
-                      margin: '0 0 6px 0',
+                      margin: '0 0 4px 0',
                       fontFamily: 'Georgia, serif'
                     }}>
                       {consultant.name}
                     </h3>
                     <p style={{
-                      fontSize: '16px',
+                      fontSize: '15px',
                       color: '#4a5568',
                       margin: '0',
                       fontFamily: 'Georgia, serif'
@@ -474,24 +510,25 @@ export function Hero() {
                 <div style={{
                   backgroundColor: 'rgba(22, 160, 133, 0.1)',
                   color: '#16a085',
-                  padding: '8px 16px',
-                  borderRadius: '25px',
-                  fontSize: '14px',
+                  padding: '6px 14px',
+                  borderRadius: '20px',
+                  fontSize: '13px',
                   fontWeight: '600',
                   display: 'inline-block',
-                  marginBottom: '20px',
+                  marginBottom: '18px',
                   fontFamily: 'Georgia, serif',
-                  alignSelf: 'flex-start'
+                  alignSelf: 'flex-start',
+                  border: '1px solid rgba(22, 160, 133, 0.15)'
                 }}>
                   {consultant.specialty}
                 </div>
 
                 {/* Bio */}
                 <p style={{
-                  fontSize: '15px',
+                  fontSize: '14px',
                   color: '#4a5568',
                   lineHeight: '1.6',
-                  margin: '0 0 24px 0',
+                  margin: '0 0 20px 0',
                   fontFamily: 'Georgia, serif',
                   flex: 1
                 }}>
@@ -502,24 +539,24 @@ export function Hero() {
                 <div style={{
                   display: 'flex',
                   alignItems: 'center',
-                  marginBottom: '24px'
+                  marginBottom: '20px'
                 }}>
                   <span style={{ 
                     color: '#fbbf24', 
-                    marginRight: '10px', 
-                    fontSize: '18px' 
+                    marginRight: '8px', 
+                    fontSize: '16px' 
                   }}>★★★★★</span>
                   <span style={{
-                    fontSize: '16px',
+                    fontSize: '15px',
                     fontWeight: '600',
                     color: '#1a1a2e',
-                    marginRight: '10px',
+                    marginRight: '8px',
                     fontFamily: 'Georgia, serif'
                   }}>
                     4.9
                   </span>
                   <span style={{
-                    fontSize: '15px',
+                    fontSize: '14px',
                     color: '#4a5568',
                     fontFamily: 'Georgia, serif'
                   }}>
@@ -532,21 +569,21 @@ export function Hero() {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  paddingTop: '24px',
+                  paddingTop: '20px',
                   borderTop: '1px solid rgba(26, 26, 46, 0.08)'
                 }}>
                   <div>
                     <span style={{
-                      fontSize: '13px',
+                      fontSize: '12px',
                       color: '#4a5568',
                       display: 'block',
                       textTransform: 'uppercase',
                       letterSpacing: '1px',
-                      marginBottom: '6px',
+                      marginBottom: '4px',
                       fontFamily: 'Georgia, serif'
                     }}>Starting at</span>
                     <span style={{
-                      fontSize: '28px',
+                      fontSize: '26px',
                       fontWeight: '700',
                       color: '#1a1a2e',
                       fontFamily: 'Georgia, serif'
@@ -559,9 +596,9 @@ export function Hero() {
                     backgroundColor: '#1a1a2e',
                     color: 'white',
                     border: 'none',
-                    padding: '14px 24px',
-                    borderRadius: '12px',
-                    fontSize: '15px',
+                    padding: '12px 20px',
+                    borderRadius: '10px',
+                    fontSize: '14px',
                     fontWeight: '600',
                     cursor: 'pointer',
                     fontFamily: 'Georgia, serif',
@@ -589,22 +626,41 @@ export function Hero() {
           padding: '0 40px',
           textAlign: 'center'
         }}>
-          <h2 style={{
-            fontSize: '48px',
-            fontWeight: '300',
-            color: '#1a1a2e',
-            margin: '0 0 60px 0',
-            fontFamily: 'Georgia, serif'
+          {/* Large Logo Header */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '24px',
+            marginBottom: '20px'
           }}>
-            Services Our Consultants Offer
-          </h2>
+            <img 
+              src="/images/proofr-logo.png" 
+              alt="Proofr"
+              style={{
+                height: '80px',
+                width: 'auto',
+                filter: 'drop-shadow(0 4px 15px rgba(0,0,0,0.15))'
+              }}
+            />
+            <h2 style={{
+              fontSize: '42px',
+              fontWeight: '600',
+              color: '#1a1a2e',
+              margin: '0',
+              fontFamily: 'Georgia, serif'
+            }}>
+              Services Our Consultants Offer
+            </h2>
+          </div>
 
           {/* Services Grid */}
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-            gap: '48px',
-            marginBottom: '80px'
+            gap: '40px',
+            marginBottom: '80px',
+            marginTop: '60px'
           }}>
             {[
               { icon: '📝', title: 'Essay Reviews', desc: 'Personal statements, supplements, and application essays' },
@@ -615,25 +671,25 @@ export function Hero() {
               { icon: '📚', title: 'School-Specific Advice', desc: 'Insider tips from current students' }
             ].map((service, index) => (
               <div key={index} style={{
-                padding: '40px 32px',
+                padding: '36px 28px',
                 backgroundColor: 'white',
-                borderRadius: '20px',
+                borderRadius: '18px',
                 border: '1px solid rgba(26, 26, 46, 0.06)',
                 boxShadow: '0 8px 25px rgba(0,0,0,0.06)',
                 transition: 'all 0.3s ease'
               }}>
-                <div style={{ fontSize: '36px', marginBottom: '20px' }}>{service.icon}</div>
+                <div style={{ fontSize: '32px', marginBottom: '18px' }}>{service.icon}</div>
                 <h3 style={{
-                  fontSize: '20px',
+                  fontSize: '18px',
                   fontWeight: '600',
                   color: '#1a1a2e',
-                  margin: '0 0 12px 0',
+                  margin: '0 0 10px 0',
                   fontFamily: 'Georgia, serif'
                 }}>
                   {service.title}
                 </h3>
                 <p style={{
-                  fontSize: '16px',
+                  fontSize: '15px',
                   color: '#4a5568',
                   margin: '0',
                   fontFamily: 'Georgia, serif',
@@ -652,25 +708,43 @@ export function Hero() {
             borderRadius: '24px',
             textAlign: 'center'
           }}>
-            <h3 style={{
-              fontSize: '36px',
-              fontWeight: '300',
-              margin: '0 0 20px 0',
-              fontFamily: 'Georgia, serif'
+            {/* Large Logo in CTA */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '20px',
+              marginBottom: '24px'
             }}>
-              Ready to get started?
-            </h3>
+              <img 
+                src="/images/proofr-logo.png" 
+                alt="Proofr"
+                style={{
+                  height: '70px',
+                  width: 'auto',
+                  filter: 'brightness(0) invert(1)'
+                }}
+              />
+              <h3 style={{
+                fontSize: '32px',
+                fontWeight: '600',
+                margin: '0',
+                fontFamily: 'Georgia, serif'
+              }}>
+                Ready to get started?
+              </h3>
+            </div>
             <p style={{
-              fontSize: '18px',
+              fontSize: '17px',
               color: '#cbd5e0',
-              margin: '0 0 40px 0',
+              margin: '0 0 36px 0',
               fontFamily: 'Georgia, serif'
             }}>
-              Join thousands of students who have successfully navigated admissions with our peer consultants.
+              Join thousands of students who have successfully navigated admissions with our consultants.
             </p>
             <div style={{
               display: 'flex',
-              gap: '24px',
+              gap: '20px',
               justifyContent: 'center',
               flexWrap: 'wrap'
             }}>
@@ -678,12 +752,13 @@ export function Hero() {
                 backgroundColor: '#16a085',
                 color: 'white',
                 border: 'none',
-                padding: '18px 36px',
+                padding: '16px 32px',
                 borderRadius: '12px',
-                fontSize: '18px',
+                fontSize: '17px',
                 fontWeight: '600',
                 cursor: 'pointer',
-                fontFamily: 'Georgia, serif'
+                fontFamily: 'Georgia, serif',
+                transition: 'all 0.3s ease'
               }}>
                 Browse Consultants
               </button>
@@ -691,12 +766,13 @@ export function Hero() {
                 backgroundColor: 'transparent',
                 color: 'white',
                 border: '2px solid white',
-                padding: '16px 36px',
+                padding: '14px 32px',
                 borderRadius: '12px',
-                fontSize: '18px',
+                fontSize: '17px',
                 fontWeight: '600',
                 cursor: 'pointer',
-                fontFamily: 'Georgia, serif'
+                fontFamily: 'Georgia, serif',
+                transition: 'all 0.3s ease'
               }}>
                 Become a Consultant
               </button>

@@ -1,13 +1,19 @@
 import * as React from 'react'
-import { useEffect, useRef } from 'react'
-import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, StatusBar, Animated, Image } from 'react-native'
+import { useEffect, useRef, useState } from 'react'
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, StatusBar, Animated, Image, ScrollView, Keyboard } from 'react-native'
 
 export function LoginScreen() {
+  // State for form inputs
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+
   // Animations
   const logoScale = useRef(new Animated.Value(0)).current
   const logoRotate = useRef(new Animated.Value(0)).current
   const fadeIn = useRef(new Animated.Value(0)).current
   const slideUp = useRef(new Animated.Value(50)).current
+  const scrollViewRef = useRef(null)
 
   useEffect(() => {
     // Logo entrance animation - similar to Freelancer bird
@@ -40,6 +46,12 @@ export function LoginScreen() {
     ]).start()
   }, [])
 
+  const handleInputFocus = () => {
+    setTimeout(() => {
+      scrollViewRef.current?.scrollToEnd({ animated: true })
+    }, 100)
+  }
+
   const logoRotateInterpolate = logoRotate.interpolate({
     inputRange: [0, 1],
     outputRange: ['0deg', '360deg'],
@@ -49,7 +61,13 @@ export function LoginScreen() {
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#0a0a0a" />
       
-      <View style={styles.content}>
+      <ScrollView 
+        ref={scrollViewRef}
+        style={styles.scrollView}
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+      >
         {/* Animated Logo Section */}
         <View style={styles.logoSection}>
           <Animated.View 
@@ -120,13 +138,35 @@ export function LoginScreen() {
 
           {/* Email/Username Input */}
           <View style={styles.inputContainer}>
-            <Text style={styles.inputPlaceholder}>Email or Username</Text>
+            <TextInput
+              style={styles.textInput}
+              value={email}
+              onChangeText={setEmail}
+              placeholder="Email or Username"
+              placeholderTextColor="rgba(255, 255, 255, 0.6)"
+              keyboardType="email-address"
+              autoCapitalize="none"
+              autoCorrect={false}
+              onFocus={handleInputFocus}
+            />
           </View>
 
           {/* Password Input */}
           <View style={styles.inputContainer}>
-            <Text style={styles.inputPlaceholder}>Password</Text>
-            <Text style={styles.eyeIcon}>👁️</Text>
+            <TextInput
+              style={styles.textInputWithIcon}
+              value={password}
+              onChangeText={setPassword}
+              placeholder="Password"
+              placeholderTextColor="rgba(255, 255, 255, 0.6)"
+              secureTextEntry={!showPassword}
+              autoCapitalize="none"
+              autoCorrect={false}
+              onFocus={handleInputFocus}
+            />
+            <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+              <Text style={styles.showHideText}>{showPassword ? 'Hide' : 'Show'}</Text>
+            </TouchableOpacity>
           </View>
 
           {/* Forgot Password */}
@@ -154,7 +194,7 @@ export function LoginScreen() {
             Don&apos;t have an account? <Text style={styles.signupLink}>Sign up</Text>
           </Text>
         </Animated.View>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   )
 }
@@ -164,8 +204,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#0a0a0a', // Much darker background
   },
-  content: {
+  scrollView: {
     flex: 1,
+  },
+  content: {
+    flexGrow: 1,
     paddingHorizontal: 24,
     paddingTop: 0,
     paddingBottom: 20,
@@ -373,14 +416,23 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 2,
   },
-  inputPlaceholder: {
+  textInput: {
     fontSize: 16,
-    color: 'rgba(255, 255, 255, 0.6)',
+    color: 'white',
     fontWeight: '400',
+    flex: 1,
   },
-  eyeIcon: {
+  textInputWithIcon: {
     fontSize: 16,
-    color: 'rgba(255, 255, 255, 0.5)',
+    color: 'white',
+    fontWeight: '400',
+    flex: 1,
+    marginRight: 12,
+  },
+  showHideText: {
+    fontSize: 14,
+    color: '#06b6d4',
+    fontWeight: '600',
   },
   
   // Forgot Password
