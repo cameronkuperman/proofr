@@ -1,4 +1,5 @@
-import React, { useEffect, useRef } from 'react'
+import * as React from 'react'
+import { useEffect, useRef } from 'react'
 import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, StatusBar, Animated, Image } from 'react-native'
 
 export function LoginScreen() {
@@ -87,23 +88,27 @@ export function LoginScreen() {
         >
           <TouchableOpacity style={styles.googleButton}>
             <View style={styles.googleIconContainer}>
-              <Text style={styles.googleIcon}>G</Text>
+              <Image 
+                source={{uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/800px-Google_%22G%22_logo.svg.png'}}
+                style={styles.googleLogoImage}
+                resizeMode="contain"
+              />
             </View>
-            <Text style={styles.buttonText}>Continue with Google</Text>
+            <Text style={styles.googleButtonText}>Continue with Google</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.appleButton}>
             <View style={styles.appleIconContainer}>
               <Text style={styles.appleIcon}></Text>
             </View>
-            <Text style={styles.buttonText}>Continue with Apple</Text>
+            <Text style={styles.appleButtonText}>Continue with Apple</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.xButton}>
-            <View style={styles.xIconContainer}>
-              <Text style={styles.xIcon}>𝕏</Text>
+          <TouchableOpacity style={styles.linkedinButton}>
+            <View style={styles.linkedinIconContainer}>
+              <Text style={styles.linkedinIcon}>in</Text>
             </View>
-            <Text style={styles.buttonText}>Continue with X</Text>
+            <Text style={styles.linkedinButtonText}>Continue with LinkedIn</Text>
           </TouchableOpacity>
 
           {/* OR Divider */}
@@ -146,7 +151,7 @@ export function LoginScreen() {
           ]}
         >
           <Text style={styles.signupPrompt}>
-            Don't have an account? <Text style={styles.signupLink}>Sign up</Text>
+            Don&apos;t have an account? <Text style={styles.signupLink}>Sign up</Text>
           </Text>
         </Animated.View>
       </View>
@@ -162,7 +167,7 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     paddingHorizontal: 24,
-    paddingTop: 40,
+    paddingTop: 0,
     paddingBottom: 20,
     justifyContent: 'space-between',
   },
@@ -170,11 +175,11 @@ const styles = StyleSheet.create({
   // Animated Logo Section
   logoSection: {
     alignItems: 'center',
-    marginBottom: 32,
+    marginBottom: -75,
   },
   logoContainer: {
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: -55,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.3,
@@ -190,8 +195,9 @@ const styles = StyleSheet.create({
     fontSize: 42,
     fontWeight: '700',
     color: 'white',
-    marginTop: 8,
+    marginTop: 0,
     textAlign: 'center',
+    marginBottom: 8,
   },
   welcomeText: {
     fontSize: 24,
@@ -205,7 +211,7 @@ const styles = StyleSheet.create({
     color: 'rgba(255, 255, 255, 0.7)',
     textAlign: 'center',
     fontStyle: 'italic',
-    marginBottom: 16,
+    marginBottom: 95,
   },
   
   // Auth Section
@@ -214,114 +220,121 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   
-  // Modern Dark Social Buttons
+  // Premium Social Login Buttons
   googleButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'flex-start',
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    backgroundColor: 'white',
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.12)',
+    borderColor: '#dadce0',
     borderRadius: 16,
-    paddingVertical: 16,
+    paddingVertical: 8,
     paddingHorizontal: 20,
-    marginBottom: 12,
+    marginBottom: 14,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
     elevation: 4,
   },
   googleIconContainer: {
-    width: 35,
-    height: 35,
-    borderRadius: 35, // Perfect circle
-    backgroundColor: '#4285f4',
+    width: 32,
+    height: 32,
+    borderRadius: 6,
+    backgroundColor: 'transparent',
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 16,
-    margin: 0,
   },
   googleIcon: {
-    color: 'white',
+    color: '#4285f4',
     fontWeight: '700',
-    fontSize: 20,
-    margin: 0,
-    padding: 0,
+    fontSize: 18,
+    fontFamily: 'Product Sans',
   },
-  xButton: {
+  googleLogoImage: {
+    width: 24,
+    height: 24,
+  },
+  linkedinButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'flex-start',
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.15)',
-    borderRadius: 16,
+    backgroundColor: '#0077b5',
+    borderWidth: 0,
+    borderRadius: 12,
     paddingVertical: 16,
-    paddingHorizontal: 20,
-    marginBottom: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
+    paddingHorizontal: 16,
+    marginBottom: 12,
+    shadowColor: '#0077b5',
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 4,
+    shadowRadius: 4,
+    elevation: 3,
   },
   appleButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'flex-start',
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.12)',
-    borderRadius: 16,
+    backgroundColor: '#000000',
+    borderWidth: 0,
+    borderRadius: 12,
     paddingVertical: 16,
-    paddingHorizontal: 20,
+    paddingHorizontal: 16,
     marginBottom: 12,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 4,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 3,
   },
   appleIconContainer: {
-    width: 35,
-    height: 35,
-    borderRadius: 35, // Perfect circle
-    backgroundColor: 'white',
+    width: 24,
+    height: 24,
+    borderRadius: 4,
+    backgroundColor: 'transparent',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 16,
-    margin: 0,
+    marginRight: 12,
   },
   appleIcon: {
-    color: 'black',
+    color: 'white',
     fontWeight: '400',
     fontSize: 20,
-    margin: 0,
-    padding: 0,
   },
-  xIconContainer: {
-    width: 39,
-    height: 39,
-    borderRadius: 39, // Perfect circle
-    backgroundColor: '#000000',
+  linkedinIconContainer: {
+    width: 24,
+    height: 24,
+    borderRadius: 4,
+    backgroundColor: 'transparent',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 16,
-    margin: 0,
+    marginRight: 12,
   },
-  xIcon: {
-    fontSize: 20, // 40% larger: 14 * 1.4 = 19.6 ≈ 20
+  linkedinIcon: {
+    fontSize: 16,
     color: 'white',
     fontWeight: '700',
+    fontFamily: 'monospace',
   },
-  buttonText: {
+  googleButtonText: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#3c4043',
+    flex: 1,
+    textAlign: 'center',
+  },
+  linkedinButtonText: {
     fontSize: 16,
     fontWeight: '600',
     color: 'white',
     flex: 1,
     textAlign: 'center',
-    marginRight: 28, // Offset for icon space to center text
+  },
+  appleButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: 'white',
+    flex: 1,
+    textAlign: 'center',
   },
   
   // OR Divider

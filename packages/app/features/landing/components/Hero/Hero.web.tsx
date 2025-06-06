@@ -1,133 +1,275 @@
 import * as React from 'react'
 import { TextLink } from 'solito/link'
-import { NavigationBar } from '../NavigationBar'
 
 export function Hero() {
-  return (
-    <>
-      <NavigationBar />
-      <div style={{
-        minHeight: '100vh',
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-        position: 'relative',
-        overflow: 'hidden'
-      }}>
-        {/* Background Pattern */}
-        <div style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-          opacity: 0.3
-        }} />
+  const consultants = [
+    {
+      initials: 'AH',
+      name: 'Ashley H.',
+      university: 'Stanford University',
+      year: "'26",
+      specialty: 'Essay Reviews',
+      bio: 'Specialized in personal statements and supplemental essays. Helped 50+ students get into top schools.',
+      price: '$45',
+      avatar: '#e74c3c'
+    },
+    {
+      initials: 'IA', 
+      name: 'Imane A.',
+      university: 'MIT',
+      year: "'25",
+      specialty: 'Application Strategy',
+      bio: 'Expert in STEM applications and research positioning. Published researcher with proven results.',
+      price: '$60',
+      avatar: '#16a085'
+    },
+    {
+      initials: 'CK',
+      name: 'Cameron K.',
+      university: 'Duke University',
+      year: "'24", 
+      specialty: 'Essay Reviews',
+      bio: 'Founder & consultant. Specializes in leadership essays and scholarship applications.',
+      price: '$40',
+      avatar: '#1a1a2e'
+    },
+    {
+      initials: 'SD',
+      name: 'Sean D.',
+      university: 'Yale University',
+      year: "'26",
+      specialty: 'Essay Reviews', 
+      bio: 'English major with expertise in storytelling and narrative structure for college essays.',
+      price: '$50',
+      avatar: '#16a085'
+    }
+  ]
 
+  return (
+    <div style={{
+      minHeight: '100vh',
+      backgroundColor: '#fafafa',
+      fontFamily: 'Georgia, "Times New Roman", Times, serif'
+    }}>
+      {/* Navigation Header */}
+      <header style={{
+        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+        backdropFilter: 'blur(10px)',
+        borderBottom: '1px solid rgba(26, 26, 46, 0.1)',
+        position: 'sticky',
+        top: 0,
+        zIndex: 50
+      }}>
         <div style={{
           maxWidth: '1400px',
           margin: '0 auto',
-          width: '100%',
-          display: 'grid',
-          gridTemplateColumns: '1.2fr 0.8fr',
-          gap: '4rem',
+          padding: '0 40px',
+          height: '85px',
+          display: 'flex',
           alignItems: 'center',
-          padding: '0 3rem',
-          paddingTop: '120px',
-          paddingBottom: '60px',
-          position: 'relative',
-          zIndex: 2
+          justifyContent: 'space-between'
         }}>
-          {/* Content Column */}
-          <div>
-            {/* Trust Badge */}
+          {/* Logo */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '14px'
+          }}>
             <div style={{
-              display: 'inline-flex',
+              width: '44px',
+              height: '44px',
+              background: 'linear-gradient(135deg, #1a1a2e 0%, #16a085 50%, #e74c3c 100%)',
+              borderRadius: '12px',
+              display: 'flex',
               alignItems: 'center',
-              background: 'rgba(255, 255, 255, 0.15)',
-              backdropFilter: 'blur(10px)',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-              borderRadius: '50px',
-              padding: '0.5rem 1.5rem',
-              marginBottom: '2rem',
-              color: 'white',
-              fontSize: '0.9rem',
-              fontWeight: '500'
+              justifyContent: 'center',
+              boxShadow: '0 4px 12px rgba(26, 26, 46, 0.15)'
             }}>
-              <span style={{ marginRight: '0.5rem' }}>🏆</span>
-              Trusted by 10,000+ students from top universities
+              <span style={{
+                color: 'white',
+                fontSize: '20px',
+                fontWeight: '600'
+              }}>🎓</span>
+            </div>
+            <span style={{
+              fontSize: '32px',
+              fontWeight: '700',
+              color: '#1a1a2e',
+              fontFamily: 'Georgia, serif',
+              letterSpacing: '-0.5px'
+            }}>proofr</span>
+          </div>
+
+          {/* Navigation Links */}
+          <nav style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '48px'
+          }}>
+            <a href="/browse" style={{
+              color: '#4a5568',
+              textDecoration: 'none',
+              fontSize: '17px',
+              fontWeight: '400',
+              fontFamily: 'Georgia, serif',
+              transition: 'color 0.2s'
+            }}>Browse Consultants</a>
+            <a href="/how-it-works" style={{
+              color: '#4a5568', 
+              textDecoration: 'none',
+              fontSize: '17px',
+              fontWeight: '400',
+              fontFamily: 'Georgia, serif'
+            }}>How It Works</a>
+            <a href="/become-consultant" style={{
+              color: '#4a5568',
+              textDecoration: 'none', 
+              fontSize: '17px',
+              fontWeight: '400',
+              fontFamily: 'Georgia, serif'
+            }}>Become a Consultant</a>
+            <a href="/about" style={{
+              color: '#4a5568',
+              textDecoration: 'none',
+              fontSize: '17px', 
+              fontWeight: '400',
+              fontFamily: 'Georgia, serif'
+            }}>About</a>
+          </nav>
+
+          {/* Auth Buttons */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '24px'
+          }}>
+            <button style={{
+              background: 'none',
+              border: 'none',
+              color: '#4a5568',
+              fontSize: '17px',
+              fontWeight: '400',
+              cursor: 'pointer',
+              fontFamily: 'Georgia, serif'
+            }}>Sign In</button>
+            <button style={{
+              backgroundColor: '#1a1a2e',
+              color: 'white',
+              border: 'none',
+              padding: '14px 28px',
+              borderRadius: '12px',
+              fontSize: '17px',
+              fontWeight: '600',
+              cursor: 'pointer',
+              fontFamily: 'Georgia, serif',
+              transition: 'all 0.3s ease',
+              boxShadow: '0 4px 12px rgba(26, 26, 46, 0.25)'
+            }}>Get Started</button>
+          </div>
+        </div>
+      </header>
+
+      {/* Hero Section */}
+      <section style={{
+        maxWidth: '1400px',
+        margin: '0 auto',
+        padding: '120px 40px 80px 40px'
+      }}>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1.2fr',
+          gap: '80px',
+          alignItems: 'start'
+        }}>
+          {/* Left Column - Text Content & Search */}
+          <div style={{ paddingTop: '40px' }}>
+            <div style={{
+              display: 'inline-block',
+              backgroundColor: '#16a085',
+              color: 'white',
+              padding: '10px 20px',
+              borderRadius: '25px',
+              fontSize: '15px',
+              fontWeight: '500',
+              marginBottom: '32px',
+              fontFamily: 'Georgia, serif',
+              letterSpacing: '0.3px'
+            }}>
+              The College Admissions Marketplace
             </div>
 
-            {/* Main Headline */}
             <h1 style={{
-              fontSize: '4.5rem',
-              fontWeight: '800',
-              color: 'white',
+              fontSize: '72px',
+              fontWeight: '300',
               lineHeight: '1.1',
-              margin: '0 0 1.5rem 0',
-              letterSpacing: '-0.02em'
+              color: '#1a1a2e',
+              margin: '0 0 28px 0',
+              letterSpacing: '-1px',
+              fontFamily: 'Georgia, serif'
             }}>
               Get Into Your{' '}
               <span style={{
-                background: 'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)',
-                backgroundClip: 'text',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                color: 'transparent'
-              }}>
-                Dream School
-              </span>
+                color: '#16a085',
+                fontWeight: '400'
+              }}>Dream School</span>
             </h1>
 
             <p style={{
-              fontSize: '1.4rem',
-              color: 'rgba(255, 255, 255, 0.9)',
-              lineHeight: '1.6',
-              margin: '0 0 3rem 0',
-              maxWidth: '600px'
+              fontSize: '24px',
+              color: '#4a5568',
+              lineHeight: '1.5',
+              margin: '0 0 50px 0',
+              maxWidth: '520px',
+              fontFamily: 'Georgia, serif',
+              fontWeight: '300'
             }}>
-              Connect with current students at Harvard, Stanford, MIT & top universities. 
-              Get personalized admissions guidance at affordable prices.
+              Connect with current students at Harvard, Stanford, MIT & top universities. Get personalized admissions guidance at affordable freelance rates.
             </p>
 
             {/* Search Bar */}
             <div style={{
-              background: 'white',
+              backgroundColor: 'white',
+              border: '1px solid rgba(26, 26, 46, 0.12)',
               borderRadius: '16px',
-              padding: '0.75rem',
-              marginBottom: '2rem',
-              boxShadow: '0 20px 40px rgba(0, 0, 0, 0.1)',
+              padding: '8px',
+              marginBottom: '50px',
               display: 'flex',
               alignItems: 'center',
-              gap: '1rem'
+              boxShadow: '0 8px 25px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.06)',
+              transition: 'all 0.3s ease'
             }}>
               <div style={{
-                color: '#64748b',
-                padding: '0 0.5rem'
+                padding: '0 20px',
+                color: '#16a085',
+                fontSize: '20px'
               }}>
                 🔍
               </div>
               <input
                 type="text"
-                placeholder="What service do you need? Essay review, mock interview..."
+                placeholder="Search for essay reviews, mock interviews, application strategy..."
                 style={{
                   flex: 1,
                   border: 'none',
                   outline: 'none',
-                  fontSize: '1.1rem',
-                  padding: '0.75rem 0',
-                  color: '#1e293b'
+                  fontSize: '17px',
+                  padding: '18px 12px',
+                  color: '#1a1a2e',
+                  backgroundColor: 'transparent',
+                  fontFamily: 'Georgia, serif'
                 }}
               />
               <button style={{
-                background: 'linear-gradient(135deg, #667eea, #764ba2)',
+                backgroundColor: '#1a1a2e',
                 color: 'white',
                 border: 'none',
-                padding: '1rem 2rem',
+                padding: '16px 28px',
                 borderRadius: '12px',
-                fontSize: '1rem',
+                fontSize: '17px',
                 fontWeight: '600',
                 cursor: 'pointer',
-                whiteSpace: 'nowrap'
+                fontFamily: 'Georgia, serif',
+                transition: 'all 0.3s ease'
               }}>
                 Search
               </button>
@@ -137,537 +279,431 @@ export function Hero() {
             <div style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '1rem',
-              marginBottom: '3rem',
+              gap: '16px',
+              marginBottom: '60px',
               flexWrap: 'wrap'
             }}>
-              <span style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '0.95rem' }}>Popular:</span>
-              {['Essay Review', 'Mock Interview', 'App Strategy', 'Resume Review'].map((service) => (
+              <span style={{ 
+                color: '#4a5568', 
+                fontSize: '17px',
+                fontFamily: 'Georgia, serif'
+              }}>Popular:</span>
+              {['Essay Reviews', 'Mock Interviews', 'Application Strategy', 'Resume Help'].map((service) => (
                 <button key={service} style={{
-                  background: 'rgba(255, 255, 255, 0.15)',
-                  backdropFilter: 'blur(10px)',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  color: 'white',
-                  padding: '0.5rem 1rem',
+                  backgroundColor: 'transparent',
+                  border: '1px solid rgba(22, 160, 133, 0.3)',
+                  color: '#16a085',
+                  padding: '10px 18px',
                   borderRadius: '25px',
-                  fontSize: '0.9rem',
+                  fontSize: '15px',
                   cursor: 'pointer',
-                  transition: 'all 0.3s ease'
+                  fontFamily: 'Georgia, serif',
+                  transition: 'all 0.3s ease',
+                  fontWeight: '400'
                 }}>
                   {service}
                 </button>
               ))}
             </div>
 
-            {/* CTAs */}
             <div style={{
               display: 'flex',
-              gap: '1rem',
-              marginBottom: '2rem'
+              gap: '24px',
+              marginBottom: '70px'
             }}>
-              <TextLink href="/browse">
-                <button style={{
-                  background: 'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)',
-                  color: '#1e293b',
-                  border: 'none',
-                  padding: '1.2rem 2.5rem',
-                  borderRadius: '12px',
-                  fontSize: '1.1rem',
-                  fontWeight: '700',
-                  cursor: 'pointer',
-                  boxShadow: '0 8px 25px rgba(252, 182, 159, 0.4)',
-                  transition: 'all 0.3s ease'
-                }}>
-                  Find a Consultant
-                </button>
-              </TextLink>
+              <button style={{
+                backgroundColor: '#1a1a2e',
+                color: 'white',
+                border: 'none',
+                padding: '20px 40px',
+                borderRadius: '16px',
+                fontSize: '19px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                fontFamily: 'Georgia, serif',
+                boxShadow: '0 8px 25px rgba(26, 26, 46, 0.25)',
+                transition: 'all 0.3s ease'
+              }}>Find a Consultant</button>
               
-              <TextLink href="/become-consultant">
-                <button style={{
-                  background: 'rgba(255, 255, 255, 0.1)',
-                  backdropFilter: 'blur(10px)',
-                  color: 'white',
-                  border: '2px solid rgba(255, 255, 255, 0.3)',
-                  padding: '1.2rem 2.5rem',
-                  borderRadius: '12px',
-                  fontSize: '1.1rem',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease'
-                }}>
-                  Become a Consultant
-                </button>
-              </TextLink>
+              <button style={{
+                backgroundColor: 'transparent',
+                color: '#1a1a2e',
+                border: '2px solid #1a1a2e',
+                padding: '18px 40px',
+                borderRadius: '16px',
+                fontSize: '19px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                fontFamily: 'Georgia, serif',
+                transition: 'all 0.3s ease'
+              }}>Become a Consultant</button>
             </div>
 
-            {/* Stats */}
             <div style={{
               display: 'flex',
-              gap: '3rem',
-              color: 'rgba(255, 255, 255, 0.9)'
+              gap: '60px',
+              color: '#4a5568'
             }}>
               <div>
-                <div style={{ fontSize: '2rem', fontWeight: '700', marginBottom: '0.25rem' }}>94%</div>
-                <div style={{ fontSize: '0.9rem', opacity: 0.8 }}>Success Rate</div>
+                <div style={{ 
+                  fontSize: '32px', 
+                  fontWeight: '700', 
+                  color: '#1a1a2e',
+                  fontFamily: 'Georgia, serif'
+                }}>94%</div>
+                <div style={{ 
+                  fontSize: '15px',
+                  fontFamily: 'Georgia, serif'
+                }}>Success Rate</div>
               </div>
               <div>
-                <div style={{ fontSize: '2rem', fontWeight: '700', marginBottom: '0.25rem' }}>500+</div>
-                <div style={{ fontSize: '0.9rem', opacity: 0.8 }}>Expert Consultants</div>
+                <div style={{ 
+                  fontSize: '32px', 
+                  fontWeight: '700', 
+                  color: '#1a1a2e',
+                  fontFamily: 'Georgia, serif'
+                }}>500+</div>
+                <div style={{ 
+                  fontSize: '15px',
+                  fontFamily: 'Georgia, serif'
+                }}>Expert Consultants</div>
               </div>
               <div>
-                <div style={{ fontSize: '2rem', fontWeight: '700', marginBottom: '0.25rem' }}>10K+</div>
-                <div style={{ fontSize: '0.9rem', opacity: 0.8 }}>Students Helped</div>
+                <div style={{ 
+                  fontSize: '32px', 
+                  fontWeight: '700', 
+                  color: '#1a1a2e',
+                  fontFamily: 'Georgia, serif'
+                }}>10K+</div>
+                <div style={{ 
+                  fontSize: '15px',
+                  fontFamily: 'Georgia, serif'
+                }}>Students Helped</div>
               </div>
             </div>
           </div>
 
-          {/* Consultant Cards Column */}
+          {/* Right Column - Consultant Cards */}
           <div style={{
             display: 'grid',
             gridTemplateColumns: '1fr 1fr',
-            gap: '1.5rem',
-            height: 'fit-content'
+            gap: '24px',
+            width: '100%'
           }}>
-            {/* Consultant Card 1 */}
-            <div style={{
-              background: 'white',
-              borderRadius: '20px',
-              padding: '2rem',
-              boxShadow: '0 10px 40px rgba(0, 0, 0, 0.15)',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-              position: 'relative',
-              transform: 'translateY(-20px)',
-              animation: 'fadeInUp 0.8s ease-out'
-            }}>
-              <div style={{
-                position: 'absolute',
-                top: '1rem',
-                right: '1rem',
-                background: '#10b981',
-                color: 'white',
-                padding: '0.25rem 0.75rem',
-                borderRadius: '12px',
-                fontSize: '0.75rem',
-                fontWeight: '600'
-              }}>
-                Online
-              </div>
-              
-              <div style={{
-                width: '60px',
-                height: '60px',
-                background: 'linear-gradient(135deg, #dc2626, #fca5a5)',
-                borderRadius: '50%',
+            {consultants.map((consultant, index) => (
+              <div key={consultant.name} style={{
+                backgroundColor: '#ffffff',
+                borderRadius: '20px',
+                padding: '36px 32px',
+                boxShadow: '0 12px 40px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.04)',
+                border: '1px solid rgba(26, 26, 46, 0.06)',
+                position: 'relative',
+                transition: 'all 0.4s ease',
+                cursor: 'pointer',
+                background: 'linear-gradient(145deg, #ffffff 0%, #fcfcfc 100%)',
+                minHeight: '320px',
                 display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: 'white',
-                fontWeight: '700',
-                fontSize: '1.5rem',
-                marginBottom: '1.5rem',
-                border: '4px solid #f1f5f9'
+                flexDirection: 'column'
               }}>
-                AH
-              </div>
-              
-              <h4 style={{
-                fontSize: '1.3rem',
-                fontWeight: '700',
-                color: '#1e293b',
-                margin: '0 0 0.5rem 0'
-              }}>
-                Ashley H.
-              </h4>
-              
-              <p style={{
-                fontSize: '1rem',
-                color: '#64748b',
-                margin: '0 0 0.25rem 0',
-                fontWeight: '500'
-              }}>
-                Stanford University &apos;26
-              </p>
-              
-              <p style={{
-                fontSize: '0.9rem',
-                color: '#64748b',
-                margin: '0 0 1rem 0'
-              }}>
-                Essay Reviews • Personal Statements
-              </p>
-              
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                marginBottom: '1rem'
-              }}>
-                <div style={{ color: '#fbbf24', marginRight: '0.5rem' }}>⭐⭐⭐⭐⭐</div>
-                <span style={{ fontSize: '0.9rem', color: '#64748b' }}>4.9 (127 reviews)</span>
-              </div>
-              
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between'
-              }}>
-                <div>
-                  <span style={{ fontSize: '0.8rem', color: '#64748b', display: 'block' }}>Starting at</span>
-                  <span style={{
-                    fontSize: '1.4rem',
-                    fontWeight: '700',
-                    color: '#16a34a'
-                  }}>
-                    $45
-                  </span>
-                </div>
-                <button style={{
-                  background: '#667eea',
+                {/* Online Status */}
+                <div style={{
+                  position: 'absolute',
+                  top: '24px',
+                  right: '24px',
+                  backgroundColor: '#16a085',
                   color: 'white',
-                  border: 'none',
-                  padding: '0.75rem 1.5rem',
-                  borderRadius: '10px',
-                  fontSize: '0.9rem',
+                  padding: '8px 16px',
+                  borderRadius: '15px',
+                  fontSize: '12px',
                   fontWeight: '600',
-                  cursor: 'pointer'
+                  fontFamily: 'Georgia, serif',
+                  letterSpacing: '0.5px'
                 }}>
-                  View Profile
-                </button>
-              </div>
-            </div>
+                  Online
+                </div>
 
-            {/* Consultant Card 2 */}
-            <div style={{
-              background: 'white',
-              borderRadius: '20px',
-              padding: '2rem',
-              boxShadow: '0 10px 40px rgba(0, 0, 0, 0.15)',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-              marginTop: '3rem',
-              animation: 'fadeInUp 0.8s ease-out 0.2s both'
-            }}>
-              <div style={{
-                position: 'absolute',
-                top: '1rem',
-                right: '1rem',
-                background: '#f59e0b',
-                color: 'white',
-                padding: '0.25rem 0.75rem',
-                borderRadius: '12px',
-                fontSize: '0.75rem',
-                fontWeight: '600'
-              }}>
-                Busy
-              </div>
-              
-              <div style={{
-                width: '60px',
-                height: '60px',
-                background: 'linear-gradient(135deg, #7c3aed, #c4b5fd)',
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: 'white',
-                fontWeight: '700',
-                fontSize: '1.5rem',
-                marginBottom: '1.5rem',
-                border: '4px solid #f1f5f9'
-              }}>
-                MK
-              </div>
-              
-              <h4 style={{
-                fontSize: '1.3rem',
-                fontWeight: '700',
-                color: '#1e293b',
-                margin: '0 0 0.5rem 0'
-              }}>
-                Marcus K.
-              </h4>
-              
-              <p style={{
-                fontSize: '1rem',
-                color: '#64748b',
-                margin: '0 0 0.25rem 0',
-                fontWeight: '500'
-              }}>
-                MIT &apos;25
-              </p>
-              
-              <p style={{
-                fontSize: '0.9rem',
-                color: '#64748b',
-                margin: '0 0 1rem 0'
-              }}>
-                Mock Interviews • Application Strategy
-              </p>
-              
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                marginBottom: '1rem'
-              }}>
-                <div style={{ color: '#fbbf24', marginRight: '0.5rem' }}>⭐⭐⭐⭐⭐</div>
-                <span style={{ fontSize: '0.9rem', color: '#64748b' }}>5.0 (89 reviews)</span>
-              </div>
-              
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between'
-              }}>
-                <div>
-                  <span style={{ fontSize: '0.8rem', color: '#64748b', display: 'block' }}>Starting at</span>
-                  <span style={{
-                    fontSize: '1.4rem',
-                    fontWeight: '700',
-                    color: '#16a34a'
-                  }}>
-                    $65
-                  </span>
-                </div>
-                <button style={{
-                  background: '#667eea',
-                  color: 'white',
-                  border: 'none',
-                  padding: '0.75rem 1.5rem',
-                  borderRadius: '10px',
-                  fontSize: '0.9rem',
-                  fontWeight: '600',
-                  cursor: 'pointer'
+                {/* Avatar and Name Section */}
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  marginBottom: '24px'
                 }}>
-                  View Profile
-                </button>
-              </div>
-            </div>
+                  <div style={{
+                    width: '64px',
+                    height: '64px',
+                    borderRadius: '50%',
+                    backgroundColor: consultant.avatar,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginRight: '18px',
+                    boxShadow: '0 6px 20px rgba(0,0,0,0.15)',
+                    border: '3px solid #ffffff'
+                  }}>
+                    <span style={{
+                      color: 'white',
+                      fontSize: '20px',
+                      fontWeight: '700',
+                      fontFamily: 'Georgia, serif'
+                    }}>
+                      {consultant.initials}
+                    </span>
+                  </div>
+                  <div>
+                    <h3 style={{
+                      fontSize: '22px',
+                      fontWeight: '600',
+                      color: '#1a1a2e',
+                      margin: '0 0 6px 0',
+                      fontFamily: 'Georgia, serif'
+                    }}>
+                      {consultant.name}
+                    </h3>
+                    <p style={{
+                      fontSize: '16px',
+                      color: '#4a5568',
+                      margin: '0',
+                      fontFamily: 'Georgia, serif'
+                    }}>
+                      {consultant.university} {consultant.year}
+                    </p>
+                  </div>
+                </div>
 
-            {/* Consultant Card 3 */}
-            <div style={{
-              background: 'white',
-              borderRadius: '20px',
-              padding: '2rem',
-              boxShadow: '0 10px 40px rgba(0, 0, 0, 0.15)',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-              animation: 'fadeInUp 0.8s ease-out 0.4s both'
-            }}>
-              <div style={{
-                position: 'absolute',
-                top: '1rem',
-                right: '1rem',
-                background: '#10b981',
-                color: 'white',
-                padding: '0.25rem 0.75rem',
-                borderRadius: '12px',
-                fontSize: '0.75rem',
-                fontWeight: '600'
-              }}>
-                Online
-              </div>
-              
-              <div style={{
-                width: '60px',
-                height: '60px',
-                background: 'linear-gradient(135deg, #0ea5e9, #7dd3fc)',
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: 'white',
-                fontWeight: '700',
-                fontSize: '1.5rem',
-                marginBottom: '1.5rem',
-                border: '4px solid #f1f5f9'
-              }}>
-                ER
-              </div>
-              
-              <h4 style={{
-                fontSize: '1.3rem',
-                fontWeight: '700',
-                color: '#1e293b',
-                margin: '0 0 0.5rem 0'
-              }}>
-                Emily R.
-              </h4>
-              
-              <p style={{
-                fontSize: '1rem',
-                color: '#64748b',
-                margin: '0 0 0.25rem 0',
-                fontWeight: '500'
-              }}>
-                Harvard &apos;25
-              </p>
-              
-              <p style={{
-                fontSize: '0.9rem',
-                color: '#64748b',
-                margin: '0 0 1rem 0'
-              }}>
-                Personal Statements • Supplements
-              </p>
-              
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                marginBottom: '1rem'
-              }}>
-                <div style={{ color: '#fbbf24', marginRight: '0.5rem' }}>⭐⭐⭐⭐⭐</div>
-                <span style={{ fontSize: '0.9rem', color: '#64748b' }}>4.8 (203 reviews)</span>
-              </div>
-              
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between'
-              }}>
-                <div>
-                  <span style={{ fontSize: '0.8rem', color: '#64748b', display: 'block' }}>Starting at</span>
-                  <span style={{
-                    fontSize: '1.4rem',
-                    fontWeight: '700',
-                    color: '#16a34a'
-                  }}>
-                    $55
-                  </span>
-                </div>
-                <button style={{
-                  background: '#667eea',
-                  color: 'white',
-                  border: 'none',
-                  padding: '0.75rem 1.5rem',
-                  borderRadius: '10px',
-                  fontSize: '0.9rem',
+                {/* Specialty Badge */}
+                <div style={{
+                  backgroundColor: 'rgba(22, 160, 133, 0.1)',
+                  color: '#16a085',
+                  padding: '8px 16px',
+                  borderRadius: '25px',
+                  fontSize: '14px',
                   fontWeight: '600',
-                  cursor: 'pointer'
+                  display: 'inline-block',
+                  marginBottom: '20px',
+                  fontFamily: 'Georgia, serif',
+                  alignSelf: 'flex-start'
                 }}>
-                  View Profile
-                </button>
-              </div>
-            </div>
+                  {consultant.specialty}
+                </div>
 
-            {/* Consultant Card 4 */}
-            <div style={{
-              background: 'white',
-              borderRadius: '20px',
-              padding: '2rem',
-              boxShadow: '0 10px 40px rgba(0, 0, 0, 0.15)',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-              marginTop: '3rem',
-              animation: 'fadeInUp 0.8s ease-out 0.6s both'
-            }}>
-              <div style={{
-                position: 'absolute',
-                top: '1rem',
-                right: '1rem',
-                background: '#10b981',
-                color: 'white',
-                padding: '0.25rem 0.75rem',
-                borderRadius: '12px',
-                fontSize: '0.75rem',
-                fontWeight: '600'
-              }}>
-                Online
-              </div>
-              
-              <div style={{
-                width: '60px',
-                height: '60px',
-                background: 'linear-gradient(135deg, #00356b, #4682b4)',
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: 'white',
-                fontWeight: '700',
-                fontSize: '1.5rem',
-                marginBottom: '1.5rem',
-                border: '4px solid #f1f5f9'
-              }}>
-                JL
-              </div>
-              
-              <h4 style={{
-                fontSize: '1.3rem',
-                fontWeight: '700',
-                color: '#1e293b',
-                margin: '0 0 0.5rem 0'
-              }}>
-                James L.
-              </h4>
-              
-              <p style={{
-                fontSize: '1rem',
-                color: '#64748b',
-                margin: '0 0 0.25rem 0',
-                fontWeight: '500'
-              }}>
-                Yale &apos;24
-              </p>
-              
-              <p style={{
-                fontSize: '0.9rem',
-                color: '#64748b',
-                margin: '0 0 1rem 0'
-              }}>
-                All Services • Premium Package
-              </p>
-              
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                marginBottom: '1rem'
-              }}>
-                <div style={{ color: '#fbbf24', marginRight: '0.5rem' }}>⭐⭐⭐⭐⭐</div>
-                <span style={{ fontSize: '0.9rem', color: '#64748b' }}>4.9 (156 reviews)</span>
-              </div>
-              
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between'
-              }}>
-                <div>
-                  <span style={{ fontSize: '0.8rem', color: '#64748b', display: 'block' }}>Starting at</span>
+                {/* Bio */}
+                <p style={{
+                  fontSize: '15px',
+                  color: '#4a5568',
+                  lineHeight: '1.6',
+                  margin: '0 0 24px 0',
+                  fontFamily: 'Georgia, serif',
+                  flex: 1
+                }}>
+                  {consultant.bio}
+                </p>
+
+                {/* Rating */}
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  marginBottom: '24px'
+                }}>
+                  <span style={{ 
+                    color: '#fbbf24', 
+                    marginRight: '10px', 
+                    fontSize: '18px' 
+                  }}>★★★★★</span>
                   <span style={{
-                    fontSize: '1.4rem',
-                    fontWeight: '700',
-                    color: '#16a34a'
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    color: '#1a1a2e',
+                    marginRight: '10px',
+                    fontFamily: 'Georgia, serif'
                   }}>
-                    $75
+                    4.9
+                  </span>
+                  <span style={{
+                    fontSize: '15px',
+                    color: '#4a5568',
+                    fontFamily: 'Georgia, serif'
+                  }}>
+                    (127 reviews)
                   </span>
                 </div>
-                <button style={{
-                  background: '#667eea',
-                  color: 'white',
-                  border: 'none',
-                  padding: '0.75rem 1.5rem',
-                  borderRadius: '10px',
-                  fontSize: '0.9rem',
-                  fontWeight: '600',
-                  cursor: 'pointer'
+
+                {/* Price and Button */}
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  paddingTop: '24px',
+                  borderTop: '1px solid rgba(26, 26, 46, 0.08)'
                 }}>
-                  View Profile
-                </button>
+                  <div>
+                    <span style={{
+                      fontSize: '13px',
+                      color: '#4a5568',
+                      display: 'block',
+                      textTransform: 'uppercase',
+                      letterSpacing: '1px',
+                      marginBottom: '6px',
+                      fontFamily: 'Georgia, serif'
+                    }}>Starting at</span>
+                    <span style={{
+                      fontSize: '28px',
+                      fontWeight: '700',
+                      color: '#1a1a2e',
+                      fontFamily: 'Georgia, serif'
+                    }}>
+                      {consultant.price}
+                    </span>
+                  </div>
+                  
+                  <button style={{
+                    backgroundColor: '#1a1a2e',
+                    color: 'white',
+                    border: 'none',
+                    padding: '14px 24px',
+                    borderRadius: '12px',
+                    fontSize: '15px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    fontFamily: 'Georgia, serif',
+                    transition: 'all 0.3s ease',
+                    boxShadow: '0 4px 12px rgba(26, 26, 46, 0.25)'
+                  }}>
+                    View Profile
+                  </button>
+                </div>
               </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Services Section */}
+      <section style={{
+        backgroundColor: '#f8f9fa',
+        borderTop: '1px solid rgba(26, 26, 46, 0.08)',
+        padding: '100px 0'
+      }}>
+        <div style={{
+          maxWidth: '1400px',
+          margin: '0 auto',
+          padding: '0 40px',
+          textAlign: 'center'
+        }}>
+          <h2 style={{
+            fontSize: '48px',
+            fontWeight: '300',
+            color: '#1a1a2e',
+            margin: '0 0 60px 0',
+            fontFamily: 'Georgia, serif'
+          }}>
+            Services Our Consultants Offer
+          </h2>
+
+          {/* Services Grid */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+            gap: '48px',
+            marginBottom: '80px'
+          }}>
+            {[
+              { icon: '📝', title: 'Essay Reviews', desc: 'Personal statements, supplements, and application essays' },
+              { icon: '💬', title: 'Mock Interviews', desc: 'Practice with students who aced their interviews' },
+              { icon: '🎯', title: 'Application Strategy', desc: 'School selection, timeline planning, and positioning' },
+              { icon: '📋', title: 'Resume Building', desc: 'Activities section and resume optimization' },
+              { icon: '🏆', title: 'Scholarship Guidance', desc: 'Find and apply for merit-based awards' },
+              { icon: '📚', title: 'School-Specific Advice', desc: 'Insider tips from current students' }
+            ].map((service, index) => (
+              <div key={index} style={{
+                padding: '40px 32px',
+                backgroundColor: 'white',
+                borderRadius: '20px',
+                border: '1px solid rgba(26, 26, 46, 0.06)',
+                boxShadow: '0 8px 25px rgba(0,0,0,0.06)',
+                transition: 'all 0.3s ease'
+              }}>
+                <div style={{ fontSize: '36px', marginBottom: '20px' }}>{service.icon}</div>
+                <h3 style={{
+                  fontSize: '20px',
+                  fontWeight: '600',
+                  color: '#1a1a2e',
+                  margin: '0 0 12px 0',
+                  fontFamily: 'Georgia, serif'
+                }}>
+                  {service.title}
+                </h3>
+                <p style={{
+                  fontSize: '16px',
+                  color: '#4a5568',
+                  margin: '0',
+                  fontFamily: 'Georgia, serif',
+                  lineHeight: '1.5'
+                }}>
+                  {service.desc}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <div style={{
+            backgroundColor: '#1a1a2e',
+            color: 'white',
+            padding: '50px',
+            borderRadius: '24px',
+            textAlign: 'center'
+          }}>
+            <h3 style={{
+              fontSize: '36px',
+              fontWeight: '300',
+              margin: '0 0 20px 0',
+              fontFamily: 'Georgia, serif'
+            }}>
+              Ready to get started?
+            </h3>
+            <p style={{
+              fontSize: '18px',
+              color: '#cbd5e0',
+              margin: '0 0 40px 0',
+              fontFamily: 'Georgia, serif'
+            }}>
+              Join thousands of students who have successfully navigated admissions with our peer consultants.
+            </p>
+            <div style={{
+              display: 'flex',
+              gap: '24px',
+              justifyContent: 'center',
+              flexWrap: 'wrap'
+            }}>
+              <button style={{
+                backgroundColor: '#16a085',
+                color: 'white',
+                border: 'none',
+                padding: '18px 36px',
+                borderRadius: '12px',
+                fontSize: '18px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                fontFamily: 'Georgia, serif'
+              }}>
+                Browse Consultants
+              </button>
+              <button style={{
+                backgroundColor: 'transparent',
+                color: 'white',
+                border: '2px solid white',
+                padding: '16px 36px',
+                borderRadius: '12px',
+                fontSize: '18px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                fontFamily: 'Georgia, serif'
+              }}>
+                Become a Consultant
+              </button>
             </div>
           </div>
         </div>
-
-        {/* Bottom floating indicator */}
-        <div style={{
-          position: 'absolute',
-          bottom: '2rem',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          color: 'rgba(255, 255, 255, 0.6)',
-          fontSize: '0.9rem',
-          textAlign: 'center'
-        }}>
-          <div style={{ marginBottom: '0.5rem' }}>Scroll to explore more</div>
-          <div style={{ fontSize: '1.5rem', animation: 'bounce 2s infinite' }}>↓</div>
-        </div>
-      </div>
-    </>
+      </section>
+    </div>
   )
 }

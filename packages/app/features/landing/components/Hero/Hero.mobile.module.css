@@ -63,13 +63,13 @@
 }
 
 .logo {
-  width: 112px; /* 40% larger: 80 * 1.4 = 112px */
-  height: 112px;
+  width: 140px; /* 60% larger than original 80px */
+  height: 140px;
   filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.4));
 }
 
 .logoText {
-  font-size: 4.2rem; /* 40% larger: 3 * 1.4 = 4.2rem */
+  font-size: 5.2rem; /* 60% larger than original 3rem */
   font-weight: 700;
   background: linear-gradient(135deg, #06b6d4 0%, #ffffff 50%, #06b6d4 100%);
   background-clip: text;
@@ -284,7 +284,20 @@
   border-color: rgba(255, 255, 255, 0.2);
 }
 
-.googleAuth:hover, .xAuth:hover {
+.googleAuth {
+  background: rgba(255, 255, 255, 0.95) !important;
+  color: #3c4043 !important;
+  border-color: rgba(255, 255, 255, 0.9);
+}
+
+.googleAuth:hover {
+  background: rgba(255, 255, 255, 1) !important;
+  border-color: rgba(255, 255, 255, 1);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.xAuth:hover {
   background: rgba(255, 255, 255, 0.12);
   border-color: rgba(255, 255, 255, 0.18);
   transform: translateY(-2px);
@@ -293,6 +306,14 @@
 
 .googleIcon, .xIcon {
   flex-shrink: 0;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.2));
+}
+
+.googleIcon {
+  background: white;
+  border-radius: 4px;
+  padding: 2px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .xAuth {
@@ -364,12 +385,12 @@
 
 /* Featured Consultant Preview */
 .featuredPreview {
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
-  border-radius: 24px;
-  padding: 2rem;
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.04));
+  border-radius: 28px;
+  padding: 2.5rem;
+  backdrop-filter: blur(30px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
 }
 
 .previewTitle {
@@ -383,12 +404,13 @@
 .consultantCard {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.04));
-  border-radius: 20px;
-  padding: 1.25rem;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(10px);
+  gap: 1.5rem;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.06));
+  border-radius: 24px;
+  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
 }
 
 .consultantImage {
