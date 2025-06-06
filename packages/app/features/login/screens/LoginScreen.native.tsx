@@ -235,11 +235,11 @@ const styles = StyleSheet.create({
   // Animated Logo Section
   logoSection: {
     alignItems: 'center',
-    marginBottom: -75,
+    marginBottom: -96,
   },
   logoContainer: {
     alignItems: 'center',
-    marginBottom: -55,
+    marginBottom: -66,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.3,
@@ -257,21 +257,21 @@ const styles = StyleSheet.create({
     color: 'white',
     marginTop: 0,
     textAlign: 'center',
-    marginBottom: 8,
+    marginBottom: 30,
   },
   welcomeText: {
     fontSize: 24,
     fontWeight: '600',
     color: 'white',
     textAlign: 'center',
-    marginBottom: 8,
+    marginBottom: 3,
   },
   subtitle: {
     fontSize: 16,
     color: 'rgba(255, 255, 255, 0.7)',
     textAlign: 'center',
     fontStyle: 'italic',
-    marginBottom: 95,
+    marginBottom: 107.6,
   },
   
   // Auth Section
@@ -287,8 +287,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderWidth: 1,
     borderColor: '#dadce0',
-    borderRadius: 16,
-    paddingVertical: 8,
+    borderRadius: 13.5,
+    paddingVertical: 10,
     paddingHorizontal: 20,
     marginBottom: 14,
     shadowColor: '#000',
@@ -300,7 +300,7 @@ const styles = StyleSheet.create({
   googleIconContainer: {
     width: 32,
     height: 32,
-    borderRadius: 6,
+    borderRadius: 5,
     backgroundColor: 'transparent',
     alignItems: 'center',
     justifyContent: 'center',
@@ -321,7 +321,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#0077b5',
     borderWidth: 0,
-    borderRadius: 12,
+    borderRadius: 13.5,
     paddingVertical: 16,
     paddingHorizontal: 16,
     marginBottom: 12,
@@ -336,7 +336,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#000000',
     borderWidth: 0,
-    borderRadius: 12,
+    borderRadius: 13.5,
     paddingVertical: 16,
     paddingHorizontal: 16,
     marginBottom: 12,
@@ -349,7 +349,7 @@ const styles = StyleSheet.create({
   appleIconContainer: {
     width: 24,
     height: 24,
-    borderRadius: 4,
+    borderRadius: 5,
     backgroundColor: 'transparent',
     alignItems: 'center',
     justifyContent: 'center',
@@ -363,7 +363,7 @@ const styles = StyleSheet.create({
   linkedinIconContainer: {
     width: 24,
     height: 24,
-    borderRadius: 4,
+    borderRadius: 5,
     backgroundColor: 'transparent',
     alignItems: 'center',
     justifyContent: 'center',
@@ -401,7 +401,8 @@ const styles = StyleSheet.create({
   dividerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: 20,
+    marginTop: 10,
+    marginBottom: 20,
   },
   dividerLine: {
     flex: 1,
