@@ -7,6 +7,7 @@ export function LoginScreen() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
+  const [keyboardMargin, setKeyboardMargin] = useState(0)
 
   // Animations
   const logoScale = useRef(new Animated.Value(0)).current
@@ -46,10 +47,22 @@ export function LoginScreen() {
     ]).start()
   }, [])
 
-  const handleInputFocus = () => {
+  const handleEmailFocus = () => {
+    setKeyboardMargin(250)
     setTimeout(() => {
-      scrollViewRef.current?.scrollToEnd({ animated: true })
+      scrollViewRef.current?.scrollTo({ y: 150, animated: true })
     }, 100)
+  }
+
+  const handlePasswordFocus = () => {
+    setKeyboardMargin(300)
+    setTimeout(() => {
+      scrollViewRef.current?.scrollTo({ y: 200, animated: true })
+    }, 100)
+  }
+
+  const handleInputBlur = () => {
+    setKeyboardMargin(0)
   }
 
   const logoRotateInterpolate = logoRotate.interpolate({
@@ -64,9 +77,11 @@ export function LoginScreen() {
       <ScrollView 
         ref={scrollViewRef}
         style={styles.scrollView}
-        contentContainerStyle={styles.content}
+        contentContainerStyle={[styles.content, { paddingBottom: keyboardMargin }]}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
+        bounces={false}
+        overScrollMode="never"
       >
         {/* Animated Logo Section */}
         <View style={styles.logoSection}>
@@ -147,7 +162,8 @@ export function LoginScreen() {
               keyboardType="email-address"
               autoCapitalize="none"
               autoCorrect={false}
-              onFocus={handleInputFocus}
+              onFocus={handleEmailFocus}
+              onBlur={handleInputBlur}
             />
           </View>
 
@@ -162,7 +178,8 @@ export function LoginScreen() {
               secureTextEntry={!showPassword}
               autoCapitalize="none"
               autoCorrect={false}
-              onFocus={handleInputFocus}
+              onFocus={handlePasswordFocus}
+              onBlur={handleInputBlur}
             />
             <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
               <Text style={styles.showHideText}>{showPassword ? 'Hide' : 'Show'}</Text>
