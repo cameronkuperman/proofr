@@ -109,9 +109,9 @@ export function Hero() {
             {['Browse Consultants', 'How It Works', 'Become a Consultant', 'About'].map((item) => (
               <a key={item} href={`/${item.toLowerCase().replace(/\s+/g, '-')}`} style={{
                 color: '#64748b',
-                textDecoration: 'none',
-                fontSize: '16px',
-                fontWeight: '500',
+              textDecoration: 'none',
+              fontSize: '16px',
+              fontWeight: '500',
                 transition: 'all 0.2s ease'
               }}
               onMouseEnter={(e) => (e.target as HTMLElement).style.color = '#2c3e50'}
@@ -138,27 +138,29 @@ export function Hero() {
             onMouseEnter={(e) => (e.target as HTMLElement).style.color = '#2c3e50'}
             onMouseLeave={(e) => (e.target as HTMLElement).style.color = '#64748b'}
             >Sign In</button>
-            <button style={{
-              background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
-              color: 'white',
-              border: 'none',
-              padding: '12px 24px',
-              borderRadius: '10px',
-              fontSize: '15px',
-              fontWeight: '600',
-              cursor: 'pointer',
-              boxShadow: '0 2px 8px rgba(59, 130, 246, 0.25)',
-              transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)'
-            }}
-            onMouseEnter={(e) => {
-              (e.target as HTMLElement).style.transform = 'translateY(-1px)'
-              ;(e.target as HTMLElement).style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.35)'
-            }}
-            onMouseLeave={(e) => {
-              (e.target as HTMLElement).style.transform = 'translateY(0)'
-              ;(e.target as HTMLElement).style.boxShadow = '0 2px 8px rgba(59, 130, 246, 0.25)'
-            }}
-            >Get Started</button>
+            <TextLink href="/onboarding">
+              <button style={{
+                background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+                color: 'white',
+                border: 'none',
+                padding: '12px 24px',
+                borderRadius: '10px',
+                fontSize: '15px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                boxShadow: '0 2px 8px rgba(59, 130, 246, 0.25)',
+                transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)'
+              }}
+              onMouseEnter={(e) => {
+                (e.target as HTMLElement).style.transform = 'translateY(-1px)'
+                ;(e.target as HTMLElement).style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.35)'
+              }}
+              onMouseLeave={(e) => {
+                (e.target as HTMLElement).style.transform = 'translateY(0)'
+                ;(e.target as HTMLElement).style.boxShadow = '0 2px 8px rgba(59, 130, 246, 0.25)'
+              }}
+              >Get Started</button>
+            </TextLink>
           </div>
         </div>
       </header>
@@ -312,27 +314,29 @@ export function Hero() {
               gap: '18px',
               marginBottom: '56px'
             }}>
-              <button style={{
-                background: 'linear-gradient(135deg, #3b82f6 0%, rgb(27, 36, 109) 100%)',
-                color: 'white',
-                border: 'none',
-                padding: '16px 32px',
-                borderRadius: '12px',
-                fontSize: '16px',
-                fontWeight: '600',
-                cursor: 'pointer',
-                boxShadow: '0 4px 12px rgba(59, 130, 246, 0.25)',
-                transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)'
-              }}
-              onMouseEnter={(e) => {
-                (e.target as HTMLElement).style.transform = 'translateY(-2px)'
-                ;(e.target as HTMLElement).style.boxShadow = '0 8px 20px rgba(59, 130, 246, 0.35)'
-              }}
-              onMouseLeave={(e) => {
-                (e.target as HTMLElement).style.transform = 'translateY(0)'
-                ;(e.target as HTMLElement).style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.25)'
-              }}
-              >Find a Consultant</button>
+              <TextLink href="/onboarding">
+                <button style={{
+                  background: 'linear-gradient(135deg, #3b82f6 0%, rgb(27, 36, 109) 100%)',
+                  color: 'white',
+                  border: 'none',
+                  padding: '16px 32px',
+                  borderRadius: '12px',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 12px rgba(59, 130, 246, 0.25)',
+                  transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)'
+                }}
+                onMouseEnter={(e) => {
+                  (e.target as HTMLElement).style.transform = 'translateY(-2px)'
+                  ;(e.target as HTMLElement).style.boxShadow = '0 8px 20px rgba(59, 130, 246, 0.35)'
+                }}
+                onMouseLeave={(e) => {
+                  (e.target as HTMLElement).style.transform = 'translateY(0)'
+                  ;(e.target as HTMLElement).style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.25)'
+                }}
+                >Find a Consultant</button>
+              </TextLink>
               
               <button style={{
                 backgroundColor: 'white',
@@ -368,7 +372,7 @@ export function Hero() {
                 { number: '10K+', label: 'Students Helped' }
               ].map((stat, index) => (
                 <div key={index}>
-                  <div style={{ 
+                <div style={{ 
                     fontSize: '32px', 
                     fontWeight: '900', 
                     background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
@@ -377,12 +381,12 @@ export function Hero() {
                     backgroundClip: 'text',
                     letterSpacing: '-0.02em'
                   }}>{stat.number}</div>
-                  <div style={{ 
+                <div style={{ 
                     fontSize: '15px',
                     color: '#64748b',
                     fontWeight: '600'
                   }}>{stat.label}</div>
-                </div>
+              </div>
               ))}
             </div>
           </div>
@@ -434,7 +438,7 @@ export function Hero() {
                   borderRadius: '24px 24px 0 0',
                   zIndex: 1
                 }} />
-
+                
                 {/* Online Status */}
                 <div style={{
                   position: 'absolute',
@@ -627,13 +631,13 @@ export function Hero() {
                     overflow: 'hidden'
                   }}
                   onMouseEnter={(e) => {
-                    e.target.style.transform = 'translateY(-2px) scale(1.02)'
-                    e.target.style.boxShadow = '0 8px 25px rgba(59, 130, 246, 0.4)'
+                    (e.target as HTMLElement).style.transform = 'translateY(-2px) scale(1.02)'
+                    ;(e.target as HTMLElement).style.boxShadow = '0 8px 25px rgba(59, 130, 246, 0.4)'
                     e.stopPropagation()
                   }}
                   onMouseLeave={(e) => {
-                    e.target.style.transform = 'translateY(0) scale(1)'
-                    e.target.style.boxShadow = '0 2px 8px rgba(59, 130, 246, 0.25)'
+                    (e.target as HTMLElement).style.transform = 'translateY(0) scale(1)'
+                    ;(e.target as HTMLElement).style.boxShadow = '0 2px 8px rgba(59, 130, 246, 0.25)'
                   }}
                   onClick={(e) => e.stopPropagation()}
                   >
@@ -676,12 +680,12 @@ export function Hero() {
               height: '80px',
               background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
               borderRadius: '20px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
               margin: '0 auto 24px auto',
               boxShadow: '0 12px 30px rgba(59, 130, 246, 0.3)'
-            }}>
+          }}>
               <span style={{
                 color: 'white',
                 fontSize: '32px'
@@ -776,13 +780,13 @@ export function Hero() {
             
             <div style={{ position: 'relative', zIndex: 1 }}>
               {/* Header */}
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '20px',
-                marginBottom: '24px'
-              }}>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '20px',
+              marginBottom: '24px'
+            }}>
                 <div style={{
                   width: '64px',
                   height: '64px',
@@ -794,78 +798,78 @@ export function Hero() {
                 }}>
                   <span style={{ fontSize: '28px' }}>🚀</span>
                 </div>
-                <h3 style={{
+              <h3 style={{
                   fontSize: '38px',
                   fontWeight: '900',
-                  margin: '0',
+                margin: '0',
                   letterSpacing: '-0.02em'
-                }}>
-                  Ready to get started?
-                </h3>
-              </div>
-              <p style={{
+              }}>
+                Ready to get started?
+              </h3>
+            </div>
+            <p style={{
                 fontSize: '18px',
                 color: 'rgba(255, 255, 255, 0.8)',
-                margin: '0 0 36px 0',
+              margin: '0 0 36px 0',
                 maxWidth: '600px',
                 marginLeft: 'auto',
                 marginRight: 'auto',
                 fontWeight: '400'
-              }}>
-                Join thousands of students who have successfully navigated admissions with our consultants.
-              </p>
-              <div style={{
-                display: 'flex',
+            }}>
+              Join thousands of students who have successfully navigated admissions with our consultants.
+            </p>
+            <div style={{
+              display: 'flex',
                 gap: '18px',
-                justifyContent: 'center',
-                flexWrap: 'wrap'
-              }}>
-                <button style={{
+              justifyContent: 'center',
+              flexWrap: 'wrap'
+            }}>
+              <button style={{
                   background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
-                  color: 'white',
-                  border: 'none',
+                color: 'white',
+                border: 'none',
                   padding: '18px 36px',
                   borderRadius: '14px',
-                  fontSize: '17px',
+                fontSize: '17px',
                   fontWeight: '700',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease'
+                cursor: 'pointer',
+                transition: 'all 0.3s ease'
                 }}
                 onMouseEnter={(e) => {
-                  e.target.style.transform = 'translateY(-2px)'
-                  e.target.style.boxShadow = '0 12px 30px rgba(255, 255, 255, 0.3)'
+                  (e.target as HTMLElement).style.transform = 'translateY(-2px)'
+                  ;(e.target as HTMLElement).style.boxShadow = '0 12px 30px rgba(255, 255, 255, 0.3)'
                 }}
                 onMouseLeave={(e) => {
-                  e.target.style.transform = 'translateY(0)'
-                  e.target.style.boxShadow = 'none'
+                  (e.target as HTMLElement).style.transform = 'translateY(0)'
+                  ;(e.target as HTMLElement).style.boxShadow = 'none'
                 }}
                 >
-                  Browse Consultants
-                </button>
-                <button style={{
-                  backgroundColor: 'transparent',
-                  color: 'white',
+                Browse Consultants
+              </button>
+              <button style={{
+                backgroundColor: 'transparent',
+                color: 'white',
                   border: '2px solid rgba(255, 255, 255, 0.8)',
                   padding: '16px 36px',
                   borderRadius: '14px',
-                  fontSize: '17px',
+                fontSize: '17px',
                   fontWeight: '700',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease'
+                cursor: 'pointer',
+                transition: 'all 0.3s ease'
                 }}
                 onMouseEnter={(e) => {
-                  e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'
-                  e.target.style.borderColor = 'white'
-                  e.target.style.transform = 'translateY(-2px)'
+                  (e.target as HTMLElement).style.backgroundColor = 'rgba(255, 255, 255, 0.1)'
+                  ;(e.target as HTMLElement).style.borderColor = 'white'
+                  ;(e.target as HTMLElement).style.transform = 'translateY(-2px)'
                 }}
                 onMouseLeave={(e) => {
-                  e.target.style.backgroundColor = 'transparent'
-                  e.target.style.borderColor = 'rgba(255, 255, 255, 0.8)'
-                  e.target.style.transform = 'translateY(0)'
+                  (e.target as HTMLElement).style.backgroundColor = 'transparent'
+                  ;(e.target as HTMLElement).style.borderColor = 'rgba(255, 255, 255, 0.8)'
+                  ;(e.target as HTMLElement).style.transform = 'translateY(0)'
                 }}
                 >
-                  Become a Consultant
-                </button>
+                Become a Consultant
+              </button>
               </div>
             </div>
           </div>
