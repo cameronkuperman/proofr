@@ -32,6 +32,19 @@ export function OnboardingScreen() {
   })
   const [isAnimating, setIsAnimating] = useState(false)
 
+  const inputStyle = {
+    width: '100%',
+    padding: '14px 16px',
+    border: '1px solid #e2e8f0',
+    borderRadius: '12px',
+    fontSize: '16px',
+    outline: 'none',
+    transition: 'border-color 0.2s ease',
+    boxSizing: 'border-box' as const,
+    backgroundColor: '#f8fafb',
+    color: '#374151'
+  }
+
   const handleRoleSelection = (role: 'student' | 'consultant') => {
     setIsAnimating(true)
     setTimeout(() => {
@@ -375,16 +388,7 @@ export function OnboardingScreen() {
                     type="text"
                     value={formData.name || ''}
                     onChange={(e) => handleInputChange('name', e.target.value)}
-                    style={{
-                      width: '100%',
-                      padding: '14px 16px',
-                      border: '1px solid #e2e8f0',
-                      borderRadius: '12px',
-                      fontSize: '16px',
-                      outline: 'none',
-                      transition: 'border-color 0.2s ease',
-                      boxSizing: 'border-box'
-                    }}
+                    style={inputStyle}
                     onFocus={(e) => (e.target as HTMLElement).style.borderColor = '#3b82f6'}
                     onBlur={(e) => (e.target as HTMLElement).style.borderColor = '#e2e8f0'}
                     placeholder="Enter your full name"
@@ -407,16 +411,7 @@ export function OnboardingScreen() {
                     type="text"
                     value={formData.currentSchool || ''}
                     onChange={(e) => handleInputChange('currentSchool', e.target.value)}
-                    style={{
-                      width: '100%',
-                      padding: '14px 16px',
-                      border: '1px solid #e2e8f0',
-                      borderRadius: '12px',
-                      fontSize: '16px',
-                      outline: 'none',
-                      transition: 'border-color 0.2s ease',
-                      boxSizing: 'border-box'
-                    }}
+                    style={inputStyle}
                     onFocus={(e) => (e.target as HTMLElement).style.borderColor = '#3b82f6'}
                     onBlur={(e) => (e.target as HTMLElement).style.borderColor = '#e2e8f0'}
                     placeholder="Your high school or college"
@@ -447,7 +442,7 @@ export function OnboardingScreen() {
                         transition: 'all 0.2s ease',
                         flex: 1,
                         justifyContent: 'center',
-                        background: formData.schoolType === type ? 'rgba(59, 130, 246, 0.05)' : 'white'
+                        background: formData.schoolType === type ? 'rgba(59, 130, 246, 0.05)' : '#f8fafb'
                       }}>
                         <input
                           type="radio"
@@ -484,16 +479,7 @@ export function OnboardingScreen() {
                     type="text"
                     value={formData.interests || ''}
                     onChange={(e) => handleInputChange('interests', e.target.value)}
-                    style={{
-                      width: '100%',
-                      padding: '14px 16px',
-                      border: '1px solid #e2e8f0',
-                      borderRadius: '12px',
-                      fontSize: '16px',
-                      outline: 'none',
-                      transition: 'border-color 0.2s ease',
-                      boxSizing: 'border-box'
-                    }}
+                    style={inputStyle}
                     onFocus={(e) => (e.target as HTMLElement).style.borderColor = '#3b82f6'}
                     onBlur={(e) => (e.target as HTMLElement).style.borderColor = '#e2e8f0'}
                     placeholder="e.g., Computer Science, Pre-Med, Business"
@@ -516,16 +502,7 @@ export function OnboardingScreen() {
                     type="text"
                     value={formData.preferredCollege || ''}
                     onChange={(e) => handleInputChange('preferredCollege', e.target.value)}
-                    style={{
-                      width: '100%',
-                      padding: '14px 16px',
-                      border: '1px solid #e2e8f0',
-                      borderRadius: '12px',
-                      fontSize: '16px',
-                      outline: 'none',
-                      transition: 'border-color 0.2s ease',
-                      boxSizing: 'border-box'
-                    }}
+                    style={inputStyle}
                     onFocus={(e) => (e.target as HTMLElement).style.borderColor = '#3b82f6'}
                     onBlur={(e) => (e.target as HTMLElement).style.borderColor = '#e2e8f0'}
                     placeholder="e.g., Harvard, Stanford, MIT"
@@ -548,16 +525,7 @@ export function OnboardingScreen() {
                     type="email"
                     value={formData.email}
                     onChange={(e) => handleInputChange('email', e.target.value)}
-                    style={{
-                      width: '100%',
-                      padding: '14px 16px',
-                      border: '1px solid #e2e8f0',
-                      borderRadius: '12px',
-                      fontSize: '16px',
-                      outline: 'none',
-                      transition: 'border-color 0.2s ease',
-                      boxSizing: 'border-box'
-                    }}
+                    style={inputStyle}
                     onFocus={(e) => (e.target as HTMLElement).style.borderColor = '#3b82f6'}
                     onBlur={(e) => (e.target as HTMLElement).style.borderColor = '#e2e8f0'}
                     placeholder="your.email@example.com"
@@ -580,16 +548,7 @@ export function OnboardingScreen() {
                     type="password"
                     value={formData.password}
                     onChange={(e) => handleInputChange('password', e.target.value)}
-                    style={{
-                      width: '100%',
-                      padding: '14px 16px',
-                      border: '1px solid #e2e8f0',
-                      borderRadius: '12px',
-                      fontSize: '16px',
-                      outline: 'none',
-                      transition: 'border-color 0.2s ease',
-                      boxSizing: 'border-box'
-                    }}
+                    style={inputStyle}
                     onFocus={(e) => (e.target as HTMLElement).style.borderColor = '#3b82f6'}
                     onBlur={(e) => (e.target as HTMLElement).style.borderColor = '#e2e8f0'}
                     placeholder="Create a secure password"
@@ -612,16 +571,7 @@ export function OnboardingScreen() {
                     type="password"
                     value={formData.confirmPassword}
                     onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-                    style={{
-                      width: '100%',
-                      padding: '14px 16px',
-                      border: '1px solid #e2e8f0',
-                      borderRadius: '12px',
-                      fontSize: '16px',
-                      outline: 'none',
-                      transition: 'border-color 0.2s ease',
-                      boxSizing: 'border-box'
-                    }}
+                    style={inputStyle}
                     onFocus={(e) => (e.target as HTMLElement).style.borderColor = '#3b82f6'}
                     onBlur={(e) => (e.target as HTMLElement).style.borderColor = '#e2e8f0'}
                     placeholder="Confirm your password"
@@ -720,16 +670,7 @@ export function OnboardingScreen() {
                     type="text"
                     value={formData.fullName || ''}
                     onChange={(e) => handleInputChange('fullName', e.target.value)}
-                    style={{
-                      width: '100%',
-                      padding: '14px 16px',
-                      border: '1px solid #e2e8f0',
-                      borderRadius: '12px',
-                      fontSize: '16px',
-                      outline: 'none',
-                      transition: 'border-color 0.2s ease',
-                      boxSizing: 'border-box'
-                    }}
+                    style={inputStyle}
                     onFocus={(e) => (e.target as HTMLElement).style.borderColor = '#3b82f6'}
                     onBlur={(e) => (e.target as HTMLElement).style.borderColor = '#e2e8f0'}
                     placeholder="Enter your full name"
@@ -752,16 +693,7 @@ export function OnboardingScreen() {
                     type="text"
                     value={formData.university || ''}
                     onChange={(e) => handleInputChange('university', e.target.value)}
-                    style={{
-                      width: '100%',
-                      padding: '14px 16px',
-                      border: '1px solid #e2e8f0',
-                      borderRadius: '12px',
-                      fontSize: '16px',
-                      outline: 'none',
-                      transition: 'border-color 0.2s ease',
-                      boxSizing: 'border-box'
-                    }}
+                    style={inputStyle}
                     onFocus={(e) => (e.target as HTMLElement).style.borderColor = '#3b82f6'}
                     onBlur={(e) => (e.target as HTMLElement).style.borderColor = '#e2e8f0'}
                     placeholder="e.g., Harvard University, Stanford"
@@ -784,16 +716,7 @@ export function OnboardingScreen() {
                     type="text"
                     value={formData.graduationYear || ''}
                     onChange={(e) => handleInputChange('graduationYear', e.target.value)}
-                    style={{
-                      width: '100%',
-                      padding: '14px 16px',
-                      border: '1px solid #e2e8f0',
-                      borderRadius: '12px',
-                      fontSize: '16px',
-                      outline: 'none',
-                      transition: 'border-color 0.2s ease',
-                      boxSizing: 'border-box'
-                    }}
+                    style={inputStyle}
                     onFocus={(e) => (e.target as HTMLElement).style.borderColor = '#3b82f6'}
                     onBlur={(e) => (e.target as HTMLElement).style.borderColor = '#e2e8f0'}
                     placeholder="e.g., 2024, 2025"
@@ -816,16 +739,7 @@ export function OnboardingScreen() {
                     type="text"
                     value={formData.major || ''}
                     onChange={(e) => handleInputChange('major', e.target.value)}
-                    style={{
-                      width: '100%',
-                      padding: '14px 16px',
-                      border: '1px solid #e2e8f0',
-                      borderRadius: '12px',
-                      fontSize: '16px',
-                      outline: 'none',
-                      transition: 'border-color 0.2s ease',
-                      boxSizing: 'border-box'
-                    }}
+                    style={inputStyle}
                     onFocus={(e) => (e.target as HTMLElement).style.borderColor = '#3b82f6'}
                     onBlur={(e) => (e.target as HTMLElement).style.borderColor = '#e2e8f0'}
                     placeholder="e.g., Computer Science, Economics"
@@ -854,7 +768,7 @@ export function OnboardingScreen() {
                         border: `1px solid ${(formData.specialties || []).includes(specialty) ? '#3b82f6' : '#e2e8f0'}`,
                         borderRadius: '8px',
                         transition: 'all 0.2s ease',
-                        background: (formData.specialties || []).includes(specialty) ? 'rgba(59, 130, 246, 0.05)' : 'white',
+                        background: (formData.specialties || []).includes(specialty) ? 'rgba(59, 130, 246, 0.05)' : '#f8fafb',
                         fontSize: '14px'
                       }}>
                         <input
@@ -895,16 +809,7 @@ export function OnboardingScreen() {
                     type="text"
                     value={formData.hourlyRate || ''}
                     onChange={(e) => handleInputChange('hourlyRate', e.target.value)}
-                    style={{
-                      width: '100%',
-                      padding: '14px 16px',
-                      border: '1px solid #e2e8f0',
-                      borderRadius: '12px',
-                      fontSize: '16px',
-                      outline: 'none',
-                      transition: 'border-color 0.2s ease',
-                      boxSizing: 'border-box'
-                    }}
+                    style={inputStyle}
                     onFocus={(e) => (e.target as HTMLElement).style.borderColor = '#3b82f6'}
                     onBlur={(e) => (e.target as HTMLElement).style.borderColor = '#e2e8f0'}
                     placeholder="e.g., $40, $60"
@@ -927,16 +832,7 @@ export function OnboardingScreen() {
                     type="email"
                     value={formData.email}
                     onChange={(e) => handleInputChange('email', e.target.value)}
-                    style={{
-                      width: '100%',
-                      padding: '14px 16px',
-                      border: '1px solid #e2e8f0',
-                      borderRadius: '12px',
-                      fontSize: '16px',
-                      outline: 'none',
-                      transition: 'border-color 0.2s ease',
-                      boxSizing: 'border-box'
-                    }}
+                    style={inputStyle}
                     onFocus={(e) => (e.target as HTMLElement).style.borderColor = '#3b82f6'}
                     onBlur={(e) => (e.target as HTMLElement).style.borderColor = '#e2e8f0'}
                     placeholder="your.email@example.com"
@@ -959,16 +855,7 @@ export function OnboardingScreen() {
                     type="password"
                     value={formData.password}
                     onChange={(e) => handleInputChange('password', e.target.value)}
-                    style={{
-                      width: '100%',
-                      padding: '14px 16px',
-                      border: '1px solid #e2e8f0',
-                      borderRadius: '12px',
-                      fontSize: '16px',
-                      outline: 'none',
-                      transition: 'border-color 0.2s ease',
-                      boxSizing: 'border-box'
-                    }}
+                    style={inputStyle}
                     onFocus={(e) => (e.target as HTMLElement).style.borderColor = '#3b82f6'}
                     onBlur={(e) => (e.target as HTMLElement).style.borderColor = '#e2e8f0'}
                     placeholder="Create a secure password"
@@ -991,16 +878,7 @@ export function OnboardingScreen() {
                     type="password"
                     value={formData.confirmPassword}
                     onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-                    style={{
-                      width: '100%',
-                      padding: '14px 16px',
-                      border: '1px solid #e2e8f0',
-                      borderRadius: '12px',
-                      fontSize: '16px',
-                      outline: 'none',
-                      transition: 'border-color 0.2s ease',
-                      boxSizing: 'border-box'
-                    }}
+                    style={inputStyle}
                     onFocus={(e) => (e.target as HTMLElement).style.borderColor = '#3b82f6'}
                     onBlur={(e) => (e.target as HTMLElement).style.borderColor = '#e2e8f0'}
                     placeholder="Confirm your password"
