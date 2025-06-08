@@ -158,7 +158,8 @@ export function OnboardingScreen() {
         maxWidth: step === 'role-selection' ? '800px' : '500px',
         transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
         transform: isAnimating ? 'scale(0.95) translateY(20px)' : 'scale(1) translateY(0)',
-        opacity: isAnimating ? 0 : 1
+        opacity: isAnimating ? 0 : 1,
+        marginTop: '72px'
       }}>
         
         {/* Role Selection */}
