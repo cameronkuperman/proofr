@@ -1,5 +1,6 @@
 import * as React from 'react'
 import { TextLink } from 'solito/link'
+import { NavigationBar } from '../NavigationBar'
 
 export function Hero() {
   const consultants = [
@@ -51,6 +52,7 @@ export function Hero() {
       background: '#f8f9fa',
       fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif'
     }}>
+      <NavigationBar />
       {/* Navigation Header */}
       <header style={{
         backgroundColor: 'rgba(255, 255, 255, 0.95)',
@@ -126,18 +128,20 @@ export function Hero() {
             alignItems: 'center',
             gap: '16px'
           }}>
-            <button style={{
-              background: 'none',
-              border: 'none',
-              color: '#64748b',
-              fontSize: '16px',
-              fontWeight: '500',
-              cursor: 'pointer',
-              transition: 'color 0.2s ease'
-            }}
-            onMouseEnter={(e) => (e.target as HTMLElement).style.color = '#2c3e50'}
-            onMouseLeave={(e) => (e.target as HTMLElement).style.color = '#64748b'}
-            >Sign In</button>
+            <TextLink href="/sign-in">
+              <button style={{
+                background: 'none',
+                border: 'none',
+                color: '#64748b',
+                fontSize: '16px',
+                fontWeight: '500',
+                cursor: 'pointer',
+                transition: 'color 0.2s ease'
+              }}
+              onMouseEnter={(e) => (e.target as HTMLElement).style.color = '#2c3e50'}
+              onMouseLeave={(e) => (e.target as HTMLElement).style.color = '#64748b'}
+              >Sign In</button>
+            </TextLink>
             <TextLink href="/onboarding">
               <button style={{
                 background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
@@ -338,28 +342,30 @@ export function Hero() {
                 >Find a Consultant</button>
               </TextLink>
               
-              <button style={{
-                backgroundColor: 'white',
-                color: '#374151',
-                border: '1px solid #e2e8f0',
-                padding: '16px 32px',
-                borderRadius: '12px',
-                fontSize: '16px',
-                fontWeight: '600',
-                cursor: 'pointer',
-                transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)'
-              }}
-              onMouseEnter={(e) => {
-                (e.target as HTMLElement).style.borderColor = '#3b82f6'
-                ;(e.target as HTMLElement).style.color = '#3b82f6'
-                ;(e.target as HTMLElement).style.transform = 'translateY(-2px)'
-              }}
-              onMouseLeave={(e) => {
-                (e.target as HTMLElement).style.borderColor = '#e2e8f0'
-                ;(e.target as HTMLElement).style.color = '#374151'
-                ;(e.target as HTMLElement).style.transform = 'translateY(0)'
-              }}
-              >Become a Consultant</button>
+              <TextLink href="/become-consultant">
+                <button style={{
+                  backgroundColor: 'white',
+                  color: '#374151',
+                  border: '1px solid #e2e8f0',
+                  padding: '16px 32px',
+                  borderRadius: '12px',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)'
+                }}
+                onMouseEnter={(e) => {
+                  (e.target as HTMLElement).style.borderColor = '#3b82f6'
+                  ;(e.target as HTMLElement).style.color = '#3b82f6'
+                  ;(e.target as HTMLElement).style.transform = 'translateY(-2px)'
+                }}
+                onMouseLeave={(e) => {
+                  (e.target as HTMLElement).style.borderColor = '#e2e8f0'
+                  ;(e.target as HTMLElement).style.color = '#374151'
+                  ;(e.target as HTMLElement).style.transform = 'translateY(0)'
+                }}
+                >Become a Consultant</button>
+              </TextLink>
             </div>
 
             <div style={{
@@ -686,10 +692,15 @@ export function Hero() {
               margin: '0 auto 24px auto',
               boxShadow: '0 12px 30px rgba(59, 130, 246, 0.3)'
           }}>
-              <span style={{
-                color: 'white',
-                fontSize: '32px'
-              }}>🎓</span>
+              <img 
+                src="/images/proofr-logo.png"
+                alt="Proofr Logo"
+                style={{
+                  width: '48px',
+                  height: '48px',
+                  objectFit: 'contain'
+                }}
+              />
             </div>
             <h2 style={{
               fontSize: '44px',

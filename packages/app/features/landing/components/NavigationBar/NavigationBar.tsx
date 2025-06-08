@@ -37,14 +37,14 @@ export function NavigationBar() {
         {/* Auth Buttons */}
         <div className={styles.authButtons}>
           <TextLink href="/sign-in">
-            <button className={styles.signInButton}>
+            <div className={styles.signInButton}>
               Sign In
-            </button>
+            </div>
           </TextLink>
-          <TextLink href="/sign-up">
-            <button className={styles.signUpButton}>
+          <TextLink href="/onboarding">
+            <div className={styles.signUpButton}>
               Get Started
-            </button>
+            </div>
           </TextLink>
         </div>
 
