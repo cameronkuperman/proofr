@@ -11,7 +11,7 @@ export function Hero() {
       specialty: 'Essay Reviews',
       bio: 'Specialized in personal statements and supplemental essays. Helped 50+ students get into top schools.',
       price: '$45',
-      avatar: '#e74c3c'
+      avatar: 'linear-gradient(135deg, #ef9a9a 0%, #e57373 100%)'
     },
     {
       initials: 'IA', 
@@ -21,7 +21,7 @@ export function Hero() {
       specialty: 'Application Strategy',
       bio: 'Expert in STEM applications and research positioning. Published researcher with proven results.',
       price: '$60',
-      avatar: '#16a085'
+      avatar: 'linear-gradient(135deg, #9c88ff 0%, #8c7ae6 100%)'
     },
     {
       initials: 'CK',
@@ -31,7 +31,7 @@ export function Hero() {
       specialty: 'Essay Reviews',
       bio: 'Founder & consultant. Specializes in leadership essays and scholarship applications.',
       price: '$40',
-      avatar: '#1a1a2e'
+      avatar: 'linear-gradient(135deg, #70a1ff 0%, #5352ed 100%)'
     },
     {
       initials: 'SD',
@@ -41,31 +41,31 @@ export function Hero() {
       specialty: 'Essay Reviews', 
       bio: 'English major with expertise in storytelling and narrative structure for college essays.',
       price: '$50',
-      avatar: '#16a085'
+      avatar: 'linear-gradient(135deg, #70a1ff 0%, #5352ed 100%)'
     }
   ]
 
   return (
     <div style={{
       minHeight: '100vh',
-      backgroundColor: '#fafafa',
-      fontFamily: 'Georgia, "Times New Roman", Times, serif'
+      background: '#f8f9fa',
+      fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif'
     }}>
       {/* Navigation Header */}
       <header style={{
         backgroundColor: 'rgba(255, 255, 255, 0.95)',
-        backdropFilter: 'blur(12px)',
-        borderBottom: '1px solid rgba(26, 26, 46, 0.1)',
+        backdropFilter: 'blur(16px)',
+        borderBottom: '1px solid rgba(148, 163, 184, 0.1)',
         position: 'sticky',
         top: 0,
         zIndex: 50,
-        boxShadow: '0 2px 12px rgba(0,0,0,0.04)'
+        WebkitBackdropFilter: 'blur(16px)'
       }}>
         <div style={{
-          maxWidth: '1400px',
+          maxWidth: '1440px',
           margin: '0 auto',
-          padding: '0 40px',
-          height: '80px',
+          padding: '0 16px',
+          height: '72px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between'
@@ -74,23 +74,29 @@ export function Hero() {
           <div style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '16px'
+            gap: '12px'
           }}>
-            <img 
-              src="/images/proofr-logo.png" 
-              alt="Proofr Logo"
-              style={{
-                height: '95px',
-                width: 'auto',
-                filter: 'drop-shadow(0 6px 20px rgba(0,0,0,0.2))'
-              }}
-            />
+            <div style={{
+              width: '42px',
+              height: '42px',
+              background: '#2c3e50',
+              borderRadius: '12px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: '0 4px 12px rgba(44, 62, 80, 0.25)'
+            }}>
+              <span style={{
+                color: 'white',
+                fontSize: '20px',
+                fontWeight: '600'
+              }}>📝</span>
+            </div>
             <span style={{
-              fontSize: '36px',
-              fontWeight: '700',
-              color: '#1a1a2e',
-              fontFamily: 'Georgia, serif',
-              letterSpacing: '-1px'
+              fontSize: '32px',
+              fontWeight: '800',
+              color: '#2c3e50',
+              letterSpacing: '-0.02em'
             }}>proofr</span>
           </div>
 
@@ -100,158 +106,121 @@ export function Hero() {
             alignItems: 'center',
             gap: '40px'
           }}>
-            <a href="/browse" style={{
-              color: '#4a5568',
-              textDecoration: 'none',
-              fontSize: '16px',
-              fontWeight: '500',
-              fontFamily: 'Georgia, serif',
-              transition: 'color 0.3s ease'
-            }}>Browse Consultants</a>
-            <a href="/how-it-works" style={{
-              color: '#4a5568', 
-              textDecoration: 'none',
-              fontSize: '16px',
-              fontWeight: '500',
-              fontFamily: 'Georgia, serif',
-              transition: 'color 0.3s ease'
-            }}>How It Works</a>
-            <a href="/become-consultant" style={{
-              color: '#4a5568',
-              textDecoration: 'none', 
-              fontSize: '16px',
-              fontWeight: '500',
-              fontFamily: 'Georgia, serif',
-              transition: 'color 0.3s ease'
-            }}>Become a Consultant</a>
-            <a href="/about" style={{
-              color: '#4a5568',
-              textDecoration: 'none',
-              fontSize: '16px', 
-              fontWeight: '500',
-              fontFamily: 'Georgia, serif',
-              transition: 'color 0.3s ease'
-            }}>About</a>
+            {['Browse Consultants', 'How It Works', 'Become a Consultant', 'About'].map((item) => (
+              <a key={item} href={`/${item.toLowerCase().replace(/\s+/g, '-')}`} style={{
+                color: '#64748b',
+                textDecoration: 'none',
+                fontSize: '16px',
+                fontWeight: '500',
+                transition: 'all 0.2s ease'
+              }}
+              onMouseEnter={(e) => (e.target as HTMLElement).style.color = '#2c3e50'}
+              onMouseLeave={(e) => (e.target as HTMLElement).style.color = '#64748b'}
+              >{item}</a>
+            ))}
           </nav>
 
           {/* Auth Buttons */}
           <div style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '24px'
+            gap: '16px'
           }}>
             <button style={{
               background: 'none',
               border: 'none',
-              color: '#4a5568',
+              color: '#64748b',
               fontSize: '16px',
               fontWeight: '500',
               cursor: 'pointer',
-              fontFamily: 'Georgia, serif',
-              transition: 'color 0.3s ease'
-            }}>Sign In</button>
+              transition: 'color 0.2s ease'
+            }}
+            onMouseEnter={(e) => (e.target as HTMLElement).style.color = '#2c3e50'}
+            onMouseLeave={(e) => (e.target as HTMLElement).style.color = '#64748b'}
+            >Sign In</button>
             <button style={{
-              backgroundColor: '#1a1a2e',
+              background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
               color: 'white',
               border: 'none',
-              padding: '14px 28px',
-              borderRadius: '12px',
-              fontSize: '16px',
+              padding: '12px 24px',
+              borderRadius: '10px',
+              fontSize: '15px',
               fontWeight: '600',
               cursor: 'pointer',
-              fontFamily: 'Georgia, serif',
-              transition: 'all 0.3s ease',
-              boxShadow: '0 6px 20px rgba(26, 26, 46, 0.25)'
-            }}>Get Started</button>
+              boxShadow: '0 2px 8px rgba(59, 130, 246, 0.25)',
+              transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)'
+            }}
+            onMouseEnter={(e) => {
+              (e.target as HTMLElement).style.transform = 'translateY(-1px)'
+              ;(e.target as HTMLElement).style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.35)'
+            }}
+            onMouseLeave={(e) => {
+              (e.target as HTMLElement).style.transform = 'translateY(0)'
+              ;(e.target as HTMLElement).style.boxShadow = '0 2px 8px rgba(59, 130, 246, 0.25)'
+            }}
+            >Get Started</button>
           </div>
         </div>
       </header>
 
       {/* Hero Section */}
       <section style={{
-        maxWidth: '1400px',
+        maxWidth: '1440px',
         margin: '0 auto',
-        padding: '80px 40px 60px 40px'
+        padding: '60px 16px'
       }}>
         <div style={{
           display: 'grid',
-          gridTemplateColumns: '1fr 1.2fr',
-          gap: '80px',
+          gridTemplateColumns: '1fr 1.1fr',
+          gap: '48px',
           alignItems: 'start'
         }}>
           {/* Left Column - Text Content & Search */}
           <div style={{ paddingTop: '20px' }}>
-            {/* Large Logo Badge */}
-            <div style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '14px',
-              backgroundColor: '#16a085',
-              color: 'white',
-              padding: '12px 24px',
-              borderRadius: '28px',
-              fontSize: '16px',
-              fontWeight: '600',
-              marginBottom: '32px',
-              fontFamily: 'Georgia, serif',
-              letterSpacing: '0.5px',
-              boxShadow: '0 8px 25px rgba(22, 160, 133, 0.3)'
-            }}>
-              <img 
-                src="/images/proofr-logo.png" 
-                alt="Proofr"
-                style={{
-                  height: '50px',
-                  width: 'auto',
-                  filter: 'brightness(0) invert(1)'
-                }}
-              />
-              The College Admissions Marketplace
-            </div>
-
             <h1 style={{
-              fontSize: '64px',
-              fontWeight: '600',
-              lineHeight: '1.1',
-              color: '#1a1a2e',
+              fontSize: '68px',
+              fontWeight: '900',
+              lineHeight: '0.95',
               margin: '0 0 28px 0',
-              letterSpacing: '-1.2px',
-              fontFamily: 'Georgia, serif'
+              letterSpacing: '-0.04em',
+              background: 'linear-gradient(135deg, #3b82f6 0%,rgb(0, 0, 0) 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text'
             }}>
               Get Into Your{' '}
-              <span style={{
-                color: '#16a085',
-                fontWeight: '700'
-              }}>Dream School</span>
+              <br />
+              Dream School
             </h1>
 
             <p style={{
               fontSize: '20px',
-              color: '#4a5568',
+              color: '#64748b',
               lineHeight: '1.5',
-              margin: '0 0 44px 0',
+              margin: '0 0 40px 0',
               maxWidth: '520px',
-              fontFamily: 'Georgia, serif',
-              fontWeight: '300'
+              fontWeight: '400'
             }}>
-              Connect with current students at Harvard, Stanford, MIT & top universities. Get personalized admissions guidance at affordable rates.
+              Connect with current students at Harvard, Stanford, MIT & top universities. Get personalized admissions guidance at affordable prices.
             </p>
 
             {/* Search Bar */}
             <div style={{
               backgroundColor: 'white',
-              border: '1px solid rgba(26, 26, 46, 0.12)',
+              border: '1px solid #e2e8f0',
               borderRadius: '16px',
-              padding: '6px',
-              marginBottom: '44px',
+              padding: '8px',
+              marginBottom: '28px',
               display: 'flex',
               alignItems: 'center',
-              boxShadow: '0 10px 30px rgba(0,0,0,0.08), 0 3px 10px rgba(0,0,0,0.05)',
-              transition: 'all 0.3s ease'
-            }}>
+              boxShadow: '0 4px 24px rgba(0, 0, 0, 0.04)',
+              transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+              outline: 'none'
+            }}
+            >
               <div style={{
                 padding: '0 18px',
-                color: '#16a085',
+                color: '#64748b',
                 fontSize: '18px'
               }}>
                 🔍
@@ -263,15 +232,16 @@ export function Hero() {
                   flex: 1,
                   border: 'none',
                   outline: 'none',
-                  fontSize: '16px',
-                  padding: '16px 10px',
-                  color: '#1a1a2e',
+                  fontSize: '17px',
+                  padding: '18px 14px',
+                  color: '#0f172a',
                   backgroundColor: 'transparent',
-                  fontFamily: 'Georgia, serif'
+                  fontWeight: '400',
+                  boxShadow: 'none'
                 }}
               />
               <button style={{
-                backgroundColor: '#1a1a2e',
+                background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
                 color: 'white',
                 border: 'none',
                 padding: '14px 24px',
@@ -279,9 +249,17 @@ export function Hero() {
                 fontSize: '16px',
                 fontWeight: '600',
                 cursor: 'pointer',
-                fontFamily: 'Georgia, serif',
-                transition: 'all 0.3s ease'
-              }}>
+                transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)'
+              }}
+              onMouseEnter={(e) => {
+                (e.target as HTMLElement).style.transform = 'translateY(-1px)'
+                ;(e.target as HTMLElement).style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.3)'
+              }}
+              onMouseLeave={(e) => {
+                (e.target as HTMLElement).style.transform = 'translateY(0)'
+                ;(e.target as HTMLElement).style.boxShadow = 'none'
+              }}
+              >
                 Search
               </button>
             </div>
@@ -291,27 +269,39 @@ export function Hero() {
               display: 'flex',
               alignItems: 'center',
               gap: '14px',
-              marginBottom: '52px',
+              marginBottom: '40px',
               flexWrap: 'wrap'
             }}>
               <span style={{ 
-                color: '#4a5568', 
-                fontSize: '16px',
-                fontFamily: 'Georgia, serif'
+                color: '#64748b', 
+                fontSize: '17px',
+                fontWeight: '500'
               }}>Popular:</span>
-              {['Essay Reviews', 'Mock Interviews', 'Application Strategy', 'Resume Help'].map((service) => (
+              {['essay reviews', 'mock interviews', 'application strategy', 'resume help'].map((service) => (
                 <button key={service} style={{
-                  backgroundColor: 'transparent',
-                  border: '1px solid rgba(22, 160, 133, 0.3)',
-                  color: '#16a085',
-                  padding: '8px 16px',
-                  borderRadius: '24px',
+                  backgroundColor: 'white',
+                  border: '1px solid #e2e8f0',
+                  color: '#374151',
+                  padding: '10px 18px',
+                  borderRadius: '20px',
                   fontSize: '14px',
                   cursor: 'pointer',
-                  fontFamily: 'Georgia, serif',
-                  transition: 'all 0.3s ease',
+                  transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
                   fontWeight: '500'
-                }}>
+                }}
+                onMouseEnter={(e) => {
+                  (e.target as HTMLElement).style.background = 'linear-gradient(135deg, #3b82f6 0%, rgb(27, 36, 109) 100%)'
+                  ;(e.target as HTMLElement).style.color = 'white'
+                  ;(e.target as HTMLElement).style.borderColor = '#3b82f6'
+                  ;(e.target as HTMLElement).style.transform = 'translateY(-1px)'
+                }}
+                onMouseLeave={(e) => {
+                  (e.target as HTMLElement).style.background = 'white'
+                  ;(e.target as HTMLElement).style.color = '#374151'
+                  ;(e.target as HTMLElement).style.borderColor = '#e2e8f0'
+                  ;(e.target as HTMLElement).style.transform = 'translateY(0)'
+                }}
+                >
                   {service}
                 </button>
               ))}
@@ -319,78 +309,81 @@ export function Hero() {
 
             <div style={{
               display: 'flex',
-              gap: '20px',
-              marginBottom: '60px'
+              gap: '18px',
+              marginBottom: '56px'
             }}>
               <button style={{
-                backgroundColor: '#1a1a2e',
+                background: 'linear-gradient(135deg, #3b82f6 0%, rgb(27, 36, 109) 100%)',
                 color: 'white',
                 border: 'none',
-                padding: '18px 36px',
-                borderRadius: '14px',
-                fontSize: '17px',
+                padding: '16px 32px',
+                borderRadius: '12px',
+                fontSize: '16px',
                 fontWeight: '600',
                 cursor: 'pointer',
-                fontFamily: 'Georgia, serif',
-                boxShadow: '0 10px 30px rgba(26, 26, 46, 0.25)',
-                transition: 'all 0.3s ease'
-              }}>Find a Consultant</button>
+                boxShadow: '0 4px 12px rgba(59, 130, 246, 0.25)',
+                transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)'
+              }}
+              onMouseEnter={(e) => {
+                (e.target as HTMLElement).style.transform = 'translateY(-2px)'
+                ;(e.target as HTMLElement).style.boxShadow = '0 8px 20px rgba(59, 130, 246, 0.35)'
+              }}
+              onMouseLeave={(e) => {
+                (e.target as HTMLElement).style.transform = 'translateY(0)'
+                ;(e.target as HTMLElement).style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.25)'
+              }}
+              >Find a Consultant</button>
               
               <button style={{
-                backgroundColor: 'transparent',
-                color: '#1a1a2e',
-                border: '2px solid #1a1a2e',
-                padding: '16px 36px',
-                borderRadius: '14px',
-                fontSize: '17px',
+                backgroundColor: 'white',
+                color: '#374151',
+                border: '1px solid #e2e8f0',
+                padding: '16px 32px',
+                borderRadius: '12px',
+                fontSize: '16px',
                 fontWeight: '600',
                 cursor: 'pointer',
-                fontFamily: 'Georgia, serif',
-                transition: 'all 0.3s ease'
-              }}>Become a Consultant</button>
+                transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)'
+              }}
+              onMouseEnter={(e) => {
+                (e.target as HTMLElement).style.borderColor = '#3b82f6'
+                ;(e.target as HTMLElement).style.color = '#3b82f6'
+                ;(e.target as HTMLElement).style.transform = 'translateY(-2px)'
+              }}
+              onMouseLeave={(e) => {
+                (e.target as HTMLElement).style.borderColor = '#e2e8f0'
+                ;(e.target as HTMLElement).style.color = '#374151'
+                ;(e.target as HTMLElement).style.transform = 'translateY(0)'
+              }}
+              >Become a Consultant</button>
             </div>
 
             <div style={{
               display: 'flex',
-              gap: '50px',
-              color: '#4a5568'
+              gap: '44px'
             }}>
-              <div>
-                <div style={{ 
-                  fontSize: '28px', 
-                  fontWeight: '700', 
-                  color: '#1a1a2e',
-                  fontFamily: 'Georgia, serif'
-                }}>94%</div>
-                <div style={{ 
-                  fontSize: '14px',
-                  fontFamily: 'Georgia, serif'
-                }}>Success Rate</div>
-              </div>
-              <div>
-                <div style={{ 
-                  fontSize: '28px', 
-                  fontWeight: '700', 
-                  color: '#1a1a2e',
-                  fontFamily: 'Georgia, serif'
-                }}>500+</div>
-                <div style={{ 
-                  fontSize: '14px',
-                  fontFamily: 'Georgia, serif'
-                }}>Expert Consultants</div>
-              </div>
-              <div>
-                <div style={{ 
-                  fontSize: '28px', 
-                  fontWeight: '700', 
-                  color: '#1a1a2e',
-                  fontFamily: 'Georgia, serif'
-                }}>10K+</div>
-                <div style={{ 
-                  fontSize: '14px',
-                  fontFamily: 'Georgia, serif'
-                }}>Students Helped</div>
-              </div>
+              {[
+                { number: '94%', label: 'Success Rate' },
+                { number: '500+', label: 'Expert Consultants' },
+                { number: '10K+', label: 'Students Helped' }
+              ].map((stat, index) => (
+                <div key={index}>
+                  <div style={{ 
+                    fontSize: '32px', 
+                    fontWeight: '900', 
+                    background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text',
+                    letterSpacing: '-0.02em'
+                  }}>{stat.number}</div>
+                  <div style={{ 
+                    fontSize: '15px',
+                    color: '#64748b',
+                    fontWeight: '600'
+                  }}>{stat.label}</div>
+                </div>
+              ))}
             </div>
           </div>
 
@@ -398,171 +391,198 @@ export function Hero() {
           <div style={{
             display: 'grid',
             gridTemplateColumns: '1fr 1fr',
-            gap: '24px',
+            gap: '16px',
             width: '100%'
           }}>
             {consultants.map((consultant, index) => (
               <div key={consultant.name} style={{
-                backgroundColor: '#ffffff',
-                borderRadius: '16px',
-                padding: '32px 28px',
-                boxShadow: `
-                  0 1px 3px rgba(0,0,0,0.12),
-                  0 4px 8px rgba(0,0,0,0.05),
-                  0 8px 16px rgba(0,0,0,0.04),
-                  0 2px 6px rgba(26,26,46,0.06),
-                  inset 0 1px 0 rgba(255,255,255,0.8)
-                `,
-                border: '1px solid rgba(26, 26, 46, 0.08)',
+                backgroundColor: 'white',
+                borderRadius: '24px',
+                padding: '28px 24px',
+                border: '1px solid rgba(226, 232, 240, 0.8)',
                 position: 'relative',
-                transition: 'all 0.4s ease',
+                transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
                 cursor: 'pointer',
-                background: `
-                  linear-gradient(145deg, #ffffff 0%, #fefefe 50%, #fdfdfd 100%),
-                  linear-gradient(to bottom, rgba(255,255,255,0.9) 0%, rgba(250,250,250,0.3) 100%)
-                `,
-                minHeight: '320px',
+                minHeight: '340px',
                 display: 'flex',
                 flexDirection: 'column',
-                animation: `slideInUp 0.6s ease-out ${index * 0.1}s both`,
-                transformOrigin: 'bottom'
-              }}>
-                <style jsx>{`
-                  @keyframes slideInUp {
-                    0% {
-                      opacity: 0;
-                      transform: translateY(30px) scale(0.95);
-                    }
-                    100% {
-                      opacity: 1;
-                      transform: translateY(0) scale(1);
-                    }
-                  }
-                `}</style>
-                
+                boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 20px rgba(0, 0, 0, 0.04)',
+                background: 'linear-gradient(135deg, rgba(255, 255, 255, 1) 0%, rgba(250, 251, 252, 0.8) 100%)',
+                backdropFilter: 'blur(20px)',
+                WebkitBackdropFilter: 'blur(20px)',
+                overflow: 'hidden'
+              }}
+                              onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-8px) scale(1.02)'
+                  e.currentTarget.style.boxShadow = '0 8px 40px rgba(0, 0, 0, 0.12), 0 2px 16px rgba(59, 130, 246, 0.08)'
+                  e.currentTarget.style.borderColor = 'rgba(59, 130, 246, 0.3)'
+                }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0) scale(1)'
+                e.currentTarget.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 20px rgba(0, 0, 0, 0.04)'
+                e.currentTarget.style.borderColor = 'rgba(226, 232, 240, 0.8)'
+              }}
+              >
+                {/* Modern Gradient Background */}
+                <div style={{
+                  position: 'absolute',
+                  top: '0',
+                  left: '0',
+                  right: '0',
+                  height: '4px',
+                  background: 'linear-gradient(90deg, #3b82f6, #1d4ed8, #3b82f6)',
+                  borderRadius: '24px 24px 0 0',
+                  zIndex: 1
+                }} />
+
                 {/* Online Status */}
                 <div style={{
                   position: 'absolute',
-                  top: '20px',
-                  right: '20px',
-                  backgroundColor: '#16a085',
-                  color: 'white',
+                  top: '16px',
+                  right: '16px',
+                  background: 'rgba(16, 185, 129, 0.1)',
+                  backdropFilter: 'blur(8px)',
+                  color: '#059669',
                   padding: '6px 12px',
-                  borderRadius: '12px',
-                  fontSize: '11px',
+                  borderRadius: '20px',
+                  fontSize: '10px',
                   fontWeight: '600',
-                  fontFamily: 'Georgia, serif',
                   letterSpacing: '0.5px',
-                  boxShadow: '0 2px 8px rgba(22, 160, 133, 0.3)'
+                  border: '1px solid rgba(16, 185, 129, 0.2)',
+                  zIndex: 2
                 }}>
-                  Online
+                  ● ONLINE
                 </div>
 
                 {/* Avatar and Name Section */}
                 <div style={{
                   display: 'flex',
                   alignItems: 'center',
-                  marginBottom: '20px'
+                  marginBottom: '20px',
+                  marginTop: '8px'
                 }}>
                   <div style={{
-                    width: '56px',
-                    height: '56px',
-                    borderRadius: '50%',
-                    backgroundColor: consultant.avatar,
+                    width: '64px',
+                    height: '64px',
+                    borderRadius: '20px',
+                    background: consultant.avatar,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     marginRight: '16px',
-                    boxShadow: '0 4px 16px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08)',
-                    border: '3px solid #ffffff'
+                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+                    border: '3px solid white',
+                    position: 'relative'
                   }}>
                     <span style={{
                       color: 'white',
-                      fontSize: '18px',
-                      fontWeight: '700',
-                      fontFamily: 'Georgia, serif'
+                      fontSize: '24px',
+                      fontWeight: '700'
                     }}>
                       {consultant.initials}
                     </span>
+                    <div style={{
+                      position: 'absolute',
+                      bottom: '-2px',
+                      right: '-2px',
+                      width: '20px',
+                      height: '20px',
+                      background: 'linear-gradient(135deg, #10b981, #059669)',
+                      borderRadius: '50%',
+                      border: '3px solid white',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}>
+                      <div style={{
+                        width: '8px',
+                        height: '8px',
+                        background: 'white',
+                        borderRadius: '50%'
+                      }} />
+                    </div>
                   </div>
                   <div>
                     <h3 style={{
-                      fontSize: '20px',
-                      fontWeight: '600',
-                      color: '#1a1a2e',
+                      fontSize: '18px',
+                      fontWeight: '700',
+                      color: '#0f172a',
                       margin: '0 0 4px 0',
-                      fontFamily: 'Georgia, serif'
+                      letterSpacing: '-0.02em'
                     }}>
                       {consultant.name}
                     </h3>
                     <p style={{
-                      fontSize: '15px',
-                      color: '#4a5568',
-                      margin: '0',
-                      fontFamily: 'Georgia, serif'
+                      fontSize: '13px',
+                      color: '#64748b',
+                      margin: '0 0 4px 0',
+                      fontWeight: '500'
                     }}>
                       {consultant.university} {consultant.year}
                     </p>
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px'
+                    }}>
+                      <span style={{ 
+                        color: '#fbbf24', 
+                        fontSize: '12px' 
+                      }}>★★★★★</span>
+                      <span style={{
+                        fontSize: '12px',
+                        fontWeight: '600',
+                        color: '#0f172a'
+                      }}>
+                        4.9
+                      </span>
+                      <span style={{
+                        fontSize: '11px',
+                        color: '#64748b',
+                        fontWeight: '500'
+                      }}>
+                        (127 reviews)
+                      </span>
+                    </div>
                   </div>
                 </div>
 
                 {/* Specialty Badge */}
                 <div style={{
-                  backgroundColor: 'rgba(22, 160, 133, 0.1)',
-                  color: '#16a085',
-                  padding: '6px 14px',
-                  borderRadius: '20px',
-                  fontSize: '13px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  background: 'rgba(59, 130, 246, 0.08)',
+                  color: '#3b82f6',
+                  padding: '8px 12px',
+                  borderRadius: '12px',
+                  fontSize: '11px',
                   fontWeight: '600',
-                  display: 'inline-block',
-                  marginBottom: '18px',
-                  fontFamily: 'Georgia, serif',
+                  marginBottom: '16px',
+                  border: '1px solid rgba(59, 130, 246, 0.15)',
                   alignSelf: 'flex-start',
-                  border: '1px solid rgba(22, 160, 133, 0.15)'
+                  letterSpacing: '0.3px'
                 }}>
-                  {consultant.specialty}
+                  <div style={{
+                    width: '6px',
+                    height: '6px',
+                    borderRadius: '50%',
+                    background: '#3b82f6'
+                  }} />
+                  {consultant.specialty.toUpperCase()}
                 </div>
 
                 {/* Bio */}
                 <p style={{
                   fontSize: '14px',
-                  color: '#4a5568',
-                  lineHeight: '1.6',
+                  color: '#64748b',
+                  lineHeight: '1.5',
                   margin: '0 0 20px 0',
-                  fontFamily: 'Georgia, serif',
-                  flex: 1
+                  flex: 1,
+                  fontWeight: '400'
                 }}>
                   {consultant.bio}
                 </p>
-
-                {/* Rating */}
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  marginBottom: '20px'
-                }}>
-                  <span style={{ 
-                    color: '#fbbf24', 
-                    marginRight: '8px', 
-                    fontSize: '16px' 
-                  }}>★★★★★</span>
-                  <span style={{
-                    fontSize: '15px',
-                    fontWeight: '600',
-                    color: '#1a1a2e',
-                    marginRight: '8px',
-                    fontFamily: 'Georgia, serif'
-                  }}>
-                    4.9
-                  </span>
-                  <span style={{
-                    fontSize: '14px',
-                    color: '#4a5568',
-                    fontFamily: 'Georgia, serif'
-                  }}>
-                    (127 reviews)
-                  </span>
-                </div>
 
                 {/* Price and Button */}
                 <div style={{
@@ -570,42 +590,63 @@ export function Hero() {
                   alignItems: 'center',
                   justifyContent: 'space-between',
                   paddingTop: '20px',
-                  borderTop: '1px solid rgba(26, 26, 46, 0.08)'
+                  borderTop: '1px solid rgba(226, 232, 240, 0.8)'
                 }}>
                   <div>
                     <span style={{
-                      fontSize: '12px',
-                      color: '#4a5568',
+                      fontSize: '11px',
+                      color: '#64748b',
                       display: 'block',
                       textTransform: 'uppercase',
-                      letterSpacing: '1px',
-                      marginBottom: '4px',
-                      fontFamily: 'Georgia, serif'
-                    }}>Starting at</span>
+                      letterSpacing: '0.5px',
+                      marginBottom: '2px',
+                      fontWeight: '500'
+                    }}>From</span>
                     <span style={{
-                      fontSize: '26px',
-                      fontWeight: '700',
-                      color: '#1a1a2e',
-                      fontFamily: 'Georgia, serif'
+                      fontSize: '24px',
+                      fontWeight: '800',
+                      color: '#2c3e50',
+                      letterSpacing: '-0.02em'
                     }}>
                       {consultant.price}
                     </span>
                   </div>
                   
                   <button style={{
-                    backgroundColor: '#1a1a2e',
+                    background: 'linear-gradient(135deg, #3b82f6 0%,rgb(27, 36, 109) 100%)',
                     color: 'white',
                     border: 'none',
                     padding: '12px 20px',
-                    borderRadius: '10px',
-                    fontSize: '14px',
+                    borderRadius: '12px',
+                    fontSize: '13px',
                     fontWeight: '600',
                     cursor: 'pointer',
-                    fontFamily: 'Georgia, serif',
-                    transition: 'all 0.3s ease',
-                    boxShadow: '0 4px 12px rgba(26, 26, 46, 0.25)'
-                  }}>
-                    View Profile
+                    transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+                    boxShadow: '0 2px 8px rgba(59, 130, 246, 0.25)',
+                    position: 'relative',
+                    overflow: 'hidden'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.transform = 'translateY(-2px) scale(1.02)'
+                    e.target.style.boxShadow = '0 8px 25px rgba(59, 130, 246, 0.4)'
+                    e.stopPropagation()
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.transform = 'translateY(0) scale(1)'
+                    e.target.style.boxShadow = '0 2px 8px rgba(59, 130, 246, 0.25)'
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                  >
+                    <span style={{ position: 'relative', zIndex: 1 }}>View Profile</span>
+                    <div style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: '-100%',
+                      width: '100%',
+                      height: '100%',
+                      background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent)',
+                      transition: 'left 0.5s'
+                    }} />
                   </button>
                 </div>
               </div>
@@ -616,39 +657,42 @@ export function Hero() {
 
       {/* Services Section */}
       <section style={{
-        backgroundColor: '#f8f9fa',
-        borderTop: '1px solid rgba(26, 26, 46, 0.08)',
-        padding: '100px 0'
+        background: 'linear-gradient(135deg, rgba(248, 250, 252, 0.6) 0%, rgba(241, 245, 249, 0.8) 100%)',
+        borderTop: '1px solid rgba(148, 163, 184, 0.08)',
+        padding: '80px 0'
       }}>
         <div style={{
-          maxWidth: '1400px',
+          maxWidth: '1440px',
           margin: '0 auto',
-          padding: '0 40px',
+          padding: '0 16px',
           textAlign: 'center'
         }}>
-          {/* Large Logo Header */}
+          {/* Header */}
           <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '24px',
-            marginBottom: '20px'
+            marginBottom: '24px'
           }}>
-            <img 
-              src="/images/proofr-logo.png" 
-              alt="Proofr"
-              style={{
-                height: '80px',
-                width: 'auto',
-                filter: 'drop-shadow(0 4px 15px rgba(0,0,0,0.15))'
-              }}
-            />
+            <div style={{
+              width: '80px',
+              height: '80px',
+              background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+              borderRadius: '20px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 24px auto',
+              boxShadow: '0 12px 30px rgba(59, 130, 246, 0.3)'
+            }}>
+              <span style={{
+                color: 'white',
+                fontSize: '32px'
+              }}>🎓</span>
+            </div>
             <h2 style={{
-              fontSize: '42px',
-              fontWeight: '600',
-              color: '#1a1a2e',
+              fontSize: '44px',
+              fontWeight: '900',
+              color: '#0f172a',
               margin: '0',
-              fontFamily: 'Georgia, serif'
+              letterSpacing: '-0.02em'
             }}>
               Services Our Consultants Offer
             </h2>
@@ -657,10 +701,10 @@ export function Hero() {
           {/* Services Grid */}
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-            gap: '40px',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+            gap: '32px',
             marginBottom: '80px',
-            marginTop: '60px'
+            marginTop: '64px'
           }}>
             {[
               { icon: '📝', title: 'Essay Reviews', desc: 'Personal statements, supplements, and application essays' },
@@ -673,27 +717,36 @@ export function Hero() {
               <div key={index} style={{
                 padding: '36px 28px',
                 backgroundColor: 'white',
-                borderRadius: '18px',
-                border: '1px solid rgba(26, 26, 46, 0.06)',
-                boxShadow: '0 8px 25px rgba(0,0,0,0.06)',
-                transition: 'all 0.3s ease'
-              }}>
-                <div style={{ fontSize: '32px', marginBottom: '18px' }}>{service.icon}</div>
+                              borderRadius: '16px',
+              border: '1px solid rgba(148, 163, 184, 0.08)',
+              boxShadow: '0 4px 24px rgba(0, 0, 0, 0.04)',
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)'
+                e.currentTarget.style.boxShadow = '0 12px 32px rgba(0, 0, 0, 0.08)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)'
+                e.currentTarget.style.boxShadow = '0 4px 24px rgba(0, 0, 0, 0.04)'
+              }}
+              >
+                <div style={{ fontSize: '44px', marginBottom: '20px' }}>{service.icon}</div>
                 <h3 style={{
-                  fontSize: '18px',
-                  fontWeight: '600',
-                  color: '#1a1a2e',
-                  margin: '0 0 10px 0',
-                  fontFamily: 'Georgia, serif'
+                  fontSize: '20px',
+                  fontWeight: '800',
+                  color: '#0f172a',
+                  margin: '0 0 12px 0',
+                  letterSpacing: '-0.01em'
                 }}>
                   {service.title}
                 </h3>
                 <p style={{
                   fontSize: '15px',
-                  color: '#4a5568',
+                  color: '#64748b',
                   margin: '0',
-                  fontFamily: 'Georgia, serif',
-                  lineHeight: '1.5'
+                  lineHeight: '1.6',
+                  fontWeight: '400'
                 }}>
                   {service.desc}
                 </p>
@@ -702,80 +755,118 @@ export function Hero() {
           </div>
 
           <div style={{
-            backgroundColor: '#1a1a2e',
+            background: 'linear-gradient(135deg, #1e293b 0%,rgb(35, 35, 241) 100%)',
             color: 'white',
-            padding: '50px',
-            borderRadius: '24px',
-            textAlign: 'center'
+            padding: '60px',
+            borderRadius: '28px',
+            textAlign: 'center',
+            position: 'relative',
+            overflow: 'hidden'
           }}>
-            {/* Large Logo in CTA */}
+            {/* Background pattern */}
             <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '20px',
-              marginBottom: '24px'
-            }}>
-              <img 
-                src="/images/proofr-logo.png" 
-                alt="Proofr"
-                style={{
-                  height: '70px',
-                  width: 'auto',
-                  filter: 'brightness(0) invert(1)'
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundImage: 'radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.1) 0%, transparent 50%)',
+              pointerEvents: 'none'
+            }} />
+            
+            <div style={{ position: 'relative', zIndex: 1 }}>
+              {/* Header */}
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '20px',
+                marginBottom: '24px'
+              }}>
+                <div style={{
+                  width: '64px',
+                  height: '64px',
+                  background: 'rgba(255, 255, 255, 0.2)',
+                  borderRadius: '16px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                  <span style={{ fontSize: '28px' }}>🚀</span>
+                </div>
+                <h3 style={{
+                  fontSize: '38px',
+                  fontWeight: '900',
+                  margin: '0',
+                  letterSpacing: '-0.02em'
+                }}>
+                  Ready to get started?
+                </h3>
+              </div>
+              <p style={{
+                fontSize: '18px',
+                color: 'rgba(255, 255, 255, 0.8)',
+                margin: '0 0 36px 0',
+                maxWidth: '600px',
+                marginLeft: 'auto',
+                marginRight: 'auto',
+                fontWeight: '400'
+              }}>
+                Join thousands of students who have successfully navigated admissions with our consultants.
+              </p>
+              <div style={{
+                display: 'flex',
+                gap: '18px',
+                justifyContent: 'center',
+                flexWrap: 'wrap'
+              }}>
+                <button style={{
+                  background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+                  color: 'white',
+                  border: 'none',
+                  padding: '18px 36px',
+                  borderRadius: '14px',
+                  fontSize: '17px',
+                  fontWeight: '700',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease'
                 }}
-              />
-              <h3 style={{
-                fontSize: '32px',
-                fontWeight: '600',
-                margin: '0',
-                fontFamily: 'Georgia, serif'
-              }}>
-                Ready to get started?
-              </h3>
-            </div>
-            <p style={{
-              fontSize: '17px',
-              color: '#cbd5e0',
-              margin: '0 0 36px 0',
-              fontFamily: 'Georgia, serif'
-            }}>
-              Join thousands of students who have successfully navigated admissions with our consultants.
-            </p>
-            <div style={{
-              display: 'flex',
-              gap: '20px',
-              justifyContent: 'center',
-              flexWrap: 'wrap'
-            }}>
-              <button style={{
-                backgroundColor: '#16a085',
-                color: 'white',
-                border: 'none',
-                padding: '16px 32px',
-                borderRadius: '12px',
-                fontSize: '17px',
-                fontWeight: '600',
-                cursor: 'pointer',
-                fontFamily: 'Georgia, serif',
-                transition: 'all 0.3s ease'
-              }}>
-                Browse Consultants
-              </button>
-              <button style={{
-                backgroundColor: 'transparent',
-                color: 'white',
-                border: '2px solid white',
-                padding: '14px 32px',
-                borderRadius: '12px',
-                fontSize: '17px',
-                fontWeight: '600',
-                cursor: 'pointer',
-                fontFamily: 'Georgia, serif',
-                transition: 'all 0.3s ease'
-              }}>
-                Become a Consultant
-              </button>
+                onMouseEnter={(e) => {
+                  e.target.style.transform = 'translateY(-2px)'
+                  e.target.style.boxShadow = '0 12px 30px rgba(255, 255, 255, 0.3)'
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.transform = 'translateY(0)'
+                  e.target.style.boxShadow = 'none'
+                }}
+                >
+                  Browse Consultants
+                </button>
+                <button style={{
+                  backgroundColor: 'transparent',
+                  color: 'white',
+                  border: '2px solid rgba(255, 255, 255, 0.8)',
+                  padding: '16px 36px',
+                  borderRadius: '14px',
+                  fontSize: '17px',
+                  fontWeight: '700',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'
+                  e.target.style.borderColor = 'white'
+                  e.target.style.transform = 'translateY(-2px)'
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.backgroundColor = 'transparent'
+                  e.target.style.borderColor = 'rgba(255, 255, 255, 0.8)'
+                  e.target.style.transform = 'translateY(0)'
+                }}
+                >
+                  Become a Consultant
+                </button>
+              </div>
             </div>
           </div>
         </div>
