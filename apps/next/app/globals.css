@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --color-primary: #1A1F25;
+  --color-accent: #0077FF;
+  --color-light-bg: #FAFAFA;
+  --color-neutral-text: #111111;
+  --color-muted-grey: #E4E4E4;
+}
+
 /* Global CSS Reset for Full Screen Coverage */
 * {
   box-sizing: border-box;
