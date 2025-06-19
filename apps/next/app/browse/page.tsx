@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { supabase } from '../../../../lib/supabase' 
 import { NavigationBar } from 'app/features/landing/components/NavigationBar'
 import ConsultantCard from '../../components/ConsultantCard'
 
@@ -45,104 +46,6 @@ const SUGGESTED_TAGS = [
   'Business',
 ]
 
-const MOCK_CONSULTANTS = [
-  {
-    id: 1,
-    name: 'Sarah Chen',
-    university: 'Harvard University',
-    universityType: 'ivy',
-    verified: true,
-    major: 'Computer Science',
-    rating: 4.9,
-    reviews: 127,
-    price: 150,
-    image: '/images/default-avatar.svg',
-    tags: ['Essay Review', 'Application Strategy', 'Interview Prep'],
-    description: 'Harvard CS graduate helping students get into top tech programs.',
-    available: true,
-    services: ['Resume Help', 'Application Help', 'Mock Interviews'],
-  },
-  {
-    id: 2,
-    name: 'Michael Rodriguez',
-    university: 'Stanford University',
-    universityType: 'hypsm',
-    verified: true,
-    major: 'Business Administration',
-    rating: 4.8,
-    reviews: 98,
-    price: 175,
-    image: '/images/default-avatar.svg',
-    tags: ['Business School', 'Application Strategy', 'Profile Building'],
-    description: 'Stanford GSB alum specializing in business school applications.',
-    available: false,
-    services: ['Application Help', 'Scholarship Guidance'],
-  },
-  {
-    id: 3,
-    name: 'Emily Thompson',
-    university: 'MIT',
-    universityType: 'hypsm',
-    verified: true,
-    major: 'Mechanical Engineering',
-    rating: 4.9,
-    reviews: 156,
-    price: 140,
-    image: '/images/default-avatar.svg',
-    tags: ['Engineering', 'Essay Review', 'Interview Prep'],
-    description: 'MIT engineering graduate with experience in technical program applications.',
-    available: true,
-    services: ['SAT Tutoring', 'Mock Interviews'],
-  },
-  {
-    id: 4,
-    name: 'David Kim',
-    university: 'Yale University',
-    universityType: 'hypsm',
-    verified: false,
-    major: 'Political Science',
-    rating: 4.7,
-    reviews: 89,
-    price: 160,
-    image: '/images/default-avatar.svg',
-    tags: ['Liberal Arts', 'Essay Review', 'Application Strategy'],
-    description: 'Yale graduate helping students craft compelling personal statements.',
-    available: false,
-    services: ['Essay Review', 'School-Specific Advice'],
-  },
-  {
-    id: 5,
-    name: 'Sophia Patel',
-    university: 'Princeton University',
-    universityType: 'ivy',
-    verified: true,
-    major: 'Computer Science',
-    rating: 4.9,
-    reviews: 112,
-    price: 165,
-    image: '/images/default-avatar.svg',
-    tags: ['Computer Science', 'Interview Prep', 'Profile Building'],
-    description: 'Princeton CS alum specializing in tech program applications.',
-    available: true,
-    services: ['Resume Help', 'Application Help', 'SAT Tutoring'],
-  },
-  {
-    id: 6,
-    name: 'James Wilson',
-    university: 'Columbia University',
-    universityType: 'top20',
-    verified: false,
-    major: 'Journalism',
-    rating: 4.8,
-    reviews: 76,
-    price: 145,
-    image: '/images/default-avatar.svg',
-    tags: ['Liberal Arts', 'Essay Review', 'Application Strategy'],
-    description: 'Columbia journalism graduate helping students tell their stories.',
-    available: true,
-    services: ['Essay Review', 'Resume Help'],
-  },
-]
 
 export default function BrowseConsultants() {
   const [searchQuery, setSearchQuery] = useState('')
@@ -152,28 +55,50 @@ export default function BrowseConsultants() {
   const [selectedAvailability, setSelectedAvailability] = useState('any')
   const [showVerified, setShowVerified] = useState(false)
   const [sortBy, setSortBy] = useState('rating')
-
+  const [consultants, setConsultants] = useState([])
+useEffect(() => {
+  const fetchConsultants = async () => {
+    console.log('Attempting to fetch from Supabase...')
+    const {data, error} = await supabase.from('consultants').select('*')
+    console.log('Supabase response:', { data, error })
+    console.log('Data length:', data?.length)
+    
+    if (error) {
+      console.error('Supabase error:', error)
+    }
+    
+    if (data && data.length > 0) {
+      console.log('First consultant:', data[0])
+      setConsultants(data)
+    } else {
+      console.log('No data returned or empty array')
+    }
+  }
+  fetchConsultants()
+}, [])
   // Enhanced filtering logic
-  const filteredConsultants = MOCK_CONSULTANTS.filter((consultant) => {
+  const filteredConsultants = consultants.filter((consultant) => {
     const searchLower = searchQuery.toLowerCase()
     const matchesSearch = searchQuery === '' || (
       consultant.name.toLowerCase().includes(searchLower) ||
-      consultant.description.toLowerCase().includes(searchLower) ||
-      consultant.university.toLowerCase().includes(searchLower) ||
-      consultant.major.toLowerCase().includes(searchLower) ||
-      consultant.services.some(service => service.toLowerCase().includes(searchLower)) ||
-      consultant.tags.some(tag => tag.toLowerCase().includes(searchLower))
+      (consultant.about_me && consultant.about_me.toLowerCase().includes(searchLower)) ||
+      consultant.college.toLowerCase().includes(searchLower) ||
+      (consultant.major && consultant.major.toLowerCase().includes(searchLower))
     )
     const matchesUniversity =
-      selectedUniversity === 'all' || consultant.universityType === selectedUniversity
+      selectedUniversity === 'all' || 
+      (selectedUniversity === 'ivy' && consultant.ivy) ||
+      (selectedUniversity === 'hypsm' && consultant.ivy_plus) ||
+      (selectedUniversity === 'top20' && consultant.T20)
     const matchesService =
-      !selectedService || consultant.services.includes(selectedService)
-    const matchesPrice =
-      consultant.price >= selectedPrice[0] && consultant.price <= selectedPrice[1]
+      !selectedService || (consultant.services && Object.keys(consultant.services).some(service => 
+        service.toLowerCase().includes(selectedService.toLowerCase())
+      ))
+    const matchesPrice = true
     const matchesAvailability =
       selectedAvailability === 'any' ||
-      (selectedAvailability === 'now' && consultant.available) ||
-      (selectedAvailability !== 'any' && consultant.available) // Simplified for mock
+      (selectedAvailability === 'now' && consultant.working) ||
+      (selectedAvailability !== 'any' && consultant.working)
     const matchesVerified = !showVerified || consultant.verified
     return (
       matchesSearch &&
@@ -195,7 +120,7 @@ export default function BrowseConsultants() {
       case 'rating':
         return b.rating - a.rating
       case 'reviews':
-        return b.reviews - a.reviews
+        return b.review_count - a.review_count
       default:
         return 0
     }
@@ -386,12 +311,15 @@ export default function BrowseConsultants() {
                   fontSize: 15,
                   fontWeight: 500,
                   background: 'white',
+                  color: '#374151',
                   cursor: 'pointer',
                   outline: 'none'
                 }}
               >
                 {UNIVERSITY_FILTERS.map(opt => (
-                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                  <option key={opt.value} value={opt.value} style={{ color: '#374151', background: 'white' }}>
+                    {opt.label}
+                  </option>
                 ))}
               </select>
 
@@ -406,13 +334,16 @@ export default function BrowseConsultants() {
                   fontSize: 15,
                   fontWeight: 500,
                   background: 'white',
+                  color: '#374151',
                   cursor: 'pointer',
                   outline: 'none'
                 }}
               >
-                <option value="">All Services</option>
+                <option value="" style={{ color: '#374151', background: 'white' }}>All Services</option>
                 {SERVICE_TYPES.map(type => (
-                  <option key={type} value={type}>{type}</option>
+                  <option key={type} value={type} style={{ color: '#374151', background: 'white' }}>
+                    {type}
+                  </option>
                 ))}
               </select>
 
@@ -427,13 +358,18 @@ export default function BrowseConsultants() {
                   fontSize: 15,
                   fontWeight: 500,
                   background: 'white',
+                  color: '#374151',
                   cursor: 'pointer',
                   outline: 'none'
                 }}
               >
-                <option value={JSON.stringify([0, 10000])}>All Prices</option>
+                <option value={JSON.stringify([0, 10000])} style={{ color: '#374151', background: 'white' }}>
+                  All Prices
+                </option>
                 {PRICE_FILTERS.map(opt => (
-                  <option key={opt.label} value={JSON.stringify(opt.value)}>{opt.label}</option>
+                  <option key={opt.label} value={JSON.stringify(opt.value)} style={{ color: '#374151', background: 'white' }}>
+                    {opt.label}
+                  </option>
                 ))}
               </select>
 
@@ -448,12 +384,15 @@ export default function BrowseConsultants() {
                   fontSize: 15,
                   fontWeight: 500,
                   background: 'white',
+                  color: '#374151',
                   cursor: 'pointer',
                   outline: 'none'
                 }}
               >
                 {AVAILABILITY_FILTERS.map(opt => (
-                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                  <option key={opt.value} value={opt.value} style={{ color: '#374151', background: 'white' }}>
+                    {opt.label}
+                  </option>
                 ))}
               </select>
             </div>
@@ -471,14 +410,15 @@ export default function BrowseConsultants() {
                   fontSize: 15,
                   fontWeight: 500,
                   background: 'white',
+                  color: '#374151',
                   cursor: 'pointer',
                   outline: 'none'
                 }}
               >
-                <option value="rating">Highest Rating</option>
-                <option value="reviews">Most Reviews</option>
-                <option value="price-low">Price: Low to High</option>
-                <option value="price-high">Price: High to Low</option>
+                <option value="rating" style={{ color: '#374151', background: 'white' }}>Highest Rating</option>
+                <option value="reviews" style={{ color: '#374151', background: 'white' }}>Most Reviews</option>
+                <option value="price-low" style={{ color: '#374151', background: 'white' }}>Price: Low to High</option>
+                <option value="price-high" style={{ color: '#374151', background: 'white' }}>Price: High to Low</option>
               </select>
             </div>
           </div>

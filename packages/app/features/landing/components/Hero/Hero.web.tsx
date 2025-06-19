@@ -4,6 +4,7 @@ import { NavigationBar } from '../NavigationBar'
 
 export function Hero() {
   const [showBanner, setShowBanner] = React.useState(true)
+  const [currentPosition, setCurrentPosition] = React.useState(0)
 
   React.useEffect(() => {
     const timer = setTimeout(() => {
@@ -12,6 +13,7 @@ export function Hero() {
 
     return () => clearTimeout(timer)
   }, [])
+  
   const consultants = [
     {
       initials: 'AH',
@@ -102,6 +104,36 @@ export function Hero() {
       badge: 'Rising Star',
       rating: 4.9,
       reviews: 73
+    },
+    {
+      initials: 'JH',
+      name: 'Jordan H.',
+      university: 'University of Pennsylvania',
+      year: "'24",
+      specialty: 'Business Applications',
+      bio: 'Wharton graduate with expertise in finance and consulting application strategies.',
+      price: '$70',
+      avatar: 'linear-gradient(135deg, #06B6D4 0%, #0891B2 100%)',
+      verified: true,
+      responseTime: 'Online now',
+      badge: 'Pro',
+      rating: 4.8,
+      reviews: 118
+    },
+    {
+      initials: 'AL',
+      name: 'Alex L.',
+      university: 'Caltech',
+      year: "'26",
+      specialty: 'STEM Research',
+      bio: 'Physics major specializing in research applications and graduate school prep.',
+      price: '$63',
+      avatar: 'linear-gradient(135deg, #F97316 0%, #EA580C 100%)',
+      verified: true,
+      responseTime: 'Online now',
+      badge: 'Choice',
+      rating: 4.9,
+      reviews: 85
     }
   ]
 
@@ -113,6 +145,16 @@ export function Hero() {
     { name: 'Resume Building', count: '1.2k' },
     { name: 'Scholarship Help', count: '634' }
   ]
+
+  // Navigation handlers for 8 cards in 2x2 grid
+  const handlePrevious = () => {
+    setCurrentPosition(prev => Math.max(0, prev - 1))
+  }
+  
+  const handleNext = () => {
+    const maxPosition = Math.floor(consultants.length / 2) - 2  // Should be 2 for 8 cards
+    setCurrentPosition(prev => Math.min(maxPosition, prev + 1))
+  }
 
   return (
     <div style={{
@@ -529,7 +571,7 @@ export function Hero() {
           {/* Right Column - 2x2 Cards Grid */}
           <div style={{
             position: 'relative',
-            width: '100%',
+            width: '660px',
             overflow: 'hidden',
             height: '700px'
           }}>
@@ -537,12 +579,12 @@ export function Hero() {
               id="cardSlider"
               style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(3, 300px)',
+                gridTemplateColumns: 'repeat(4, 300px)',
                 gridTemplateRows: 'repeat(2, 320px)',
                 gap: '16px',
-                width: 'calc(900px + 100px)',
+                width: 'calc(1200px + 100px)',
                 transition: 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                transform: 'translateX(0px)',
+                transform: `translateX(${-currentPosition * 316}px)`,
                 touchAction: 'pan-x'
               }}
             >
@@ -562,30 +604,15 @@ export function Hero() {
                     transition: 'all 0.3s ease',
                     cursor: 'pointer',
                     position: 'relative',
-                    animation: `slideUp 0.6s ease-out ${index * 0.1}s both`,
-                    filter: index >= 4 ? 'blur(3px)' : 'none',
-                    opacity: index >= 4 ? 0.3 : 1,
-                    transform: index >= 4 ? 'scale(0.9)' : 'scale(1)'
+                    animation: `slideUp 0.6s ease-out ${index * 0.1}s both`
                   }}
                   onMouseEnter={(e) => {
-                    if (index < 4) {
-                      e.currentTarget.style.transform = 'translateY(-8px) scale(1.02)'
-                      e.currentTarget.style.boxShadow = '0 20px 40px rgba(0, 0, 0, 0.12)'
-                      e.currentTarget.style.filter = 'none'
-                      e.currentTarget.style.opacity = '1'
-                    }
+                    e.currentTarget.style.transform = 'translateY(-8px) scale(1.02)'
+                    e.currentTarget.style.boxShadow = '0 20px 40px rgba(0, 0, 0, 0.12)'
                   }}
                   onMouseLeave={(e) => {
-                    if (index < 4) {
-                      e.currentTarget.style.transform = 'translateY(0) scale(1)'
-                      e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.06)'
-                      e.currentTarget.style.filter = 'none'
-                      e.currentTarget.style.opacity = '1'
-                    } else {
-                      e.currentTarget.style.filter = 'blur(3px)'
-                      e.currentTarget.style.opacity = '0.3'
-                      e.currentTarget.style.transform = 'scale(0.9)'
-                    }
+                    e.currentTarget.style.transform = 'translateY(0) scale(1)'
+                    e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.06)'
                   }}
                 >
                   {/* Badge */}
@@ -761,101 +788,87 @@ export function Hero() {
               ))}
             </div>
             
-            {/* Left Navigation Arrow */}
-            <button 
-              style={{
-                position: 'absolute',
-                left: '-10px',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                width: '44px',
-                height: '44px',
-                backgroundColor: 'white',
-                border: '1px solid #E5E7EB',
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                boxShadow: '0 8px 20px rgba(0, 0, 0, 0.08)',
-                transition: 'all 0.2s ease',
-                zIndex: 10
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = '#F9FAFB'
-                e.currentTarget.style.transform = 'translateY(-50%) scale(1.1)'
-                e.currentTarget.style.boxShadow = '0 12px 30px rgba(0, 0, 0, 0.15)'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'white'
-                e.currentTarget.style.transform = 'translateY(-50%) scale(1)'
-                e.currentTarget.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.08)'
-              }}
-              onClick={() => {
-                const slider = document.getElementById('cardSlider')
-                if (slider) {
-                  const currentTransform = slider.style.transform
-                  const currentX = currentTransform.includes('translateX') ? 
-                    parseInt(currentTransform.match(/-?\d+/)?.[0] || '0') : 0
-                  const newX = Math.min(currentX + 632, 0)
-                  slider.style.transform = `translateX(${newX}px)`
-                }
-              }}
-            >
-              <span style={{
-                fontSize: '18px',
-                color: '#6B7280',
-                fontWeight: '700'
-              }}>←</span>
-            </button>
+            {/* Left Navigation Arrow - Only show if not at start */}
+            {currentPosition > 0 && (
+              <button 
+                style={{
+                  position: 'absolute',
+                  left: '-10px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  width: '44px',
+                  height: '44px',
+                  backgroundColor: 'white',
+                  border: '1px solid #E5E7EB',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  boxShadow: '0 8px 20px rgba(0, 0, 0, 0.08)',
+                  transition: 'all 0.2s ease',
+                  zIndex: 10
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = '#F9FAFB'
+                  e.currentTarget.style.transform = 'translateY(-50%) scale(1.1)'
+                  e.currentTarget.style.boxShadow = '0 12px 30px rgba(0, 0, 0, 0.15)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'white'
+                  e.currentTarget.style.transform = 'translateY(-50%) scale(1)'
+                  e.currentTarget.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.08)'
+                }}
+                onClick={handlePrevious}
+              >
+                <span style={{
+                  fontSize: '18px',
+                  color: '#6B7280',
+                  fontWeight: '700'
+                }}>←</span>
+              </button>
+            )}
 
-            {/* Right Navigation Arrow */}
-            <button 
-              style={{
-                position: 'absolute',
-                right: '-10px',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                width: '44px',
-                height: '44px',
-                backgroundColor: 'white',
-                border: '1px solid #E5E7EB',
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                boxShadow: '0 8px 20px rgba(0, 0, 0, 0.08)',
-                transition: 'all 0.2s ease',
-                zIndex: 10
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = '#F9FAFB'
-                e.currentTarget.style.transform = 'translateY(-50%) scale(1.1)'
-                e.currentTarget.style.boxShadow = '0 12px 30px rgba(0, 0, 0, 0.15)'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'white'
-                e.currentTarget.style.transform = 'translateY(-50%) scale(1)'
-                e.currentTarget.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.08)'
-              }}
-              onClick={() => {
-                const slider = document.getElementById('cardSlider')
-                if (slider) {
-                  const currentTransform = slider.style.transform
-                  const currentX = currentTransform.includes('translateX') ? 
-                    parseInt(currentTransform.match(/-?\d+/)?.[0] || '0') : 0
-                  const newX = Math.max(currentX - 632, -632)
-                  slider.style.transform = `translateX(${newX}px)`
-                }
-              }}
-            >
-              <span style={{
-                fontSize: '18px',
-                color: '#6B7280',
-                fontWeight: '700'
-              }}>→</span>
-            </button>
+            {/* Right Navigation Arrow - Only show if not at end */}
+            {currentPosition < Math.floor(consultants.length / 2) - 2 && (
+              <button 
+                style={{
+                  position: 'absolute',
+                  right: '-10px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  width: '44px',
+                  height: '44px',
+                  backgroundColor: 'white',
+                  border: '1px solid #E5E7EB',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  boxShadow: '0 8px 20px rgba(0, 0, 0, 0.08)',
+                  transition: 'all 0.2s ease',
+                  zIndex: 10
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = '#F9FAFB'
+                  e.currentTarget.style.transform = 'translateY(-50%) scale(1.1)'
+                  e.currentTarget.style.boxShadow = '0 12px 30px rgba(0, 0, 0, 0.15)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'white'
+                  e.currentTarget.style.transform = 'translateY(-50%) scale(1)'
+                  e.currentTarget.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.08)'
+                }}
+                onClick={handleNext}
+              >
+                <span style={{
+                  fontSize: '18px',
+                  color: '#6B7280',
+                  fontWeight: '700'
+                }}>→</span>
+              </button>
+            )}
           </div>
         </div>
       </section>

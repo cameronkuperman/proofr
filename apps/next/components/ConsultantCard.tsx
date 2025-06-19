@@ -5,18 +5,16 @@ import { useState } from 'react'
 interface Consultant {
   id: number
   name: string
-  university: string
-  universityType: string
+  college: string
   verified: boolean
-  major: string
+  major?: string
   rating: number
-  reviews: number
-  price: number
-  image: string
-  tags: string[]
-  description: string
-  available: boolean
-  services: string[]
+  review_count: number
+  about_me: string
+  working: boolean
+  services: Record<string, string[]>
+  years_experience: number
+  location: string
 }
 
 interface ConsultantCardProps {
@@ -90,18 +88,23 @@ export default function ConsultantCard({ consultant, onClick }: ConsultantCardPr
         alignItems: 'center',
         gap: 12
       }}>
-        <img
-          src={consultant.image}
-          alt={consultant.name}
+        <div
           style={{
             width: 48,
             height: 48,
             borderRadius: '50%',
-            objectFit: 'cover',
-            background: '#f3f4f6',
+            background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
             border: '2px solid #f9fafb',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'white',
+            fontSize: 18,
+            fontWeight: 600
           }}
-        />
+        >
+          {consultant.name.charAt(0)}
+        </div>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ 
             display: 'flex', 
@@ -151,7 +154,7 @@ export default function ConsultantCard({ consultant, onClick }: ConsultantCardPr
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap'
           }}>
-            {consultant.university}
+            {consultant.college}
           </p>
         </div>
         
@@ -161,7 +164,7 @@ export default function ConsultantCard({ consultant, onClick }: ConsultantCardPr
             width: 12,
             height: 12,
             borderRadius: '50%',
-            background: consultant.available ? '#10b981' : '#d1d5db',
+            background: consultant.working ? '#10b981' : '#d1d5db',
             border: '2px solid white',
             boxShadow: '0 0 0 1px rgba(0, 0, 0, 0.05)',
             flexShrink: 0
@@ -186,7 +189,7 @@ export default function ConsultantCard({ consultant, onClick }: ConsultantCardPr
           WebkitBoxOrient: 'vertical',
           height: '2.8em'
         }}>
-          {consultant.description}
+          {consultant.about_me}
         </p>
       </div>
 
@@ -198,7 +201,7 @@ export default function ConsultantCard({ consultant, onClick }: ConsultantCardPr
         flexWrap: 'wrap',
         gap: 6
       }}>
-        {consultant.services.slice(0, 2).map((service) => (
+        {Object.keys(consultant.services).slice(0, 2).map((service) => (
           <span 
             key={service}
             style={{
@@ -211,16 +214,16 @@ export default function ConsultantCard({ consultant, onClick }: ConsultantCardPr
               textTransform: 'capitalize',
             }}
           >
-            {service}
+            {service.replace('_', ' ')}
           </span>
         ))}
-        {consultant.services.length > 2 && (
+        {Object.keys(consultant.services).length > 2 && (
           <span style={{
             color: '#9ca3af',
             fontSize: 11,
             fontWeight: 500,
           }}>
-            +{consultant.services.length - 2} more
+            +{Object.keys(consultant.services).length - 2} more
           </span>
         )}
       </div>
@@ -248,7 +251,7 @@ export default function ConsultantCard({ consultant, onClick }: ConsultantCardPr
           fontSize: 13,
           fontWeight: 500
         }}>
-          ({consultant.reviews} reviews)
+          ({consultant.review_count} reviews)
         </span>
       </div>
 
@@ -268,36 +271,36 @@ export default function ConsultantCard({ consultant, onClick }: ConsultantCardPr
             fontSize: 18,
             lineHeight: 1
           }}>
-            ${consultant.price}
-            <span style={{ fontSize: 13, color: '#6b7280', fontWeight: 500 }}>/hr</span>
+            {consultant.years_experience} yrs
+            <span style={{ fontSize: 13, color: '#6b7280', fontWeight: 500 }}> exp</span>
           </span>
         </div>
         
         <button
           style={{
-            background: consultant.available ? '#1f2937' : '#d1d5db',
-            color: consultant.available ? 'white' : '#9ca3af',
+            background: consultant.working ? '#1f2937' : '#d1d5db',
+            color: consultant.working ? 'white' : '#9ca3af',
             border: 'none',
             borderRadius: 4,
             padding: '8px 16px',
             fontWeight: 600,
             fontSize: 13,
-            cursor: consultant.available ? 'pointer' : 'not-allowed',
+            cursor: consultant.working ? 'pointer' : 'not-allowed',
             transition: 'all 0.2s ease',
           }}
-          disabled={!consultant.available}
+          disabled={!consultant.working}
           onMouseEnter={(e) => {
-            if (consultant.available) {
+            if (consultant.working) {
               e.currentTarget.style.background = '#111827'
             }
           }}
           onMouseLeave={(e) => {
-            if (consultant.available) {
+            if (consultant.working) {
               e.currentTarget.style.background = '#1f2937'
             }
           }}
         >
-          {consultant.available ? 'Contact' : 'Unavailable'}
+          {consultant.working ? 'Contact' : 'Unavailable'}
         </button>
       </div>
     </div>
