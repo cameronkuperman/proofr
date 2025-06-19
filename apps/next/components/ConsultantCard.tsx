@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from 'react'
+import MessagingModal from './MessagingModal'
 
 interface Consultant {
   id: number
@@ -20,11 +21,19 @@ interface Consultant {
 interface ConsultantCardProps {
   consultant: Consultant
   onClick?: () => void
+  currentUserId?: string
+  currentUserType?: 'student' | 'consultant'
 }
 
-export default function ConsultantCard({ consultant, onClick }: ConsultantCardProps) {
+export default function ConsultantCard({ 
+  consultant, 
+  onClick, 
+  currentUserId, 
+  currentUserType 
+}: ConsultantCardProps) {
   const [isHovered, setIsHovered] = useState(false)
   const [isFavorited, setIsFavorited] = useState(false)
+  const [showMessagingModal, setShowMessagingModal] = useState(false)
 
   return (
     <div
@@ -285,6 +294,12 @@ export default function ConsultantCard({ consultant, onClick }: ConsultantCardPr
         </div>
         
         <button
+          onClick={(e) => {
+            e.stopPropagation()
+            if (consultant.working && currentUserId && currentUserType) {
+              setShowMessagingModal(true)
+            }
+          }}
           style={{
             background: consultant.working ? '#1f2937' : '#d1d5db',
             color: consultant.working ? 'white' : '#9ca3af',
@@ -311,6 +326,18 @@ export default function ConsultantCard({ consultant, onClick }: ConsultantCardPr
           {consultant.working ? 'Contact' : 'Unavailable'}
         </button>
       </div>
+
+      {/* Messaging Modal */}
+      {currentUserId && currentUserType && (
+        <MessagingModal
+          isOpen={showMessagingModal}
+          onClose={() => setShowMessagingModal(false)}
+          consultant={consultant}
+          currentUserId={currentUserId}
+          currentUserType={currentUserType}
+          mode="new_conversation"
+        />
+      )}
     </div>
   )
 }

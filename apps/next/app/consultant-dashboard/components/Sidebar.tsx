@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useTheme } from './ThemeProvider'
+import UnreadMessageBadge from './UnreadMessageBadge'
 
 /*
 SUPABASE INTEGRATION TODO:
@@ -122,8 +123,8 @@ const navigationItems = [
   {
     id: 'messages',
     label: 'Messages',
-    description: 'Client communications',
-    badge: '3' // TODO: Replace with real-time unread message count from Supabase
+    description: 'Client communications'
+    // Badge will be handled by UnreadMessageBadge component
   },
   {
     id: 'analytics',
@@ -195,14 +196,11 @@ export default function Sidebar({ activeTab, onTabChange }: SidebarProps) {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between">
                     <p className="font-semibold truncate">{item.label}</p>
-                    {item.badge && (
-                      <span className={`px-2 py-1 text-xs rounded-full ${
-                        activeTab === item.id 
-                          ? 'bg-white/20 text-white' 
-                          : 'bg-proofr-coral text-white'
-                      }`}>
-                        {item.badge}
-                      </span>
+                    {item.id === 'messages' && (
+                      <UnreadMessageBadge 
+                        currentUserId="consultant-123" 
+                        isActive={activeTab === item.id}
+                      />
                     )}
                   </div>
                   <p className={`text-sm truncate ${
