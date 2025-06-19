@@ -271,8 +271,16 @@ export default function ConsultantCard({ consultant, onClick }: ConsultantCardPr
             fontSize: 18,
             lineHeight: 1
           }}>
-            {consultant.years_experience} yrs
-            <span style={{ fontSize: 13, color: '#6b7280', fontWeight: 500 }}> exp</span>
+            Starting ${(() => {
+              const prices = Object.values(consultant.services).flat()
+                .map(item => {
+                  const match = item.match(/\$(\d+)/)
+                  return match ? parseInt(match[1]) : null
+                })
+                .filter(price => price !== null)
+              return prices.length > 0 ? Math.min(...prices) : 0
+            })()}
+            <span style={{ fontSize: 13, color: '#6b7280', fontWeight: 500 }}></span>
           </span>
         </div>
         
