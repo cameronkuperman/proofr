@@ -3,11 +3,18 @@
 @tailwind utilities;
 
 :root {
-  --color-primary: #1A1F25;
-  --color-accent: #0077FF;
-  --color-light-bg: #FAFAFA;
-  --color-neutral-text: #111111;
-  --color-muted-grey: #E4E4E4;
+  /* Sunset Academic Color Scheme */
+  --color-primary: #CC6B47;     /* burnt orange */
+  --color-accent: #E8956B;      /* peach */
+  --color-bg: #FFFAF6;          /* cream */
+  --color-text: #3A1F0B;        /* coffee */
+  --color-text-muted: #8B7355;  /* warm muted */
+  --color-border: #F4E5D7;      /* warm border */
+  
+  /* Legacy variables for compatibility */
+  --color-light-bg: #FFFAF6;
+  --color-neutral-text: #3A1F0B;
+  --color-muted-grey: #F4E5D7;
 }
 
 /* Global CSS Reset for Full Screen Coverage */

@@ -146,7 +146,7 @@ export function Hero() {
     { name: 'Scholarship Help', count: '634' }
   ]
 
-  // Navigation handlers for 8 cards in 2x2 grid
+  // Navigation handlers for 8 cards in 2x2 grid (back to original)
   const handlePrevious = () => {
     setCurrentPosition(prev => Math.max(0, prev - 1))
   }
@@ -159,19 +159,19 @@ export function Hero() {
   return (
     <div style={{
       minHeight: '100vh',
-      background: 'linear-gradient(180deg, #FFFFFF 0%, #F1F5F9 100%)',
+      background: '#FFFAF6', // Keep the warm cream background you loved
       fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", sans-serif',
       position: 'relative',
       overflow: 'hidden'
     }}>
-      {/* Enhanced Abstract Background */}
+      {/* Subtle warm abstract elements */}
       <div style={{
         position: 'absolute',
         top: '0',
         right: '0',
         width: '500px',
         height: '500px',
-        background: 'radial-gradient(circle, rgba(59, 130, 246, 0.04) 0%, transparent 70%)',
+        background: 'radial-gradient(circle, rgba(37, 99, 235, 0.04) 0%, transparent 70%)', // subtle blue
         borderRadius: '50%',
         transform: 'translate(30%, -30%)'
       }} />
@@ -181,39 +181,18 @@ export function Hero() {
         left: '0',
         width: '400px',
         height: '400px',
-        background: 'radial-gradient(circle, rgba(24, 24, 27, 0.03) 0%, transparent 70%)',
+        background: 'radial-gradient(circle, rgba(24, 24, 27, 0.03) 0%, transparent 70%)', // subtle black
         borderRadius: '50%',
         transform: 'translate(-30%, 30%)'
-      }} />
-      {/* Floating Elements */}
-      <div style={{
-        position: 'absolute',
-        top: '20%',
-        left: '15%',
-        width: '3px',
-        height: '60px',
-        background: 'linear-gradient(180deg, rgba(59, 130, 246, 0.15) 0%, transparent 100%)',
-        borderRadius: '2px',
-        transform: 'rotate(20deg)'
-      }} />
-      <div style={{
-        position: 'absolute',
-        top: '70%',
-        right: '20%',
-        width: '40px',
-        height: '3px',
-        background: 'linear-gradient(90deg, rgba(245, 158, 11, 0.1) 0%, transparent 100%)',
-        borderRadius: '2px',
-        transform: 'rotate(-25deg)'
       }} />
 
       <NavigationBar />
       
-      {/* Clean Header */}
+      {/* Header - balanced approach */}
       <header style={{
-        backgroundColor: 'rgba(255, 255, 255, 0.9)',
-        backdropFilter: 'blur(16px)',
-        borderBottom: '1px solid rgba(0, 0, 0, 0.05)',
+        backgroundColor: 'rgba(255, 250, 246, 0.95)', // warm cream with transparency
+        backdropFilter: 'blur(20px)',
+        borderBottom: '1px solid rgba(229, 231, 235, 0.3)', // subtle border
         position: 'sticky',
         top: 0,
         zIndex: 50
@@ -228,7 +207,7 @@ export function Hero() {
           justifyContent: 'space-between',
           flexWrap: 'nowrap'
         }}>
-          {/* Logo */}
+          {/* Logo - strong black for impact */}
           <div style={{
             display: 'flex',
             alignItems: 'center',
@@ -237,7 +216,7 @@ export function Hero() {
             <div style={{
               width: '32px',
               height: '32px',
-              background: '#18181B',
+              background: '#18181B', // strong black
               borderRadius: '8px',
               display: 'flex',
               alignItems: 'center',
@@ -252,7 +231,7 @@ export function Hero() {
             <span style={{
               fontSize: '24px',
               fontWeight: '800',
-              color: '#18181B',
+              color: '#18181B', // strong black
               letterSpacing: '-0.02em'
             }}>proofr</span>
           </div>
@@ -266,15 +245,15 @@ export function Hero() {
           }}>
             {['Browse', 'How it works', 'Join as consultant'].map((item) => (
               <a key={item} href="#" style={{
-                color: '#374151',
+                color: '#6B7280', // warm muted
                 textDecoration: 'none',
                 fontSize: 'clamp(12px, 2.5vw, 14px)',
                 fontWeight: '500',
                 transition: 'color 0.2s ease',
                 whiteSpace: 'nowrap'
               }}
-              onMouseEnter={(e) => (e.target as HTMLElement).style.color = '#18181B'}
-              onMouseLeave={(e) => (e.target as HTMLElement).style.color = '#374151'}
+              onMouseEnter={(e) => (e.target as HTMLElement).style.color = '#18181B'} // strong black
+              onMouseLeave={(e) => (e.target as HTMLElement).style.color = '#6B7280'}
               >{item}</a>
             ))}
           </nav>
@@ -288,13 +267,13 @@ export function Hero() {
             <button style={{
               background: 'none',
               border: 'none',
-              color: '#374151',
+              color: '#6B7280', // warm muted
               fontSize: '14px',
               fontWeight: '500',
               cursor: 'pointer'
             }}>Sign in</button>
             <button style={{
-              background: '#18181B',
+              background: '#18181B', // strong black for impact
               color: 'white',
               border: 'none',
               padding: '8px 16px',
@@ -305,20 +284,22 @@ export function Hero() {
               transition: 'all 0.2s ease'
             }}
             onMouseEnter={(e) => {
-              (e.target as HTMLElement).style.transform = 'translateY(-1px)'
+              (e.target as HTMLElement).style.background = '#374151' // warm black hover
+              ;(e.target as HTMLElement).style.transform = 'translateY(-1px)'
             }}
             onMouseLeave={(e) => {
-              (e.target as HTMLElement).style.transform = 'translateY(0)'
+              (e.target as HTMLElement).style.background = '#18181B'
+              ;(e.target as HTMLElement).style.transform = 'translateY(0)'
             }}>Get started</button>
           </div>
         </div>
       </header>
 
-      {/* Live Activity Banner */}
+      {/* Live Activity Banner - with warm blue accent */}
       {showBanner && (
         <div style={{
-          backgroundColor: '#F0F9FF',
-          borderBottom: '1px solid #E0F2FE',
+          backgroundColor: 'rgba(37, 99, 235, 0.05)', // subtle blue tint
+          borderBottom: '1px solid rgba(229, 231, 235, 0.3)',
           padding: '8px 0',
           position: 'relative',
           overflow: 'hidden',
@@ -337,13 +318,13 @@ export function Hero() {
             <div style={{
               width: '8px',
               height: '8px',
-              backgroundColor: '#10B981',
+              backgroundColor: '#2563EB', // warm blue
               borderRadius: '50%',
               animation: 'pulse 2s infinite'
             }} />
             <span style={{
               fontSize: '13px',
-              color: '#1E40AF',
+              color: '#2563EB', // warm blue
               fontWeight: '600'
             }}>🔥 127 students got help in the last 24 hours</span>
             
@@ -363,7 +344,7 @@ export function Hero() {
                 transition: 'background-color 0.2s ease'
               }}
               onMouseEnter={(e) => {
-                (e.target as HTMLElement).style.backgroundColor = 'rgba(0, 0, 0, 0.05)'
+                (e.target as HTMLElement).style.backgroundColor = 'rgba(37, 99, 235, 0.1)'
               }}
               onMouseLeave={(e) => {
                 (e.target as HTMLElement).style.backgroundColor = 'transparent'
@@ -375,7 +356,7 @@ export function Hero() {
         </div>
       )}
 
-      {/* Hero Section */}
+      {/* Hero Section - bringing back the powerful original layout */}
       <section style={{
         maxWidth: '1200px',
         margin: '0 auto',
@@ -389,15 +370,15 @@ export function Hero() {
           gap: '60px',
           alignItems: 'start'
         }}>
-          {/* Left Column - Keep unchanged */}
+          {/* Left Column - bringing back the powerful tagline */}
           <div style={{ paddingTop: '20px' }}>
-            {/* Trust Badge */}
+            {/* Trust Badge - with warm blue */}
             <div style={{
               display: 'inline-flex',
               alignItems: 'center',
               gap: '8px',
-              backgroundColor: '#F0F9FF',
-              border: '1px solid #E0F2FE',
+              backgroundColor: 'rgba(37, 99, 235, 0.08)', // subtle blue tint
+              border: '1px solid rgba(37, 99, 235, 0.2)',
               padding: '6px 12px',
               borderRadius: '20px',
               marginBottom: '24px'
@@ -405,36 +386,36 @@ export function Hero() {
               <div style={{
                 width: '6px',
                 height: '6px',
-                backgroundColor: '#3B82F6',
+                backgroundColor: '#2563EB', // warm blue
                 borderRadius: '50%'
               }} />
               <span style={{
                 fontSize: '12px',
                 fontWeight: '600',
-                color: '#1E40AF',
+                color: '#2563EB', // warm blue
                 letterSpacing: '0.3px'
               }}>TRUSTED BY 12,000+ STUDENTS</span>
             </div>
 
-            {/* Main Headline */}
+            {/* BRINGING BACK THE POWERFUL TAGLINE */}
             <h1 style={{
               fontSize: 'clamp(32px, 6vw, 52px)',
               fontWeight: '800',
               lineHeight: '1.1',
               margin: '0 0 20px 0',
               letterSpacing: '-0.04em',
-              color: '#18181B'
+              color: '#18181B' // strong black for maximum impact
             }}>
               Real students.
               <br />
-              <span style={{ color: '#3B82F6' }}>Real schools.</span>
+              <span style={{ color: '#2563EB' }}>Real schools.</span> {/* warm blue accent */}
               <br />
               Real results.
             </h1>
 
             <p style={{
               fontSize: '18px',
-              color: '#6B7280',
+              color: '#6B7280', // warm muted
               lineHeight: '1.6',
               margin: '0 0 32px 0',
               maxWidth: '420px',
@@ -444,7 +425,7 @@ export function Hero() {
               <strong style={{ color: '#18181B' }}> Save 70% vs traditional consultants.</strong>
             </p>
 
-            {/* Categories */}
+            {/* Categories - with warm styling */}
             <div style={{
               display: 'flex',
               flexWrap: 'wrap',
@@ -453,25 +434,26 @@ export function Hero() {
             }}>
               {categories.slice(0, 4).map((cat) => (
                 <button key={cat.name} style={{
-                  backgroundColor: 'white',
+                  backgroundColor: 'rgba(255, 255, 255, 0.8)',
                   border: '1px solid #E5E7EB',
-                  color: '#374151',
+                  color: '#6B7280',
                   padding: '8px 12px',
                   borderRadius: '20px',
                   fontSize: '13px',
                   cursor: 'pointer',
                   transition: 'all 0.2s ease',
                   fontWeight: '500',
-                  position: 'relative'
+                  position: 'relative',
+                  backdropFilter: 'blur(10px)'
                 }}
                 onMouseEnter={(e) => {
-                  (e.target as HTMLElement).style.borderColor = '#3B82F6'
-                  ;(e.target as HTMLElement).style.color = '#3B82F6'
+                  (e.target as HTMLElement).style.borderColor = '#2563EB' // warm blue
+                  ;(e.target as HTMLElement).style.color = '#2563EB'
                   ;(e.target as HTMLElement).style.transform = 'translateY(-1px)'
                 }}
                 onMouseLeave={(e) => {
                   (e.target as HTMLElement).style.borderColor = '#E5E7EB'
-                  ;(e.target as HTMLElement).style.color = '#374151'
+                  ;(e.target as HTMLElement).style.color = '#6B7280'
                   ;(e.target as HTMLElement).style.transform = 'translateY(0)'
                 }}>
                   {cat.name}
@@ -490,14 +472,14 @@ export function Hero() {
               ))}
             </div>
 
-            {/* CTA */}
+            {/* CTA - strong black for impact */}
             <div style={{
               display: 'flex',
               gap: '12px',
               marginBottom: '40px'
             }}>
               <button style={{
-                background: '#18181B',
+                background: '#18181B', // strong black
                 color: 'white',
                 border: 'none',
                 padding: '14px 24px',
@@ -519,15 +501,16 @@ export function Hero() {
               </button>
               
               <button style={{
-                backgroundColor: 'white',
-                color: '#374151',
+                backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                color: '#6B7280',
                 border: '1px solid #E5E7EB',
                 padding: '14px 24px',
                 borderRadius: '8px',
                 fontSize: '15px',
                 fontWeight: '600',
                 cursor: 'pointer',
-                transition: 'all 0.2s ease'
+                transition: 'all 0.2s ease',
+                backdropFilter: 'blur(10px)'
               }}
               onMouseEnter={(e) => {
                 (e.target as HTMLElement).style.borderColor = '#9CA3AF'
@@ -555,12 +538,12 @@ export function Hero() {
                   <div style={{ 
                     fontSize: '24px', 
                     fontWeight: '800', 
-                    color: '#18181B',
+                    color: '#18181B', // strong black
                     letterSpacing: '-0.02em'
                   }}>{stat.number}</div>
                   <div style={{ 
                     fontSize: '13px',
-                    color: '#6B7280',
+                    color: '#6B7280', // warm muted
                     fontWeight: '500'
                   }}>{stat.label}</div>
                 </div>
@@ -568,7 +551,7 @@ export function Hero() {
             </div>
           </div>
 
-          {/* Right Column - 2x2 Cards Grid */}
+          {/* BRINGING BACK THE ORIGINAL 2x2 CAROUSEL */}
           <div style={{
             position: 'relative',
             width: '660px',
@@ -579,7 +562,7 @@ export function Hero() {
               id="cardSlider"
               style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(4, 300px)',
+                gridTemplateColumns: 'repeat(4, 300px)', // 2x2 layout
                 gridTemplateRows: 'repeat(2, 320px)',
                 gap: '16px',
                 width: 'calc(1200px + 100px)',
@@ -592,10 +575,10 @@ export function Hero() {
                 <div 
                   key={consultant.name} 
                   style={{
-                    backgroundColor: 'white',
+                    backgroundColor: 'rgba(255, 255, 255, 0.95)', // warm white
                     borderRadius: '16px',
                     padding: '24px',
-                    border: '1px solid #F3F4F6',
+                    border: '1px solid rgba(229, 231, 235, 0.3)', // subtle border
                     height: '320px',
                     width: '300px',
                     display: 'flex',
@@ -604,7 +587,8 @@ export function Hero() {
                     transition: 'all 0.3s ease',
                     cursor: 'pointer',
                     position: 'relative',
-                    animation: `slideUp 0.6s ease-out ${index * 0.1}s both`
+                    animation: `slideUp 0.6s ease-out ${index * 0.1}s both`,
+                    backdropFilter: 'blur(10px)'
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.transform = 'translateY(-8px) scale(1.02)'
@@ -674,14 +658,14 @@ export function Hero() {
                       <h3 style={{
                         fontSize: '17px',
                         fontWeight: '700',
-                        color: '#18181B',
+                        color: '#18181B', // strong black
                         margin: '0 0 4px 0'
                       }}>
                         {consultant.name}
                       </h3>
                       <p style={{
                         fontSize: '13px',
-                        color: '#6B7280',
+                        color: '#6B7280', // warm muted
                         margin: '0 0 6px 0',
                         fontWeight: '500'
                       }}>
@@ -696,7 +680,7 @@ export function Hero() {
                         <span style={{
                           fontSize: '12px',
                           fontWeight: '600',
-                          color: '#18181B'
+                          color: '#18181B' // strong black
                         }}>
                           {consultant.rating}
                         </span>
@@ -729,7 +713,7 @@ export function Hero() {
                   {/* Bio */}
                   <p style={{
                     fontSize: '14px',
-                    color: '#6B7280',
+                    color: '#6B7280', // warm muted
                     lineHeight: '1.5',
                     margin: '0 0 auto 0',
                     fontWeight: '400'
@@ -743,7 +727,7 @@ export function Hero() {
                     alignItems: 'center',
                     justifyContent: 'space-between',
                     paddingTop: '16px',
-                    borderTop: '1px solid #F3F4F6',
+                    borderTop: '1px solid rgba(229, 231, 235, 0.3)',
                     marginTop: '16px'
                   }}>
                     <div>
@@ -757,14 +741,14 @@ export function Hero() {
                       <span style={{
                         fontSize: '20px',
                         fontWeight: '800',
-                        color: '#18181B'
+                        color: '#18181B' // strong black
                       }}>
                         {consultant.price}
                       </span>
                     </div>
                     
                     <button style={{
-                      background: '#18181B',
+                      background: '#18181B', // strong black
                       color: 'white',
                       border: 'none',
                       padding: '10px 18px',
@@ -775,7 +759,7 @@ export function Hero() {
                       transition: 'all 0.2s ease'
                     }}
                     onMouseEnter={(e) => {
-                      (e.target as HTMLElement).style.background = '#374151'
+                      (e.target as HTMLElement).style.background = '#374151' // warm black hover
                     }}
                     onMouseLeave={(e) => {
                       (e.target as HTMLElement).style.background = '#18181B'
@@ -788,7 +772,7 @@ export function Hero() {
               ))}
             </div>
             
-            {/* Left Navigation Arrow - Only show if not at start */}
+            {/* Left Navigation Arrow */}
             {currentPosition > 0 && (
               <button 
                 style={{
@@ -798,8 +782,8 @@ export function Hero() {
                   transform: 'translateY(-50%)',
                   width: '44px',
                   height: '44px',
-                  backgroundColor: 'white',
-                  border: '1px solid #E5E7EB',
+                  backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                  border: '1px solid rgba(229, 231, 235, 0.3)',
                   borderRadius: '50%',
                   display: 'flex',
                   alignItems: 'center',
@@ -807,15 +791,16 @@ export function Hero() {
                   cursor: 'pointer',
                   boxShadow: '0 8px 20px rgba(0, 0, 0, 0.08)',
                   transition: 'all 0.2s ease',
-                  zIndex: 10
+                  zIndex: 10,
+                  backdropFilter: 'blur(10px)'
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = '#F9FAFB'
+                  e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 1)'
                   e.currentTarget.style.transform = 'translateY(-50%) scale(1.1)'
                   e.currentTarget.style.boxShadow = '0 12px 30px rgba(0, 0, 0, 0.15)'
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = 'white'
+                  e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.95)'
                   e.currentTarget.style.transform = 'translateY(-50%) scale(1)'
                   e.currentTarget.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.08)'
                 }}
@@ -829,7 +814,7 @@ export function Hero() {
               </button>
             )}
 
-            {/* Right Navigation Arrow - Only show if not at end */}
+            {/* Right Navigation Arrow */}
             {currentPosition < Math.floor(consultants.length / 2) - 2 && (
               <button 
                 style={{
@@ -839,8 +824,8 @@ export function Hero() {
                   transform: 'translateY(-50%)',
                   width: '44px',
                   height: '44px',
-                  backgroundColor: 'white',
-                  border: '1px solid #E5E7EB',
+                  backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                  border: '1px solid rgba(229, 231, 235, 0.3)',
                   borderRadius: '50%',
                   display: 'flex',
                   alignItems: 'center',
@@ -848,15 +833,16 @@ export function Hero() {
                   cursor: 'pointer',
                   boxShadow: '0 8px 20px rgba(0, 0, 0, 0.08)',
                   transition: 'all 0.2s ease',
-                  zIndex: 10
+                  zIndex: 10,
+                  backdropFilter: 'blur(10px)'
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = '#F9FAFB'
+                  e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 1)'
                   e.currentTarget.style.transform = 'translateY(-50%) scale(1.1)'
                   e.currentTarget.style.boxShadow = '0 12px 30px rgba(0, 0, 0, 0.15)'
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = 'white'
+                  e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.95)'
                   e.currentTarget.style.transform = 'translateY(-50%) scale(1)'
                   e.currentTarget.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.08)'
                 }}
@@ -873,10 +859,10 @@ export function Hero() {
         </div>
       </section>
 
-      {/* Categories Section - Enhanced Contrast */}
+      {/* Popular Services Section - Refined with warm blue accents */}
       <section style={{
-        backgroundColor: '#F1F5F9',
-        borderTop: '1px solid #D1D5DB',
+        backgroundColor: 'rgba(37, 99, 235, 0.02)', // very subtle blue tint
+        borderTop: '1px solid rgba(229, 231, 235, 0.3)',
         padding: '80px 0'
       }}>
         <div style={{
@@ -886,10 +872,10 @@ export function Hero() {
         }}>
           <div style={{
             textAlign: 'center',
-            marginBottom: '50px'
+            marginBottom: '60px'
           }}>
             <h2 style={{
-              fontSize: '32px',
+              fontSize: '36px',
               fontWeight: '700',
               color: '#18181B',
               margin: '0 0 16px 0',
@@ -908,37 +894,40 @@ export function Hero() {
 
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
-            gap: '16px'
+            gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+            gap: '20px'
           }}>
             {categories.map((category, index) => (
               <div key={category.name} style={{
-                backgroundColor: 'white',
-                borderRadius: '16px',
-                padding: '24px 20px',
-                border: '1px solid #F3F4F6',
+                backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                borderRadius: '20px',
+                padding: '28px 24px',
+                border: '1px solid rgba(229, 231, 235, 0.3)',
                 textAlign: 'center',
                 cursor: 'pointer',
-                transition: 'all 0.2s ease',
+                transition: 'all 0.3s ease',
                 position: 'relative',
-                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)'
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.04)',
+                backdropFilter: 'blur(10px)'
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-4px)'
-                e.currentTarget.style.boxShadow = '0 12px 30px rgba(0, 0, 0, 0.1)'
-                e.currentTarget.style.borderColor = '#E5E7EB'
+                e.currentTarget.style.transform = 'translateY(-8px)'
+                e.currentTarget.style.boxShadow = '0 20px 40px rgba(37, 99, 235, 0.15)'
+                e.currentTarget.style.borderColor = 'rgba(37, 99, 235, 0.2)'
+                e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.95)'
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = 'translateY(0)'
-                e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.04)'
-                e.currentTarget.style.borderColor = '#F3F4F6'
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.04)'
+                e.currentTarget.style.borderColor = 'rgba(229, 231, 235, 0.3)'
+                e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.8)'
               }}>
                 {category.popular && (
                   <div style={{
                     position: 'absolute',
                     top: '-8px',
                     right: '-8px',
-                    background: '#EF4444',
+                    background: '#2563EB',
                     color: 'white',
                     padding: '4px 8px',
                     borderRadius: '12px',
@@ -947,15 +936,15 @@ export function Hero() {
                   }}>HOT</div>
                 )}
                 <h3 style={{
-                  fontSize: '16px',
+                  fontSize: '18px',
                   fontWeight: '600',
                   color: '#18181B',
-                  margin: '0 0 6px 0'
+                  margin: '0 0 8px 0'
                 }}>
                   {category.name}
                 </h3>
                 <p style={{
-                  fontSize: '13px',
+                  fontSize: '14px',
                   color: '#9CA3AF',
                   margin: '0',
                   fontWeight: '500'
@@ -968,10 +957,10 @@ export function Hero() {
         </div>
       </section>
 
-      {/* How it Works - White Background */}
+      {/* How it Works - Clean Anthropic style */}
       <section style={{
-        padding: '100px 0',
-        backgroundColor: 'white'
+        padding: '120px 0',
+        backgroundColor: '#FFFAF6' // keep warm background
       }}>
         <div style={{
           maxWidth: '1200px',
@@ -980,13 +969,13 @@ export function Hero() {
         }}>
           <div style={{
             textAlign: 'center',
-            marginBottom: '60px'
+            marginBottom: '80px'
           }}>
             <h2 style={{
-              fontSize: '36px',
+              fontSize: '42px',
               fontWeight: '700',
               color: '#18181B',
-              margin: '0 0 20px 0',
+              margin: '0 0 24px 0',
               letterSpacing: '-0.02em'
             }}>
               How Proofr works
@@ -996,7 +985,8 @@ export function Hero() {
               color: '#6B7280',
               maxWidth: '500px',
               margin: '0 auto',
-              fontWeight: '400'
+              fontWeight: '400',
+              lineHeight: '1.6'
             }}>
               Get expert guidance in three simple steps
             </p>
@@ -1004,8 +994,8 @@ export function Hero() {
 
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-            gap: '40px'
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gap: '60px'
           }}>
             {[
               {
@@ -1032,45 +1022,45 @@ export function Hero() {
                 position: 'relative'
               }}>
                 <div style={{
-                  width: '80px',
-                  height: '80px',
-                  backgroundColor: '#F1F5F9',
-                  borderRadius: '20px',
+                  width: '100px',
+                  height: '100px',
+                  backgroundColor: 'rgba(37, 99, 235, 0.08)',
+                  borderRadius: '24px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  margin: '0 auto 24px auto',
-                  fontSize: '32px',
-                  border: '1px solid #F3F4F6'
+                  margin: '0 auto 32px auto',
+                  fontSize: '36px',
+                  border: '1px solid rgba(37, 99, 235, 0.1)',
+                  position: 'relative'
                 }}>
                   {item.icon}
-                </div>
-                <div style={{
-                  position: 'absolute',
-                  top: '12px',
-                  left: '50%',
-                  transform: 'translateX(-50%) translateX(100px)',
-                  fontSize: '14px',
-                  fontWeight: '700',
-                  color: '#3B82F6',
-                  backgroundColor: '#F0F9FF',
-                  padding: '6px 12px',
-                  borderRadius: '16px',
-                  display: index < 2 ? 'block' : 'none',
-                  border: '1px solid #E0F2FE'
-                }}>
-                  {item.step}
+                  <div style={{
+                    position: 'absolute',
+                    top: '-12px',
+                    right: '-12px',
+                    fontSize: '14px',
+                    fontWeight: '700',
+                    color: '#2563EB',
+                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                    padding: '8px 12px',
+                    borderRadius: '20px',
+                    border: '1px solid rgba(37, 99, 235, 0.2)',
+                    backdropFilter: 'blur(10px)'
+                  }}>
+                    {item.step}
+                  </div>
                 </div>
                 <h3 style={{
-                  fontSize: '20px',
+                  fontSize: '24px',
                   fontWeight: '600',
                   color: '#18181B',
-                  margin: '0 0 12px 0'
+                  margin: '0 0 16px 0'
                 }}>
                   {item.title}
                 </h3>
                 <p style={{
-                  fontSize: '15px',
+                  fontSize: '16px',
                   color: '#6B7280',
                   margin: '0',
                   lineHeight: '1.6',
@@ -1084,11 +1074,11 @@ export function Hero() {
         </div>
       </section>
 
-      {/* Social Proof - Darker Background */}
+      {/* Social Proof - Anthropic inspired */}
       <section style={{
-        backgroundColor: '#E2E8F0',
-        padding: '80px 0',
-        borderTop: '1px solid #CBD5E1'
+        backgroundColor: 'rgba(37, 99, 235, 0.02)',
+        padding: '100px 0',
+        borderTop: '1px solid rgba(229, 231, 235, 0.3)'
       }}>
         <div style={{
           maxWidth: '1200px',
@@ -1097,20 +1087,20 @@ export function Hero() {
         }}>
           <div style={{
             textAlign: 'center',
-            marginBottom: '50px'
+            marginBottom: '60px'
           }}>
             <h2 style={{
-              fontSize: '28px',
+              fontSize: '32px',
               fontWeight: '600',
               color: '#18181B',
-              margin: '0 0 12px 0'
+              margin: '0 0 16px 0'
             }}>
               Trusted by students at top universities
             </h2>
             <p style={{
-              fontSize: '16px',
-              color: '#9CA3AF',
-              fontWeight: '500'
+              fontSize: '18px',
+              color: '#6B7280',
+              fontWeight: '400'
             }}>
               Join thousands who've successfully navigated admissions
             </p>
@@ -1120,14 +1110,14 @@ export function Hero() {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            gap: '50px',
+            gap: '60px',
             flexWrap: 'wrap',
-            opacity: 0.7,
-            marginBottom: '60px'
+            opacity: 0.8,
+            marginBottom: '80px'
           }}>
             {['Harvard', 'Stanford', 'MIT', 'Yale', 'Princeton', 'Columbia'].map((school) => (
               <div key={school} style={{
-                fontSize: '16px',
+                fontSize: '18px',
                 fontWeight: '600',
                 color: '#6B7280',
                 letterSpacing: '0.5px'
@@ -1137,16 +1127,17 @@ export function Hero() {
             ))}
           </div>
 
-          {/* Stats */}
+          {/* Stats - Anthropic style cards */}
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-            gap: '24px',
-            padding: '32px 20px',
-            backgroundColor: 'white',
-            borderRadius: '20px',
-            border: '1px solid #F3F4F6',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.06)'
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+            gap: '32px',
+            padding: '40px 32px',
+            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+            borderRadius: '24px',
+            border: '1px solid rgba(229, 231, 235, 0.3)',
+            boxShadow: '0 20px 40px rgba(0, 0, 0, 0.04)',
+            backdropFilter: 'blur(10px)'
           }}>
             {[
               { number: '12,000+', label: 'Students helped' },
@@ -1156,15 +1147,15 @@ export function Hero() {
             ].map((stat, index) => (
               <div key={index} style={{ textAlign: 'center' }}>
                 <div style={{
-                  fontSize: '24px',
+                  fontSize: '28px',
                   fontWeight: '800',
                   color: '#18181B',
-                  marginBottom: '6px'
+                  marginBottom: '8px'
                 }}>
                   {stat.number}
                 </div>
                 <div style={{
-                  fontSize: '13px',
+                  fontSize: '14px',
                   color: '#6B7280',
                   fontWeight: '500'
                 }}>
@@ -1176,10 +1167,10 @@ export function Hero() {
         </div>
       </section>
 
-      {/* Final CTA - Strong Contrast */}
+      {/* Final CTA - Strong but warm */}
       <section style={{
-        backgroundColor: '#0F172A',
-        padding: '100px 0',
+        backgroundColor: '#18181B',
+        padding: '120px 0',
         position: 'relative',
         overflow: 'hidden'
       }}>
@@ -1189,7 +1180,7 @@ export function Hero() {
           left: '0',
           right: '0',
           bottom: '0',
-          background: 'radial-gradient(circle at 30% 40%, rgba(59, 130, 246, 0.15) 0%, transparent 50%)',
+          background: 'radial-gradient(circle at 30% 40%, rgba(37, 99, 235, 0.15) 0%, transparent 50%)',
           pointerEvents: 'none'
         }} />
         
@@ -1202,10 +1193,10 @@ export function Hero() {
           zIndex: 1
         }}>
           <h2 style={{
-            fontSize: '40px',
+            fontSize: '48px',
             fontWeight: '700',
             color: 'white',
-            margin: '0 0 20px 0',
+            margin: '0 0 24px 0',
             letterSpacing: '-0.02em'
           }}>
             Ready to get started?
@@ -1213,10 +1204,11 @@ export function Hero() {
           <p style={{
             fontSize: '20px',
             color: 'rgba(255, 255, 255, 0.8)',
-            margin: '0 0 40px 0',
+            margin: '0 0 48px 0',
             maxWidth: '500px',
             marginLeft: 'auto',
-            marginRight: 'auto'
+            marginRight: 'auto',
+            lineHeight: '1.6'
           }}>
             Join thousands of students who've transformed their applications with expert guidance.
           </p>
@@ -1228,19 +1220,19 @@ export function Hero() {
             flexWrap: 'wrap'
           }}>
             <button style={{
-              background: '#3B82F6',
+              background: '#2563EB', // warm blue
               color: 'white',
               border: 'none',
-              padding: '18px 36px',
-              borderRadius: '10px',
-              fontSize: '17px',
+              padding: '20px 40px',
+              borderRadius: '12px',
+              fontSize: '18px',
               fontWeight: '600',
               cursor: 'pointer',
-              transition: 'all 0.2s ease'
+              transition: 'all 0.3s ease'
             }}
             onMouseEnter={(e) => {
               (e.target as HTMLElement).style.transform = 'translateY(-2px)'
-              ;(e.target as HTMLElement).style.boxShadow = '0 12px 30px rgba(59, 130, 246, 0.4)'
+              ;(e.target as HTMLElement).style.boxShadow = '0 12px 30px rgba(37, 99, 235, 0.4)'
             }}
             onMouseLeave={(e) => {
               (e.target as HTMLElement).style.transform = 'translateY(0)'
@@ -1253,12 +1245,12 @@ export function Hero() {
               backgroundColor: 'transparent',
               color: 'white',
               border: '2px solid rgba(255, 255, 255, 0.3)',
-              padding: '16px 36px',
-              borderRadius: '10px',
-              fontSize: '17px',
+              padding: '18px 40px',
+              borderRadius: '12px',
+              fontSize: '18px',
               fontWeight: '600',
               cursor: 'pointer',
-              transition: 'all 0.2s ease'
+              transition: 'all 0.3s ease'
             }}
             onMouseEnter={(e) => {
               (e.target as HTMLElement).style.backgroundColor = 'rgba(255, 255, 255, 0.1)'
@@ -1293,9 +1285,6 @@ export function Hero() {
           50% {
             opacity: 0.5;
           }
-        }
-        #cardSlider::-webkit-scrollbar {
-          display: none;
         }
         @media (max-width: 768px) {
           #cardSlider {

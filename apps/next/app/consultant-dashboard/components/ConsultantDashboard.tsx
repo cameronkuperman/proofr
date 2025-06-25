@@ -15,7 +15,7 @@ export default function ConsultantDashboard() {
   const renderContent = () => {
     switch (activeTab) {
       case 'dashboard':
-        return <DashboardMain />
+        return <DashboardMain onNavigate={setActiveTab} />
       case 'gigs':
         return <GigPipeline />
       case 'profile':
@@ -25,7 +25,7 @@ export default function ConsultantDashboard() {
       case 'analytics':
         return <Analytics />
       default:
-        return <DashboardMain />
+        return <DashboardMain onNavigate={setActiveTab} />
     }
   }
 

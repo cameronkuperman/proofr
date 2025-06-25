@@ -2484,9 +2484,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-navigation/core@npm:^7.11.0":
-  version: 7.11.0
-  resolution: "@react-navigation/core@npm:7.11.0"
+"@react-navigation/core@npm:^7.12.1":
+  version: 7.12.1
+  resolution: "@react-navigation/core@npm:7.12.1"
   dependencies:
     "@react-navigation/routers": "npm:^7.4.1"
     escape-string-regexp: "npm:^4.0.0"
@@ -2497,50 +2497,51 @@ __metadata:
     use-sync-external-store: "npm:^1.5.0"
   peerDependencies:
     react: ">= 18.2.0"
-  checksum: 10/d6a7c005c57128eabe9409da0e8012aa04d39f5d96205b73c349139cc041328139dc277fb6525c029cb303ca8bd293ebce5ba474db58c83ba22519055f59a57f
+  checksum: 10/efc8d06cde19f64bf9e25240612086e0c8feb4b7fc7bdd5a7bae1d743a711abd1c83596597bf044a79b7830fc32b65a125313700235e62b99772ca3213e2ca17
   languageName: node
   linkType: hard
 
-"@react-navigation/elements@npm:^2.4.5":
-  version: 2.4.5
-  resolution: "@react-navigation/elements@npm:2.4.5"
+"@react-navigation/elements@npm:^2.5.1":
+  version: 2.5.1
+  resolution: "@react-navigation/elements@npm:2.5.1"
   dependencies:
     color: "npm:^4.2.3"
     use-latest-callback: "npm:^0.2.4"
+    use-sync-external-store: "npm:^1.5.0"
   peerDependencies:
     "@react-native-masked-view/masked-view": ">= 0.2.0"
-    "@react-navigation/native": ^7.1.12
+    "@react-navigation/native": ^7.1.14
     react: ">= 18.2.0"
     react-native: "*"
     react-native-safe-area-context: ">= 4.0.0"
   peerDependenciesMeta:
     "@react-native-masked-view/masked-view":
       optional: true
-  checksum: 10/01a88c303adf5cc502cac23f3ce7da2b9ea34d746f9f0a9cccc3026f6c0adb82e2a9ac04b339298ff62b48afc0cb257cb6c9dc887445b31b9cc8e9b648784c76
+  checksum: 10/008b6db98cf94b3ef218668bf1fb5777c560337e6f5cbf9e34cd8001199fdef00665f7e702e7932393a5450b741138e3601c4a723042c6201fb402474a1d96b7
   languageName: node
   linkType: hard
 
 "@react-navigation/native-stack@npm:^7.2.1":
-  version: 7.3.17
-  resolution: "@react-navigation/native-stack@npm:7.3.17"
+  version: 7.3.20
+  resolution: "@react-navigation/native-stack@npm:7.3.20"
   dependencies:
-    "@react-navigation/elements": "npm:^2.4.5"
+    "@react-navigation/elements": "npm:^2.5.1"
     warn-once: "npm:^0.1.1"
   peerDependencies:
-    "@react-navigation/native": ^7.1.12
+    "@react-navigation/native": ^7.1.14
     react: ">= 18.2.0"
     react-native: "*"
     react-native-safe-area-context: ">= 4.0.0"
     react-native-screens: ">= 4.0.0"
-  checksum: 10/6546dabb4493c62d616a29419f3910e77aba5f1de04aea6035b24a48b656cc7249585df4e0d5ea3dac44e21091b667cbb6ddd133b308eada9e86c60c1dfad059
+  checksum: 10/ef7802e20399c594c80dfd1392fead36de91641e4e8a18d0d31ec5bfa0a384e4038721c8e5209b3e22826f5ef9cdfc7bd81c1e2783bf816b6daba400b9045420
   languageName: node
   linkType: hard
 
 "@react-navigation/native@npm:^7.0.15":
-  version: 7.1.12
-  resolution: "@react-navigation/native@npm:7.1.12"
+  version: 7.1.14
+  resolution: "@react-navigation/native@npm:7.1.14"
   dependencies:
-    "@react-navigation/core": "npm:^7.11.0"
+    "@react-navigation/core": "npm:^7.12.1"
     escape-string-regexp: "npm:^4.0.0"
     fast-deep-equal: "npm:^3.1.3"
     nanoid: "npm:^3.3.11"
@@ -2548,7 +2549,7 @@ __metadata:
   peerDependencies:
     react: ">= 18.2.0"
     react-native: "*"
-  checksum: 10/35c700c3925a29d21c4c065e6322436f5238904fb6bf576c4481a12524266a993b7ffca645ce40fa16f5cbedee74f52e1a1f5b7646dd90f0239be21a45aa35cc
+  checksum: 10/167ab132a2d06a41f969d62b47bd78ca961406af68f57cd954e17815c1ea1ba01eb9e0470cbaa6fb1fd11d0515f608b0771fb97165792e2d75c6194d6ff4996e
   languageName: node
   linkType: hard
 
@@ -2946,137 +2947,137 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@unrs/resolver-binding-android-arm-eabi@npm:1.9.0":
-  version: 1.9.0
-  resolution: "@unrs/resolver-binding-android-arm-eabi@npm:1.9.0"
+"@unrs/resolver-binding-android-arm-eabi@npm:1.9.1":
+  version: 1.9.1
+  resolution: "@unrs/resolver-binding-android-arm-eabi@npm:1.9.1"
   conditions: os=android & cpu=arm
   languageName: node
   linkType: hard
 
-"@unrs/resolver-binding-android-arm64@npm:1.9.0":
-  version: 1.9.0
-  resolution: "@unrs/resolver-binding-android-arm64@npm:1.9.0"
+"@unrs/resolver-binding-android-arm64@npm:1.9.1":
+  version: 1.9.1
+  resolution: "@unrs/resolver-binding-android-arm64@npm:1.9.1"
   conditions: os=android & cpu=arm64
   languageName: node
   linkType: hard
 
-"@unrs/resolver-binding-darwin-arm64@npm:1.9.0":
-  version: 1.9.0
-  resolution: "@unrs/resolver-binding-darwin-arm64@npm:1.9.0"
+"@unrs/resolver-binding-darwin-arm64@npm:1.9.1":
+  version: 1.9.1
+  resolution: "@unrs/resolver-binding-darwin-arm64@npm:1.9.1"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"@unrs/resolver-binding-darwin-x64@npm:1.9.0":
-  version: 1.9.0
-  resolution: "@unrs/resolver-binding-darwin-x64@npm:1.9.0"
+"@unrs/resolver-binding-darwin-x64@npm:1.9.1":
+  version: 1.9.1
+  resolution: "@unrs/resolver-binding-darwin-x64@npm:1.9.1"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"@unrs/resolver-binding-freebsd-x64@npm:1.9.0":
-  version: 1.9.0
-  resolution: "@unrs/resolver-binding-freebsd-x64@npm:1.9.0"
+"@unrs/resolver-binding-freebsd-x64@npm:1.9.1":
+  version: 1.9.1
+  resolution: "@unrs/resolver-binding-freebsd-x64@npm:1.9.1"
   conditions: os=freebsd & cpu=x64
   languageName: node
   linkType: hard
 
-"@unrs/resolver-binding-linux-arm-gnueabihf@npm:1.9.0":
-  version: 1.9.0
-  resolution: "@unrs/resolver-binding-linux-arm-gnueabihf@npm:1.9.0"
+"@unrs/resolver-binding-linux-arm-gnueabihf@npm:1.9.1":
+  version: 1.9.1
+  resolution: "@unrs/resolver-binding-linux-arm-gnueabihf@npm:1.9.1"
   conditions: os=linux & cpu=arm
   languageName: node
   linkType: hard
 
-"@unrs/resolver-binding-linux-arm-musleabihf@npm:1.9.0":
-  version: 1.9.0
-  resolution: "@unrs/resolver-binding-linux-arm-musleabihf@npm:1.9.0"
+"@unrs/resolver-binding-linux-arm-musleabihf@npm:1.9.1":
+  version: 1.9.1
+  resolution: "@unrs/resolver-binding-linux-arm-musleabihf@npm:1.9.1"
   conditions: os=linux & cpu=arm
   languageName: node
   linkType: hard
 
-"@unrs/resolver-binding-linux-arm64-gnu@npm:1.9.0":
-  version: 1.9.0
-  resolution: "@unrs/resolver-binding-linux-arm64-gnu@npm:1.9.0"
+"@unrs/resolver-binding-linux-arm64-gnu@npm:1.9.1":
+  version: 1.9.1
+  resolution: "@unrs/resolver-binding-linux-arm64-gnu@npm:1.9.1"
   conditions: os=linux & cpu=arm64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@unrs/resolver-binding-linux-arm64-musl@npm:1.9.0":
-  version: 1.9.0
-  resolution: "@unrs/resolver-binding-linux-arm64-musl@npm:1.9.0"
+"@unrs/resolver-binding-linux-arm64-musl@npm:1.9.1":
+  version: 1.9.1
+  resolution: "@unrs/resolver-binding-linux-arm64-musl@npm:1.9.1"
   conditions: os=linux & cpu=arm64 & libc=musl
   languageName: node
   linkType: hard
 
-"@unrs/resolver-binding-linux-ppc64-gnu@npm:1.9.0":
-  version: 1.9.0
-  resolution: "@unrs/resolver-binding-linux-ppc64-gnu@npm:1.9.0"
+"@unrs/resolver-binding-linux-ppc64-gnu@npm:1.9.1":
+  version: 1.9.1
+  resolution: "@unrs/resolver-binding-linux-ppc64-gnu@npm:1.9.1"
   conditions: os=linux & cpu=ppc64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@unrs/resolver-binding-linux-riscv64-gnu@npm:1.9.0":
-  version: 1.9.0
-  resolution: "@unrs/resolver-binding-linux-riscv64-gnu@npm:1.9.0"
+"@unrs/resolver-binding-linux-riscv64-gnu@npm:1.9.1":
+  version: 1.9.1
+  resolution: "@unrs/resolver-binding-linux-riscv64-gnu@npm:1.9.1"
   conditions: os=linux & cpu=riscv64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@unrs/resolver-binding-linux-riscv64-musl@npm:1.9.0":
-  version: 1.9.0
-  resolution: "@unrs/resolver-binding-linux-riscv64-musl@npm:1.9.0"
+"@unrs/resolver-binding-linux-riscv64-musl@npm:1.9.1":
+  version: 1.9.1
+  resolution: "@unrs/resolver-binding-linux-riscv64-musl@npm:1.9.1"
   conditions: os=linux & cpu=riscv64 & libc=musl
   languageName: node
   linkType: hard
 
-"@unrs/resolver-binding-linux-s390x-gnu@npm:1.9.0":
-  version: 1.9.0
-  resolution: "@unrs/resolver-binding-linux-s390x-gnu@npm:1.9.0"
+"@unrs/resolver-binding-linux-s390x-gnu@npm:1.9.1":
+  version: 1.9.1
+  resolution: "@unrs/resolver-binding-linux-s390x-gnu@npm:1.9.1"
   conditions: os=linux & cpu=s390x & libc=glibc
   languageName: node
   linkType: hard
 
-"@unrs/resolver-binding-linux-x64-gnu@npm:1.9.0":
-  version: 1.9.0
-  resolution: "@unrs/resolver-binding-linux-x64-gnu@npm:1.9.0"
+"@unrs/resolver-binding-linux-x64-gnu@npm:1.9.1":
+  version: 1.9.1
+  resolution: "@unrs/resolver-binding-linux-x64-gnu@npm:1.9.1"
   conditions: os=linux & cpu=x64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@unrs/resolver-binding-linux-x64-musl@npm:1.9.0":
-  version: 1.9.0
-  resolution: "@unrs/resolver-binding-linux-x64-musl@npm:1.9.0"
+"@unrs/resolver-binding-linux-x64-musl@npm:1.9.1":
+  version: 1.9.1
+  resolution: "@unrs/resolver-binding-linux-x64-musl@npm:1.9.1"
   conditions: os=linux & cpu=x64 & libc=musl
   languageName: node
   linkType: hard
 
-"@unrs/resolver-binding-wasm32-wasi@npm:1.9.0":
-  version: 1.9.0
-  resolution: "@unrs/resolver-binding-wasm32-wasi@npm:1.9.0"
+"@unrs/resolver-binding-wasm32-wasi@npm:1.9.1":
+  version: 1.9.1
+  resolution: "@unrs/resolver-binding-wasm32-wasi@npm:1.9.1"
   dependencies:
     "@napi-rs/wasm-runtime": "npm:^0.2.11"
   conditions: cpu=wasm32
   languageName: node
   linkType: hard
 
-"@unrs/resolver-binding-win32-arm64-msvc@npm:1.9.0":
-  version: 1.9.0
-  resolution: "@unrs/resolver-binding-win32-arm64-msvc@npm:1.9.0"
+"@unrs/resolver-binding-win32-arm64-msvc@npm:1.9.1":
+  version: 1.9.1
+  resolution: "@unrs/resolver-binding-win32-arm64-msvc@npm:1.9.1"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
 
-"@unrs/resolver-binding-win32-ia32-msvc@npm:1.9.0":
-  version: 1.9.0
-  resolution: "@unrs/resolver-binding-win32-ia32-msvc@npm:1.9.0"
+"@unrs/resolver-binding-win32-ia32-msvc@npm:1.9.1":
+  version: 1.9.1
+  resolution: "@unrs/resolver-binding-win32-ia32-msvc@npm:1.9.1"
   conditions: os=win32 & cpu=ia32
   languageName: node
   linkType: hard
 
-"@unrs/resolver-binding-win32-x64-msvc@npm:1.9.0":
-  version: 1.9.0
-  resolution: "@unrs/resolver-binding-win32-x64-msvc@npm:1.9.0"
+"@unrs/resolver-binding-win32-x64-msvc@npm:1.9.1":
+  version: 1.9.1
+  resolution: "@unrs/resolver-binding-win32-x64-msvc@npm:1.9.1"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
@@ -3316,7 +3317,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"array-includes@npm:^3.1.6, array-includes@npm:^3.1.8":
+"array-includes@npm:^3.1.6, array-includes@npm:^3.1.8, array-includes@npm:^3.1.9":
   version: 3.1.9
   resolution: "array-includes@npm:3.1.9"
   dependencies:
@@ -3353,7 +3354,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"array.prototype.findlastindex@npm:^1.2.5":
+"array.prototype.findlastindex@npm:^1.2.6":
   version: 1.2.6
   resolution: "array.prototype.findlastindex@npm:1.2.6"
   dependencies:
@@ -3368,7 +3369,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"array.prototype.flat@npm:^1.3.1, array.prototype.flat@npm:^1.3.2":
+"array.prototype.flat@npm:^1.3.1, array.prototype.flat@npm:^1.3.3":
   version: 1.3.3
   resolution: "array.prototype.flat@npm:1.3.3"
   dependencies:
@@ -3935,9 +3936,9 @@ __metadata:
   linkType: hard
 
 "caniuse-lite@npm:^1.0.30001579, caniuse-lite@npm:^1.0.30001702, caniuse-lite@npm:^1.0.30001718":
-  version: 1.0.30001723
-  resolution: "caniuse-lite@npm:1.0.30001723"
-  checksum: 10/edab89e84a2b257cf640f0bac1f25f92c699ade86143b2affc73403468f894023416a9f4a99e5345c933956990b005a2facfb87ac4517c8ccb588819bb62453b
+  version: 1.0.30001724
+  resolution: "caniuse-lite@npm:1.0.30001724"
+  checksum: 10/0e95811e7c33410ec458784726b97f50f07fb0f6f17b2b17789bb2d5ba1ff126daa24549d698c0a8729f5236d98fde04bb44a3def22eb4667ac15bd80f20a4f2
   languageName: node
   linkType: hard
 
@@ -4549,9 +4550,9 @@ __metadata:
   linkType: hard
 
 "electron-to-chromium@npm:^1.5.160":
-  version: 1.5.170
-  resolution: "electron-to-chromium@npm:1.5.170"
-  checksum: 10/7d9d86aadc3d444e5fa743c512fe8da566f6c8fd02fd1d79dd966577b60a13838e642eab8db2075418b476deb9d5ca6d8d89a07da06fdcf4e12964e1c8101521
+  version: 1.5.172
+  resolution: "electron-to-chromium@npm:1.5.172"
+  checksum: 10/46bd4d22c39ac63de05c8dfa1f5d3b179c336e4cc845a4a76153fdac7d5ae67c5a4ea71fe2e826e64b1a0d9959431c0a815ddf9b213dccc03d69aa2768d2ad33
   languageName: node
   linkType: hard
 
@@ -4865,44 +4866,44 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-module-utils@npm:^2.12.0":
-  version: 2.12.0
-  resolution: "eslint-module-utils@npm:2.12.0"
+"eslint-module-utils@npm:^2.12.1":
+  version: 2.12.1
+  resolution: "eslint-module-utils@npm:2.12.1"
   dependencies:
     debug: "npm:^3.2.7"
   peerDependenciesMeta:
     eslint:
       optional: true
-  checksum: 10/dd27791147eca17366afcb83f47d6825b6ce164abb256681e5de4ec1d7e87d8605641eb869298a0dbc70665e2446dbcc2f40d3e1631a9475dd64dd23d4ca5dee
+  checksum: 10/bd25d6610ec3abaa50e8f1beb0119541562bbb8dd02c035c7e887976fe1e0c5dd8175f4607ca8d86d1146df24d52a071bd3d1dd329f6902bd58df805a8ca16d3
   languageName: node
   linkType: hard
 
 "eslint-plugin-import@npm:^2.26.0":
-  version: 2.31.0
-  resolution: "eslint-plugin-import@npm:2.31.0"
+  version: 2.32.0
+  resolution: "eslint-plugin-import@npm:2.32.0"
   dependencies:
     "@rtsao/scc": "npm:^1.1.0"
-    array-includes: "npm:^3.1.8"
-    array.prototype.findlastindex: "npm:^1.2.5"
-    array.prototype.flat: "npm:^1.3.2"
-    array.prototype.flatmap: "npm:^1.3.2"
+    array-includes: "npm:^3.1.9"
+    array.prototype.findlastindex: "npm:^1.2.6"
+    array.prototype.flat: "npm:^1.3.3"
+    array.prototype.flatmap: "npm:^1.3.3"
     debug: "npm:^3.2.7"
     doctrine: "npm:^2.1.0"
     eslint-import-resolver-node: "npm:^0.3.9"
-    eslint-module-utils: "npm:^2.12.0"
+    eslint-module-utils: "npm:^2.12.1"
     hasown: "npm:^2.0.2"
-    is-core-module: "npm:^2.15.1"
+    is-core-module: "npm:^2.16.1"
     is-glob: "npm:^4.0.3"
     minimatch: "npm:^3.1.2"
     object.fromentries: "npm:^2.0.8"
     object.groupby: "npm:^1.0.3"
-    object.values: "npm:^1.2.0"
+    object.values: "npm:^1.2.1"
     semver: "npm:^6.3.1"
-    string.prototype.trimend: "npm:^1.0.8"
+    string.prototype.trimend: "npm:^1.0.9"
     tsconfig-paths: "npm:^3.15.0"
   peerDependencies:
     eslint: ^2 || ^3 || ^4 || ^5 || ^6 || ^7.2.0 || ^8 || ^9
-  checksum: 10/6b76bd009ac2db0615d9019699d18e2a51a86cb8c1d0855a35fb1b418be23b40239e6debdc6e8c92c59f1468ed0ea8d7b85c817117a113d5cc225be8a02ad31c
+  checksum: 10/1bacf4967e9ebf99e12176a795f0d6d3a87d1c9a030c2207f27b267e10d96a1220be2647504c7fc13ab543cdf13ffef4b8f5620e0447032dba4ff0d3922f7c9e
   languageName: node
   linkType: hard
 
@@ -5530,6 +5531,28 @@ __metadata:
   version: 4.3.7
   resolution: "fraction.js@npm:4.3.7"
   checksum: 10/bb5ebcdeeffcdc37b68ead3bdfc244e68de188e0c64e9702197333c72963b95cc798883ad16adc21588088b942bca5b6a6ff4aeb1362d19f6f3b629035dc15f5
+  languageName: node
+  linkType: hard
+
+"framer-motion@npm:^12.19.1":
+  version: 12.19.1
+  resolution: "framer-motion@npm:12.19.1"
+  dependencies:
+    motion-dom: "npm:^12.19.0"
+    motion-utils: "npm:^12.19.0"
+    tslib: "npm:^2.4.0"
+  peerDependencies:
+    "@emotion/is-prop-valid": "*"
+    react: ^18.0.0 || ^19.0.0
+    react-dom: ^18.0.0 || ^19.0.0
+  peerDependenciesMeta:
+    "@emotion/is-prop-valid":
+      optional: true
+    react:
+      optional: true
+    react-dom:
+      optional: true
+  checksum: 10/d47c304ffea064572d5c81a1b6150b896c177a6910e2ef22200a58ca48283436446228ca4710433c8f20110efced5908b1db64c7b0dc8f72249cfb20206e50da
   languageName: node
   linkType: hard
 
@@ -6220,7 +6243,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"is-core-module@npm:^2.13.0, is-core-module@npm:^2.15.1, is-core-module@npm:^2.16.0":
+"is-core-module@npm:^2.13.0, is-core-module@npm:^2.16.0, is-core-module@npm:^2.16.1":
   version: 2.16.1
   resolution: "is-core-module@npm:2.16.1"
   dependencies:
@@ -7507,6 +7530,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"motion-dom@npm:^12.19.0":
+  version: 12.19.0
+  resolution: "motion-dom@npm:12.19.0"
+  dependencies:
+    motion-utils: "npm:^12.19.0"
+  checksum: 10/52aa28dc43fd727bebdbea64717e4dec8e7cb5ab0e001b465ee25526378fdbbd8bdd2b35004069192469872cb55c7b63f435df71ac8315a32fada9d7885576c6
+  languageName: node
+  linkType: hard
+
+"motion-utils@npm:^12.19.0":
+  version: 12.19.0
+  resolution: "motion-utils@npm:12.19.0"
+  checksum: 10/a6fe6b329bf4e2070bb95788218f36f0d7ea6cc3098e6ea2646ed68d5be88d25fa30e55284463ace78d19a5e19714875a7b70055bd86ae6e52a5fdee08438470
+  languageName: node
+  linkType: hard
+
 "ms@npm:2.0.0":
   version: 2.0.0
   resolution: "ms@npm:2.0.0"
@@ -7851,7 +7890,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"object.values@npm:^1.1.6, object.values@npm:^1.2.0, object.values@npm:^1.2.1":
+"object.values@npm:^1.1.6, object.values@npm:^1.2.1":
   version: 1.2.1
   resolution: "object.values@npm:1.2.1"
   dependencies:
@@ -8385,6 +8424,7 @@ __metadata:
     "@types/react-native-web": "npm:^0"
     eslint: "npm:^8.21.0"
     expo: "npm:^53.0.0"
+    framer-motion: "npm:^12.19.1"
     react: "npm:^19.0.0"
     react-dom: "npm:^19.0.0"
     react-native: "npm:0.79.2"
@@ -9702,7 +9742,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"string.prototype.trimend@npm:^1.0.8, string.prototype.trimend@npm:^1.0.9":
+"string.prototype.trimend@npm:^1.0.9":
   version: 1.0.9
   resolution: "string.prototype.trimend@npm:1.0.9"
   dependencies:
@@ -9940,8 +9980,8 @@ __metadata:
   linkType: hard
 
 "terser@npm:^5.15.0":
-  version: 5.43.0
-  resolution: "terser@npm:5.43.0"
+  version: 5.43.1
+  resolution: "terser@npm:5.43.1"
   dependencies:
     "@jridgewell/source-map": "npm:^0.3.3"
     acorn: "npm:^8.14.0"
@@ -9949,7 +9989,7 @@ __metadata:
     source-map-support: "npm:~0.5.20"
   bin:
     terser: bin/terser
-  checksum: 10/e6141c5364eec85067b4b3e509f4d50638f022ed685965126e24209e5e2c77fab8fffbe0bfb6ed153839a225cc9eab266ac25a55272283a2653c328310e05b18
+  checksum: 10/c0a0fd62319e0ce66e800f57ae12ef4ca45f12e9422dac160b866f0d890d01f8b547c96de2557b8443d96953db36be5d900e8006436ef9f628dbd38082e8fe5d
   languageName: node
   linkType: hard
 
@@ -10369,28 +10409,28 @@ __metadata:
   linkType: hard
 
 "unrs-resolver@npm:^1.6.2":
-  version: 1.9.0
-  resolution: "unrs-resolver@npm:1.9.0"
+  version: 1.9.1
+  resolution: "unrs-resolver@npm:1.9.1"
   dependencies:
-    "@unrs/resolver-binding-android-arm-eabi": "npm:1.9.0"
-    "@unrs/resolver-binding-android-arm64": "npm:1.9.0"
-    "@unrs/resolver-binding-darwin-arm64": "npm:1.9.0"
-    "@unrs/resolver-binding-darwin-x64": "npm:1.9.0"
-    "@unrs/resolver-binding-freebsd-x64": "npm:1.9.0"
-    "@unrs/resolver-binding-linux-arm-gnueabihf": "npm:1.9.0"
-    "@unrs/resolver-binding-linux-arm-musleabihf": "npm:1.9.0"
-    "@unrs/resolver-binding-linux-arm64-gnu": "npm:1.9.0"
-    "@unrs/resolver-binding-linux-arm64-musl": "npm:1.9.0"
-    "@unrs/resolver-binding-linux-ppc64-gnu": "npm:1.9.0"
-    "@unrs/resolver-binding-linux-riscv64-gnu": "npm:1.9.0"
-    "@unrs/resolver-binding-linux-riscv64-musl": "npm:1.9.0"
-    "@unrs/resolver-binding-linux-s390x-gnu": "npm:1.9.0"
-    "@unrs/resolver-binding-linux-x64-gnu": "npm:1.9.0"
-    "@unrs/resolver-binding-linux-x64-musl": "npm:1.9.0"
-    "@unrs/resolver-binding-wasm32-wasi": "npm:1.9.0"
-    "@unrs/resolver-binding-win32-arm64-msvc": "npm:1.9.0"
-    "@unrs/resolver-binding-win32-ia32-msvc": "npm:1.9.0"
-    "@unrs/resolver-binding-win32-x64-msvc": "npm:1.9.0"
+    "@unrs/resolver-binding-android-arm-eabi": "npm:1.9.1"
+    "@unrs/resolver-binding-android-arm64": "npm:1.9.1"
+    "@unrs/resolver-binding-darwin-arm64": "npm:1.9.1"
+    "@unrs/resolver-binding-darwin-x64": "npm:1.9.1"
+    "@unrs/resolver-binding-freebsd-x64": "npm:1.9.1"
+    "@unrs/resolver-binding-linux-arm-gnueabihf": "npm:1.9.1"
+    "@unrs/resolver-binding-linux-arm-musleabihf": "npm:1.9.1"
+    "@unrs/resolver-binding-linux-arm64-gnu": "npm:1.9.1"
+    "@unrs/resolver-binding-linux-arm64-musl": "npm:1.9.1"
+    "@unrs/resolver-binding-linux-ppc64-gnu": "npm:1.9.1"
+    "@unrs/resolver-binding-linux-riscv64-gnu": "npm:1.9.1"
+    "@unrs/resolver-binding-linux-riscv64-musl": "npm:1.9.1"
+    "@unrs/resolver-binding-linux-s390x-gnu": "npm:1.9.1"
+    "@unrs/resolver-binding-linux-x64-gnu": "npm:1.9.1"
+    "@unrs/resolver-binding-linux-x64-musl": "npm:1.9.1"
+    "@unrs/resolver-binding-wasm32-wasi": "npm:1.9.1"
+    "@unrs/resolver-binding-win32-arm64-msvc": "npm:1.9.1"
+    "@unrs/resolver-binding-win32-ia32-msvc": "npm:1.9.1"
+    "@unrs/resolver-binding-win32-x64-msvc": "npm:1.9.1"
     napi-postinstall: "npm:^0.2.2"
   dependenciesMeta:
     "@unrs/resolver-binding-android-arm-eabi":
@@ -10431,7 +10471,7 @@ __metadata:
       optional: true
     "@unrs/resolver-binding-win32-x64-msvc":
       optional: true
-  checksum: 10/49c149b71dfc22b7e134ea1ee317b564e3498ceb3512b6267fe3fdb52a5fbe8b5a5b4b5f3027a30b0a3ad0a4844f33d4ea8b87253c05209602456c5de1150ba7
+  checksum: 10/c051d8057c9af2d46d0dbb955fda47e3acbed25f103a3639612828b4b1bf402dd504456ff9eb9fcdfc4efaf554bb110c610cda223f8a9d07165d89e868b83915
   languageName: node
   linkType: hard
 

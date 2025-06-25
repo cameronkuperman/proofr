@@ -1,0 +1,5 @@
+export { HeroSection } from './HeroSection'
+export { StatsSection } from './StatsSection'
+export { CheatingSection } from './CheatingSection'
+export { GigCard } from './GigCard'
+export type { Gig } from './GigCard'

@@ -142,7 +142,7 @@ const PerformanceIndicator = ({ percentage, label, comparison }: { percentage: n
   )
 }
 
-export default function DashboardMain() {
+export default function DashboardMain({ onNavigate }: { onNavigate?: (tab: string) => void }) {
   const [timeframe, setTimeframe] = useState('week')
   const [showQuickActions, setShowQuickActions] = useState(false)
 
@@ -471,7 +471,10 @@ export default function DashboardMain() {
                 <h2 className="text-2xl font-bold bg-gradient-to-r from-gray-900 via-proofr-navy to-proofr-cyan bg-clip-text text-transparent dark:from-white dark:via-gray-100 dark:to-proofr-cyan">
                   Active Projects
                 </h2>
-                <button className="text-sm text-proofr-cyan hover:text-proofr-navy dark:hover:text-proofr-cyan/80 transition-colors font-medium">
+                <button 
+                  onClick={() => onNavigate?.('gigs')}
+                  className="text-sm text-proofr-cyan hover:text-proofr-navy dark:hover:text-proofr-cyan/80 transition-colors font-medium"
+                >
                   View All Projects
                 </button>
               </div>
@@ -570,6 +573,14 @@ export default function DashboardMain() {
                     </div>
                   </div>
                 ))}
+              </div>
+              <div className="mt-6 text-center">
+                <button
+                  onClick={() => onNavigate?.('gigs')}
+                  className="px-6 py-3 bg-gradient-to-r from-proofr-navy to-proofr-cyan text-white rounded-xl hover:shadow-xl hover:shadow-proofr-cyan/25 transition-all duration-300 font-medium"
+                >
+                  View All Requests →
+                </button>
               </div>
             </div>
           </div>
