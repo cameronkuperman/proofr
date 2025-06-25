@@ -141,7 +141,7 @@ export function Hero() {
     { name: 'Essay Reviews', count: '2.1k', popular: true },
     { name: 'Mock Interviews', count: '890' },
     { name: 'Application Strategy', count: '1.5k' },
-    { name: 'STEM Guidance', count: '756' },
+    { name: 'SAT Tutoring', count: '756' },
     { name: 'Resume Building', count: '1.2k' },
     { name: 'Scholarship Help', count: '634' }
   ]
@@ -893,22 +893,26 @@ export function Hero() {
           </div>
 
           <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-            gap: '20px'
+            display: 'flex',
+            justifyContent: 'center',
+            gap: '16px',
+            flexWrap: 'nowrap'
           }}>
             {categories.map((category, index) => (
               <div key={category.name} style={{
                 backgroundColor: 'rgba(255, 255, 255, 0.8)',
                 borderRadius: '20px',
-                padding: '28px 24px',
+                padding: '20px 16px',
                 border: '1px solid rgba(229, 231, 235, 0.3)',
                 textAlign: 'center',
                 cursor: 'pointer',
                 transition: 'all 0.3s ease',
                 position: 'relative',
                 boxShadow: '0 4px 12px rgba(0, 0, 0, 0.04)',
-                backdropFilter: 'blur(10px)'
+                backdropFilter: 'blur(10px)',
+                flex: '1',
+                minWidth: '140px',
+                maxWidth: '180px'
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = 'translateY(-8px)'
