@@ -14,71 +14,75 @@ export function HowItWorksScreen() {
 
   useEffect(() => {
     const handleScroll = () => {
+      const scrollY = window.scrollY || document.documentElement.scrollTop || document.body.scrollTop
+      console.log('SCROLL EVENT FIRED - scrollY:', scrollY, 'window.scrollY:', window.scrollY, 'documentElement.scrollTop:', document.documentElement.scrollTop)
+      
       const scrollHeight = document.documentElement.scrollHeight - window.innerHeight
-      const currentProgress = window.scrollY / scrollHeight
+      const currentProgress = scrollY / scrollHeight
       setScrollProgress(currentProgress)
 
       // Check which elements are visible
       Object.entries(sectionRefs.current).forEach(([key, element]) => {
         if (element) {
           const rect = element.getBoundingClientRect()
-          const isInView = rect.top < window.innerHeight * 0.9 && rect.bottom > 0
+          const isInView = rect.top < window.innerHeight * 1.2 && rect.bottom > -200
           setIsVisible(prev => ({ ...prev, [key]: isInView }))
         }
       })
 
-      // Handle student section slide changes
+      // Simple scroll-based slide detection
+      
+      // Use getBoundingClientRect to detect which section we're in
       if (studentSectionRef.current) {
-        const section = studentSectionRef.current
-        const rect = section.getBoundingClientRect()
-        const scrollingContent = section.querySelector('[data-scrolling-content]')
+        const rect = studentSectionRef.current.getBoundingClientRect()
+        const sectionHeight = rect.height
+        const sectionTop = rect.top
         
-        if (scrollingContent && rect.top <= window.innerHeight && rect.bottom >= 0) {
-          const panels = scrollingContent.querySelectorAll('[data-panel]')
-          let currentPanel = 0
+        // Only detect when section is in view
+        if (sectionTop <= 0 && rect.bottom >= 0) {
+          // Calculate how far we've scrolled through this section
+          const scrollableHeight = sectionHeight - window.innerHeight
+          const scrolledDistance = Math.abs(sectionTop)
+          const progressInSection = Math.max(0, Math.min(1, scrolledDistance / scrollableHeight))
           
-          panels.forEach((panel, index) => {
-            const panelRect = panel.getBoundingClientRect()
-            const panelCenter = panelRect.top + panelRect.height / 2
-            const screenCenter = window.innerHeight / 2
-            
-            if (Math.abs(panelCenter - screenCenter) < panelRect.height / 2) {
-              currentPanel = index
-            }
-          })
+          // Map to 4 slides (0, 1, 2, 3)
+          const slideIndex = Math.floor(progressInSection * 4)
+          const clampedSlide = Math.min(3, slideIndex) // Ensure max is 3
           
-          setStudentSlideIndex(currentPanel)
+          console.log('STUDENT SECTION - sectionTop:', sectionTop, 'scrollableHeight:', scrollableHeight, 'scrolledDistance:', scrolledDistance, 'Progress:', progressInSection, 'Slide:', clampedSlide)
+          setStudentSlideIndex(clampedSlide)
         }
       }
-
-      // Handle consultant section slide changes
+      
       if (consultantSectionRef.current) {
-        const section = consultantSectionRef.current
-        const rect = section.getBoundingClientRect()
-        const scrollingContent = section.querySelector('[data-scrolling-content]')
+        const rect = consultantSectionRef.current.getBoundingClientRect()
+        const sectionHeight = rect.height
+        const sectionTop = rect.top
         
-        if (scrollingContent && rect.top <= window.innerHeight && rect.bottom >= 0) {
-          const panels = scrollingContent.querySelectorAll('[data-panel]')
-          let currentPanel = 0
+        // Only detect when section is in view
+        if (sectionTop <= 0 && rect.bottom >= 0) {
+          // Calculate how far we've scrolled through this section
+          const scrollableHeight = sectionHeight - window.innerHeight
+          const scrolledDistance = Math.abs(sectionTop)
+          const progressInSection = Math.max(0, Math.min(1, scrolledDistance / scrollableHeight))
           
-          panels.forEach((panel, index) => {
-            const panelRect = panel.getBoundingClientRect()
-            const panelCenter = panelRect.top + panelRect.height / 2
-            const screenCenter = window.innerHeight / 2
-            
-            if (Math.abs(panelCenter - screenCenter) < panelRect.height / 2) {
-              currentPanel = index
-            }
-          })
+          // Map to 4 slides (0, 1, 2, 3)
+          const slideIndex = Math.floor(progressInSection * 4)
+          const clampedSlide = Math.min(3, slideIndex) // Ensure max is 3
           
-          setConsultantSlideIndex(currentPanel)
+          console.log('CONSULTANT SECTION - sectionTop:', sectionTop, 'scrollableHeight:', scrollableHeight, 'scrolledDistance:', scrolledDistance, 'Progress:', progressInSection, 'Slide:', clampedSlide)
+          setConsultantSlideIndex(clampedSlide)
         }
       }
     }
 
-    window.addEventListener('scroll', handleScroll)
+    console.log('ADDING SCROLL LISTENER')
+    window.addEventListener('scroll', handleScroll, { passive: true })
     handleScroll()
-    return () => window.removeEventListener('scroll', handleScroll)
+    return () => {
+      console.log('REMOVING SCROLL LISTENER')
+      window.removeEventListener('scroll', handleScroll)
+    }
   }, [])
 
   const setSectionRef = (key: string) => (el: HTMLElement | null) => {
@@ -285,6 +289,27 @@ export function HowItWorksScreen() {
               }
             },
               [
+                // Debug heading to show active slide
+                React.createElement(
+                  'div',
+                  {
+                    key: 'slide-debug',
+                    style: {
+                      position: 'absolute' as const,
+                      top: '20px',
+                      left: '20px',
+                      background: 'rgba(0, 0, 0, 0.8)',
+                      color: 'white',
+                      padding: '8px 16px',
+                      borderRadius: '8px',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      zIndex: 1000
+                    }
+                  },
+                  `Student Slide: ${studentSlideIndex + 1}/4`
+                ),
+                
                 // Slide 1 - Search
                 React.createElement(
                   'div',
@@ -1117,6 +1142,27 @@ export function HowItWorksScreen() {
               }
             },
               [
+                // Debug heading to show active slide
+                React.createElement(
+                  'div',
+                  {
+                    key: 'slide-debug-consultant',
+                    style: {
+                      position: 'absolute' as const,
+                      top: '20px',
+                      right: '20px',
+                      background: 'rgba(0, 0, 0, 0.8)',
+                      color: 'white',
+                      padding: '8px 16px',
+                      borderRadius: '8px',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      zIndex: 1000
+                    }
+                  },
+                  `Consultant Slide: ${consultantSlideIndex + 1}/4`
+                ),
+                
                 // Slide 1 - Profile Setup
                 React.createElement(
                   'div',
@@ -1566,8 +1612,7 @@ export function HowItWorksScreen() {
             background: '#181B20',
             color: 'white',
             padding: '120px 0',
-            position: 'relative' as const,
-            overflow: 'hidden'
+            position: 'relative' as const
           }
         },
         [
@@ -1664,7 +1709,7 @@ export function HowItWorksScreen() {
                         padding: '32px',
                         textAlign: 'center',
                         transform: isVisible[`feature-${i}`] ? 'translateY(0)' : 'translateY(20px)',
-                        opacity: isVisible[`feature-${i}`] ? 1 : 0,
+                        opacity: 1,
                         transition: 'all 0.6s ease',
                         transitionDelay: `${i * 0.1}s`
                       }
@@ -1692,8 +1737,7 @@ export function HowItWorksScreen() {
             color: 'white',
             padding: '160px 0',
             textAlign: 'center',
-            position: 'relative' as const,
-            overflow: 'hidden'
+            position: 'relative' as const
           }
         },
         [
@@ -1712,24 +1756,32 @@ export function HowItWorksScreen() {
           React.createElement(
             'div',
             {
+              ref: setSectionRef('final-cta-content'),
               style: {
                 maxWidth: '800px',
                 margin: '0 auto',
                 padding: '0 40px',
                 position: 'relative' as const,
-                zIndex: 1
+                zIndex: 1,
+                transform: isVisible['final-cta-content'] ? 'translateY(0)' : 'translateY(40px)',
+                opacity: 1,
+                transition: 'all 0.8s ease'
               }
             },
             [
               React.createElement(
                 'h2',
                 {
+                  ref: setSectionRef('final-cta-title'),
                   style: {
                     fontSize: 'clamp(48px, 6vw, 72px)',
                     fontWeight: '700',
                     marginBottom: '32px',
                     letterSpacing: '-0.02em',
-                    lineHeight: '1.1'
+                    lineHeight: '1.1',
+                    transform: isVisible['final-cta-title'] ? 'translateY(0)' : 'translateY(30px)',
+                    opacity: 1,
+                    transition: 'all 0.8s ease 0.2s'
                   }
                 },
                 ['Your future starts', React.createElement('br', { key: 'br' }), 'with one click.']
@@ -1737,11 +1789,15 @@ export function HowItWorksScreen() {
               React.createElement(
                 'p',
                 {
+                  ref: setSectionRef('final-cta-subtitle'),
                   style: {
                     fontSize: '22px',
                     color: 'rgba(255, 255, 255, 0.8)',
                     marginBottom: '48px',
-                    lineHeight: '1.6'
+                    lineHeight: '1.6',
+                    transform: isVisible['final-cta-subtitle'] ? 'translateY(0)' : 'translateY(30px)',
+                    opacity: 1,
+                    transition: 'all 0.8s ease 0.4s'
                   }
                 },
                 'Join thousands of students who got into their dream schools with Proofr.'
@@ -1749,11 +1805,15 @@ export function HowItWorksScreen() {
               React.createElement(
                 'div',
                 {
+                  ref: setSectionRef('final-cta-buttons'),
                   style: {
                     display: 'flex',
                     gap: '16px',
                     justifyContent: 'center',
-                    flexWrap: 'wrap' as const
+                    flexWrap: 'wrap' as const,
+                    transform: isVisible['final-cta-buttons'] ? 'translateY(0)' : 'translateY(30px)',
+                    opacity: 1,
+                    transition: 'all 0.8s ease 0.6s'
                   }
                 },
                 [
