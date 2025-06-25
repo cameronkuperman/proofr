@@ -22,29 +22,57 @@ export function HowItWorksScreen() {
       Object.entries(sectionRefs.current).forEach(([key, element]) => {
         if (element) {
           const rect = element.getBoundingClientRect()
-          const isInView = rect.top < window.innerHeight * 0.75 && rect.bottom > 0
+          const isInView = rect.top < window.innerHeight * 0.9 && rect.bottom > 0
           setIsVisible(prev => ({ ...prev, [key]: isInView }))
         }
       })
 
       // Handle student section slide changes
       if (studentSectionRef.current) {
-        const rect = studentSectionRef.current.getBoundingClientRect()
-        const sectionHeight = studentSectionRef.current.offsetHeight
-        const scrolledInSection = Math.max(0, -rect.top)
-        const scrollPercentage = Math.min(scrolledInSection / (sectionHeight - window.innerHeight), 1)
-        const slideIndex = Math.min(Math.floor(scrollPercentage * 4), 3)
-        setStudentSlideIndex(slideIndex)
+        const section = studentSectionRef.current
+        const rect = section.getBoundingClientRect()
+        const scrollingContent = section.querySelector('[data-scrolling-content]')
+        
+        if (scrollingContent && rect.top <= window.innerHeight && rect.bottom >= 0) {
+          const panels = scrollingContent.querySelectorAll('[data-panel]')
+          let currentPanel = 0
+          
+          panels.forEach((panel, index) => {
+            const panelRect = panel.getBoundingClientRect()
+            const panelCenter = panelRect.top + panelRect.height / 2
+            const screenCenter = window.innerHeight / 2
+            
+            if (Math.abs(panelCenter - screenCenter) < panelRect.height / 2) {
+              currentPanel = index
+            }
+          })
+          
+          setStudentSlideIndex(currentPanel)
+        }
       }
 
       // Handle consultant section slide changes
       if (consultantSectionRef.current) {
-        const rect = consultantSectionRef.current.getBoundingClientRect()
-        const sectionHeight = consultantSectionRef.current.offsetHeight
-        const scrolledInSection = Math.max(0, -rect.top)
-        const scrollPercentage = Math.min(scrolledInSection / (sectionHeight - window.innerHeight), 1)
-        const slideIndex = Math.min(Math.floor(scrollPercentage * 4), 3)
-        setConsultantSlideIndex(slideIndex)
+        const section = consultantSectionRef.current
+        const rect = section.getBoundingClientRect()
+        const scrollingContent = section.querySelector('[data-scrolling-content]')
+        
+        if (scrollingContent && rect.top <= window.innerHeight && rect.bottom >= 0) {
+          const panels = scrollingContent.querySelectorAll('[data-panel]')
+          let currentPanel = 0
+          
+          panels.forEach((panel, index) => {
+            const panelRect = panel.getBoundingClientRect()
+            const panelCenter = panelRect.top + panelRect.height / 2
+            const screenCenter = window.innerHeight / 2
+            
+            if (Math.abs(panelCenter - screenCenter) < panelRect.height / 2) {
+              currentPanel = index
+            }
+          })
+          
+          setConsultantSlideIndex(currentPanel)
+        }
       }
     }
 
@@ -63,8 +91,7 @@ export function HowItWorksScreen() {
       style: {
         minHeight: '100vh',
         background: '#ffffff',
-        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", sans-serif',
-        overflow: 'hidden'
+        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", sans-serif'
       }
     },
     [
@@ -234,36 +261,29 @@ export function HowItWorksScreen() {
           ref: studentSectionRef,
           style: {
             position: 'relative' as const,
-            height: '400vh', // Tall enough for scrolling
+            display: 'flex',
+            minHeight: '400vh',
             background: 'linear-gradient(180deg, #C8DCFF 0%, #ffffff 100%)'
           }
         },
-        React.createElement(
-          'div',
-          {
-            style: {
-              position: 'sticky' as const,
-              top: 0,
-              height: '100vh',
-              display: 'flex',
-              overflow: 'hidden'
-            }
-          },
-          [
-            // Left side - Sticky slideshow
-            React.createElement(
-              'div',
-              {
-                key: 'left',
-                style: {
-                  flex: '0 0 50%',
-                  position: 'relative' as const,
-                  background: 'linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }
-              },
+        [
+          // Left side - Sticky slideshow
+          React.createElement(
+            'div',
+            {
+              key: 'left',
+              style: {
+                width: '50%',
+                position: 'sticky' as const,
+                top: 0,
+                height: '100vh',
+                background: 'linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                alignSelf: 'flex-start'
+              }
+            },
               [
                 // Slide 1 - Search
                 React.createElement(
@@ -631,192 +651,210 @@ export function HowItWorksScreen() {
               ]
             ),
             
-            // Right side - Scrolling content
-            React.createElement(
-              'div',
-              {
-                key: 'right',
-                style: {
-                  flex: '0 0 50%',
-                  padding: '80px',
-                  display: 'flex',
-                  flexDirection: 'column' as const,
-                  justifyContent: 'center',
-                  background: 'white'
-                }
-              },
-              [
-                React.createElement(
-                  'div',
-                  {
-                    style: {
-                      opacity: studentSlideIndex === 0 ? 1 : 0,
-                      transform: studentSlideIndex === 0 ? 'translateY(0)' : 'translateY(-20px)',
-                      transition: 'all 0.6s ease',
-                      position: studentSlideIndex === 0 ? 'relative' as const : 'absolute' as const
-                    }
-                  },
-                  [
-                    React.createElement('h2', { style: { fontSize: '48px', fontWeight: '700', marginBottom: '24px' } }, 
-                      'Find Your Perfect Consultant'),
-                    React.createElement('p', { style: { fontSize: '20px', color: '#6B7280', marginBottom: '32px' } }, 
-                      'Search by school, specialty, price, and reviews. Our smart matching helps you find consultants who\'ve been exactly where you want to go.'),
-                    React.createElement(
-                      'ul',
-                      { style: { listStyle: 'none', padding: 0 } },
-                      ['Filter by dream schools', 'Read verified reviews', 'Compare prices instantly'].map(item =>
-                        React.createElement('li', { 
-                          key: item,
-                          style: { 
-                            padding: '12px 0', 
-                            fontSize: '18px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '12px'
-                          } 
-                        }, ['✓', item])
-                      )
-                    )
-                  ]
-                ),
-                React.createElement(
-                  'div',
-                  {
-                    style: {
-                      opacity: studentSlideIndex === 1 ? 1 : 0,
-                      transform: studentSlideIndex === 1 ? 'translateY(0)' : 'translateY(-20px)',
-                      transition: 'all 0.6s ease',
-                      position: studentSlideIndex === 1 ? 'relative' as const : 'absolute' as const
-                    }
-                  },
-                  [
-                    React.createElement('h2', { style: { fontSize: '48px', fontWeight: '700', marginBottom: '24px' } }, 
-                      'Browse & Compare'),
-                    React.createElement('p', { style: { fontSize: '20px', color: '#6B7280', marginBottom: '32px' } }, 
-                      'See detailed profiles, success rates, and sample work. Every consultant is verified with their university email.'),
-                    React.createElement(
-                      'div',
-                      { style: { display: 'grid', gap: '16px' } },
-                      [
-                        { icon: '🎓', text: 'Verified university students' },
-                        { icon: '⭐', text: 'Real reviews from applicants' },
-                        { icon: '📊', text: 'Success rates and specialties' }
-                      ].map(item =>
-                        React.createElement(
-                          'div',
-                          {
-                            key: item.text,
-                            style: {
+          // Right side - Scrolling content
+          React.createElement(
+            'div',
+            {
+              key: 'right',
+              style: {
+                width: '50%',
+                background: 'white',
+                position: 'relative' as const,
+                zIndex: 1
+              }
+            },
+              React.createElement(
+                'div',
+                {
+                  'data-scrolling-content': true,
+                  style: {
+                    padding: '80px'
+                  }
+                },
+                [
+                  // Panel 1
+                  React.createElement(
+                    'div',
+                    {
+                      'data-panel': true,
+                      style: {
+                        minHeight: '100vh',
+                        display: 'flex',
+                        flexDirection: 'column' as const,
+                        justifyContent: 'center'
+                      }
+                    },
+                    [
+                      React.createElement('h2', { style: { fontSize: '48px', fontWeight: '700', marginBottom: '24px' } }, 
+                        'Find Your Perfect Consultant'),
+                      React.createElement('p', { style: { fontSize: '20px', color: '#6B7280', marginBottom: '32px' } }, 
+                        'Search by school, specialty, price, and reviews. Our smart matching helps you find consultants who\'ve been exactly where you want to go.'),
+                      React.createElement(
+                        'ul',
+                        { style: { listStyle: 'none', padding: 0 } },
+                        ['Filter by dream schools', 'Read verified reviews', 'Compare prices instantly'].map(item =>
+                          React.createElement('li', { 
+                            key: item,
+                            style: { 
+                              padding: '12px 0', 
+                              fontSize: '18px',
                               display: 'flex',
                               alignItems: 'center',
-                              gap: '16px',
-                              padding: '16px',
-                              background: '#f9fafb',
-                              borderRadius: '12px'
-                            }
-                          },
-                          [
-                            React.createElement('span', { style: { fontSize: '24px' } }, item.icon),
-                            React.createElement('span', { style: { fontSize: '16px' } }, item.text)
-                          ]
+                              gap: '12px'
+                            } 
+                          }, ['✓', item])
                         )
                       )
-                    )
-                  ]
-                ),
-                React.createElement(
-                  'div',
-                  {
-                    style: {
-                      opacity: studentSlideIndex === 2 ? 1 : 0,
-                      transform: studentSlideIndex === 2 ? 'translateY(0)' : 'translateY(-20px)',
-                      transition: 'all 0.6s ease',
-                      position: studentSlideIndex === 2 ? 'relative' as const : 'absolute' as const
-                    }
-                  },
-                  [
-                    React.createElement('h2', { style: { fontSize: '48px', fontWeight: '700', marginBottom: '24px' } }, 
-                      'Collaborate Securely'),
-                    React.createElement('p', { style: { fontSize: '20px', color: '#6B7280', marginBottom: '32px' } }, 
-                      'Share documents, chat in real-time, and get feedback fast. Everything happens on our secure platform.'),
-                    React.createElement(
-                      'div',
-                      {
-                        style: {
-                          background: 'linear-gradient(135deg, #E6F0FF 0%, #C8DCFF 100%)',
-                          borderRadius: '16px',
-                          padding: '32px'
-                        }
-                      },
-                      [
-                        React.createElement('h4', { style: { fontWeight: '600', marginBottom: '16px' } }, 'Platform Features:'),
-                        React.createElement(
-                          'div',
-                          { style: { display: 'grid', gap: '12px' } },
-                          ['Encrypted document sharing', 'Built-in video calls', 'Track changes & comments', 'Mobile app access'].map(feature =>
-                            React.createElement('div', { 
-                              key: feature,
-                              style: { 
-                                display: 'flex', 
-                                alignItems: 'center', 
-                                gap: '8px',
-                                fontSize: '16px'
-                              } 
-                            }, ['•', feature])
+                    ]
+                  ),
+                  
+                  // Panel 2
+                  React.createElement(
+                    'div',
+                    {
+                      'data-panel': true,
+                      style: {
+                        minHeight: '100vh',
+                        display: 'flex',
+                        flexDirection: 'column' as const,
+                        justifyContent: 'center'
+                      }
+                    },
+                    [
+                      React.createElement('h2', { style: { fontSize: '48px', fontWeight: '700', marginBottom: '24px' } }, 
+                        'Browse & Compare'),
+                      React.createElement('p', { style: { fontSize: '20px', color: '#6B7280', marginBottom: '32px' } }, 
+                        'See detailed profiles, success rates, and sample work. Every consultant is verified with their university email.'),
+                      React.createElement(
+                        'div',
+                        { style: { display: 'grid', gap: '16px' } },
+                        [
+                          { icon: '🎓', text: 'Verified university students' },
+                          { icon: '⭐', text: 'Real reviews from applicants' },
+                          { icon: '📊', text: 'Success rates and specialties' }
+                        ].map(item =>
+                          React.createElement(
+                            'div',
+                            {
+                              key: item.text,
+                              style: {
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '16px',
+                                padding: '16px',
+                                background: '#f9fafb',
+                                borderRadius: '12px'
+                              }
+                            },
+                            [
+                              React.createElement('span', { style: { fontSize: '24px' } }, item.icon),
+                              React.createElement('span', { style: { fontSize: '16px' } }, item.text)
+                            ]
                           )
                         )
-                      ]
-                    )
-                  ]
-                ),
-                React.createElement(
-                  'div',
-                  {
-                    style: {
-                      opacity: studentSlideIndex === 3 ? 1 : 0,
-                      transform: studentSlideIndex === 3 ? 'translateY(0)' : 'translateY(-20px)',
-                      transition: 'all 0.6s ease',
-                      position: studentSlideIndex === 3 ? 'relative' as const : 'absolute' as const
-                    }
-                  },
-                  [
-                    React.createElement('h2', { style: { fontSize: '48px', fontWeight: '700', marginBottom: '24px' } }, 
-                      'Submit with Confidence'),
-                    React.createElement('p', { style: { fontSize: '20px', color: '#6B7280', marginBottom: '32px' } }, 
-                      'Get into your dream school with essays that stand out. Join thousands of successful applicants.'),
-                    React.createElement(
-                      'div',
-                      { style: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginTop: '48px' } },
-                      [
-                        { value: '98%', label: 'Success Rate' },
-                        { value: '15K+', label: 'Students Helped' },
-                        { value: '4.9', label: 'Average Rating' },
-                        { value: '48hr', label: 'Avg. Turnaround' }
-                      ].map(stat =>
-                        React.createElement(
-                          'div',
-                          {
-                            key: stat.label,
-                            style: {
-                              textAlign: 'center',
-                              padding: '24px',
-                              background: '#f9fafb',
-                              borderRadius: '12px'
-                            }
-                          },
-                          [
-                            React.createElement('div', { style: { fontSize: '36px', fontWeight: '700', color: '#0055FE' } }, stat.value),
-                            React.createElement('div', { style: { fontSize: '14px', color: '#6B7280', marginTop: '8px' } }, stat.label)
-                          ]
+                      )
+                    ]
+                  ),
+                  
+                  // Panel 3
+                  React.createElement(
+                    'div',
+                    {
+                      'data-panel': true,
+                      style: {
+                        minHeight: '100vh',
+                        display: 'flex',
+                        flexDirection: 'column' as const,
+                        justifyContent: 'center'
+                      }
+                    },
+                    [
+                      React.createElement('h2', { style: { fontSize: '48px', fontWeight: '700', marginBottom: '24px' } }, 
+                        'Collaborate Securely'),
+                      React.createElement('p', { style: { fontSize: '20px', color: '#6B7280', marginBottom: '32px' } }, 
+                        'Share documents, chat in real-time, and get feedback fast. Everything happens on our secure platform.'),
+                      React.createElement(
+                        'div',
+                        {
+                          style: {
+                            background: 'linear-gradient(135deg, #E6F0FF 0%, #C8DCFF 100%)',
+                            borderRadius: '16px',
+                            padding: '32px'
+                          }
+                        },
+                        [
+                          React.createElement('h4', { style: { fontWeight: '600', marginBottom: '16px', color: '#1f2937' } }, 'Platform Features:'),
+                          React.createElement(
+                            'div',
+                            { style: { display: 'grid', gap: '12px' } },
+                            ['Encrypted document sharing', 'Built-in video calls', 'Track changes & comments', 'Mobile app access'].map(feature =>
+                              React.createElement('div', { 
+                                key: feature,
+                                style: { 
+                                  display: 'flex', 
+                                  alignItems: 'center', 
+                                  gap: '8px',
+                                  fontSize: '16px',
+                                  color: '#374151'
+                                } 
+                              }, ['•', feature])
+                            )
+                          )
+                        ]
+                      )
+                    ]
+                  ),
+                  
+                  // Panel 4
+                  React.createElement(
+                    'div',
+                    {
+                      'data-panel': true,
+                      style: {
+                        minHeight: '100vh',
+                        display: 'flex',
+                        flexDirection: 'column' as const,
+                        justifyContent: 'center'
+                      }
+                    },
+                    [
+                      React.createElement('h2', { style: { fontSize: '48px', fontWeight: '700', marginBottom: '24px' } }, 
+                        'Submit with Confidence'),
+                      React.createElement('p', { style: { fontSize: '20px', color: '#6B7280', marginBottom: '32px' } }, 
+                        'Get into your dream school with essays that stand out. Join thousands of successful applicants.'),
+                      React.createElement(
+                        'div',
+                        { style: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginTop: '48px' } },
+                        [
+                          { value: '98%', label: 'Success Rate' },
+                          { value: '15K+', label: 'Students Helped' },
+                          { value: '4.9', label: 'Average Rating' },
+                          { value: '48hr', label: 'Avg. Turnaround' }
+                        ].map(stat =>
+                          React.createElement(
+                            'div',
+                            {
+                              key: stat.label,
+                              style: {
+                                textAlign: 'center',
+                                padding: '24px',
+                                background: '#f9fafb',
+                                borderRadius: '12px'
+                              }
+                            },
+                            [
+                              React.createElement('div', { style: { fontSize: '36px', fontWeight: '700', color: '#0055FE' } }, stat.value),
+                              React.createElement('div', { style: { fontSize: '14px', color: '#6B7280', marginTop: '8px' } }, stat.label)
+                            ]
+                          )
                         )
                       )
-                    )
-                  ]
-                )
-              ]
+                    ]
+                  )
+                ]
+              )
             )
-          ]
-        )
+        ]
       ),
 
       // Consultant Split-Screen Section with Sticky Right
@@ -827,47 +865,45 @@ export function HowItWorksScreen() {
           ref: consultantSectionRef,
           style: {
             position: 'relative' as const,
-            height: '400vh',
+            display: 'flex',
+            minHeight: '400vh',
             background: 'linear-gradient(180deg, #ffffff 0%, #f9fafb 100%)'
           }
         },
-        React.createElement(
-          'div',
-          {
-            style: {
-              position: 'sticky' as const,
-              top: 0,
-              height: '100vh',
-              display: 'flex',
-              overflow: 'hidden'
-            }
-          },
-          [
-            // Left side - Scrolling content
-            React.createElement(
-              'div',
-              {
-                key: 'left',
-                style: {
-                  flex: '0 0 50%',
-                  padding: '80px',
-                  display: 'flex',
-                  flexDirection: 'column' as const,
-                  justifyContent: 'center',
-                  background: 'white'
-                }
-              },
-              [
-                React.createElement(
-                  'div',
-                  {
-                    style: {
-                      opacity: consultantSlideIndex === 0 ? 1 : 0,
-                      transform: consultantSlideIndex === 0 ? 'translateY(0)' : 'translateY(-20px)',
-                      transition: 'all 0.6s ease',
-                      position: consultantSlideIndex === 0 ? 'relative' as const : 'absolute' as const
-                    }
-                  },
+        [
+          // Left side - Scrolling content
+          React.createElement(
+            'div',
+            {
+              key: 'left',
+              style: {
+                width: '50%',
+                background: 'white',
+                position: 'relative' as const,
+                zIndex: 1
+              }
+            },
+              React.createElement(
+                'div',
+                {
+                  'data-scrolling-content': true,
+                  style: {
+                    padding: '80px'
+                  }
+                },
+                [
+                  // Panel 1
+                  React.createElement(
+                    'div',
+                    {
+                      'data-panel': true,
+                      style: {
+                        minHeight: '100vh',
+                        display: 'flex',
+                        flexDirection: 'column' as const,
+                        justifyContent: 'center'
+                      }
+                    },
                   [
                     React.createElement('h2', { style: { fontSize: '48px', fontWeight: '700', marginBottom: '24px' } }, 
                       'Create Your Profile'),
@@ -914,18 +950,21 @@ export function HowItWorksScreen() {
                         )
                       )
                     )
-                  ]
-                ),
-                React.createElement(
-                  'div',
-                  {
-                    style: {
-                      opacity: consultantSlideIndex === 1 ? 1 : 0,
-                      transform: consultantSlideIndex === 1 ? 'translateY(0)' : 'translateY(-20px)',
-                      transition: 'all 0.6s ease',
-                      position: consultantSlideIndex === 1 ? 'relative' as const : 'absolute' as const
-                    }
-                  },
+                    ]
+                  ),
+                  
+                  // Panel 2
+                  React.createElement(
+                    'div',
+                    {
+                      'data-panel': true,
+                      style: {
+                        minHeight: '100vh',
+                        display: 'flex',
+                        flexDirection: 'column' as const,
+                        justifyContent: 'center'
+                      }
+                    },
                   [
                     React.createElement('h2', { style: { fontSize: '48px', fontWeight: '700', marginBottom: '24px' } }, 
                       'Set Your Terms'),
@@ -968,18 +1007,21 @@ export function HowItWorksScreen() {
                         )
                       ]
                     )
-                  ]
-                ),
-                React.createElement(
-                  'div',
-                  {
-                    style: {
-                      opacity: consultantSlideIndex === 2 ? 1 : 0,
-                      transform: consultantSlideIndex === 2 ? 'translateY(0)' : 'translateY(-20px)',
-                      transition: 'all 0.6s ease',
-                      position: consultantSlideIndex === 2 ? 'relative' as const : 'absolute' as const
-                    }
-                  },
+                    ]
+                  ),
+                  
+                  // Panel 3
+                  React.createElement(
+                    'div',
+                    {
+                      'data-panel': true,
+                      style: {
+                        minHeight: '100vh',
+                        display: 'flex',
+                        flexDirection: 'column' as const,
+                        justifyContent: 'center'
+                      }
+                    },
                   [
                     React.createElement('h2', { style: { fontSize: '48px', fontWeight: '700', marginBottom: '24px' } }, 
                       'Help Students Succeed'),
@@ -1012,18 +1054,21 @@ export function HowItWorksScreen() {
                         )
                       )
                     )
-                  ]
-                ),
-                React.createElement(
-                  'div',
-                  {
-                    style: {
-                      opacity: consultantSlideIndex === 3 ? 1 : 0,
-                      transform: consultantSlideIndex === 3 ? 'translateY(0)' : 'translateY(-20px)',
-                      transition: 'all 0.6s ease',
-                      position: consultantSlideIndex === 3 ? 'relative' as const : 'absolute' as const
-                    }
-                  },
+                    ]
+                  ),
+                  
+                  // Panel 4
+                  React.createElement(
+                    'div',
+                    {
+                      'data-panel': true,
+                      style: {
+                        minHeight: '100vh',
+                        display: 'flex',
+                        flexDirection: 'column' as const,
+                        justifyContent: 'center'
+                      }
+                    },
                   [
                     React.createElement('h2', { style: { fontSize: '48px', fontWeight: '700', marginBottom: '24px' } }, 
                       'Grow Your Business'),
@@ -1048,25 +1093,29 @@ export function HowItWorksScreen() {
                           '- Jessica L., Harvard \'25')
                       ]
                     )
-                  ]
-                )
-              ]
+                    ]
+                  )
+                ]
+              )
             ),
             
-            // Right side - Sticky slideshow
-            React.createElement(
-              'div',
-              {
-                key: 'right',
-                style: {
-                  flex: '0 0 50%',
-                  position: 'relative' as const,
-                  background: 'linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }
-              },
+          // Right side - Sticky slideshow
+          React.createElement(
+            'div',
+            {
+              key: 'right',
+              style: {
+                width: '50%',
+                position: 'sticky' as const,
+                top: 0,
+                height: '100vh',
+                background: 'linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                alignSelf: 'flex-start'
+              }
+            },
               [
                 // Slide 1 - Profile Setup
                 React.createElement(
@@ -1436,10 +1485,9 @@ export function HowItWorksScreen() {
                     ]
                   )
                 )
-              ]
-            )
-          ]
-        )
+            ]
+          )
+        ]
       ),
 
       // Transition to darker sections - "This feels like cheating"
