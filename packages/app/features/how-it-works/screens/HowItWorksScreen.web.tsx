@@ -8,6 +8,11 @@ export function HowItWorksScreen() {
   const [isVisible, setIsVisible] = useState<Record<string, boolean>>({})
   const [studentSlideIndex, setStudentSlideIndex] = useState(0)
   const [consultantSlideIndex, setConsultantSlideIndex] = useState(0)
+  
+  // Debug: log when state changes
+  useEffect(() => {
+    console.log('STATE UPDATED - Student slide:', studentSlideIndex, 'Consultant slide:', consultantSlideIndex)
+  }, [studentSlideIndex, consultantSlideIndex])
   const sectionRefs = useRef<Record<string, HTMLElement | null>>({})
   const studentSectionRef = useRef<HTMLElement | null>(null)
   const consultantSectionRef = useRef<HTMLElement | null>(null)
@@ -32,46 +37,48 @@ export function HowItWorksScreen() {
 
       // Simple scroll-based slide detection
       
-      // Use getBoundingClientRect to detect which section we're in
+      // FIXED: Account for the fact that we can't scroll past the last viewport
       if (studentSectionRef.current) {
         const rect = studentSectionRef.current.getBoundingClientRect()
-        const sectionHeight = rect.height
-        const sectionTop = rect.top
         
-        // Only detect when section is in view
-        if (sectionTop <= 0 && rect.bottom >= 0) {
-          // Calculate how far we've scrolled through this section
-          const scrollableHeight = sectionHeight - window.innerHeight
-          const scrolledDistance = Math.abs(sectionTop)
-          const progressInSection = Math.max(0, Math.min(1, scrolledDistance / scrollableHeight))
+        if (rect.top <= 0 && rect.bottom > 0) {
+          // Maximum scrollable distance is section height minus viewport height
+          const maxScroll = rect.height - window.innerHeight
+          const currentScroll = Math.abs(rect.top)
+          const progress = Math.min(1, currentScroll / maxScroll)
           
-          // Map to 4 slides (0, 1, 2, 3)
-          const slideIndex = Math.floor(progressInSection * 4)
-          const clampedSlide = Math.min(3, slideIndex) // Ensure max is 3
+          // Map progress to slides: 0-0.25 = slide 0, 0.25-0.5 = slide 1, etc
+          const rawSlide = Math.floor(progress * 4)
+          const slide = Math.min(3, rawSlide) // Clamp to max slide 3
           
-          console.log('STUDENT SECTION - sectionTop:', sectionTop, 'scrollableHeight:', scrollableHeight, 'scrolledDistance:', scrolledDistance, 'Progress:', progressInSection, 'Slide:', clampedSlide)
-          setStudentSlideIndex(clampedSlide)
+          console.log('STUDENT - rect.height:', rect.height, 'maxScroll:', maxScroll, 'currentScroll:', currentScroll, 'progress:', progress, 'slide:', slide)
+          
+          // Only update if slide changed to prevent unnecessary re-renders
+          if (slide !== studentSlideIndex) {
+            setStudentSlideIndex(slide)
+          }
         }
       }
       
       if (consultantSectionRef.current) {
         const rect = consultantSectionRef.current.getBoundingClientRect()
-        const sectionHeight = rect.height
-        const sectionTop = rect.top
         
-        // Only detect when section is in view
-        if (sectionTop <= 0 && rect.bottom >= 0) {
-          // Calculate how far we've scrolled through this section
-          const scrollableHeight = sectionHeight - window.innerHeight
-          const scrolledDistance = Math.abs(sectionTop)
-          const progressInSection = Math.max(0, Math.min(1, scrolledDistance / scrollableHeight))
+        if (rect.top <= 0 && rect.bottom > 0) {
+          // Maximum scrollable distance is section height minus viewport height
+          const maxScroll = rect.height - window.innerHeight
+          const currentScroll = Math.abs(rect.top)
+          const progress = Math.min(1, currentScroll / maxScroll)
           
-          // Map to 4 slides (0, 1, 2, 3)
-          const slideIndex = Math.floor(progressInSection * 4)
-          const clampedSlide = Math.min(3, slideIndex) // Ensure max is 3
+          // Map progress to slides: 0-0.25 = slide 0, 0.25-0.5 = slide 1, etc
+          const rawSlide = Math.floor(progress * 4)
+          const slide = Math.min(3, rawSlide) // Clamp to max slide 3
           
-          console.log('CONSULTANT SECTION - sectionTop:', sectionTop, 'scrollableHeight:', scrollableHeight, 'scrolledDistance:', scrolledDistance, 'Progress:', progressInSection, 'Slide:', clampedSlide)
-          setConsultantSlideIndex(clampedSlide)
+          console.log('CONSULTANT - rect.height:', rect.height, 'maxScroll:', maxScroll, 'currentScroll:', currentScroll, 'progress:', progress, 'slide:', slide)
+          
+          // Only update if slide changed to prevent unnecessary re-renders
+          if (slide !== consultantSlideIndex) {
+            setConsultantSlideIndex(slide)
+          }
         }
       }
     }
