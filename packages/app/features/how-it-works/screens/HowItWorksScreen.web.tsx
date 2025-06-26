@@ -53,10 +53,8 @@ export function HowItWorksScreen() {
           
           console.log('STUDENT - rect.height:', rect.height, 'maxScroll:', maxScroll, 'currentScroll:', currentScroll, 'progress:', progress, 'slide:', slide)
           
-          // Only update if slide changed to prevent unnecessary re-renders
-          if (slide !== studentSlideIndex) {
-            setStudentSlideIndex(slide)
-          }
+          // React will automatically prevent a re-render if the state is the same
+          setStudentSlideIndex(slide)
         }
       }
       
@@ -75,10 +73,8 @@ export function HowItWorksScreen() {
           
           console.log('CONSULTANT - rect.height:', rect.height, 'maxScroll:', maxScroll, 'currentScroll:', currentScroll, 'progress:', progress, 'slide:', slide)
           
-          // Only update if slide changed to prevent unnecessary re-renders
-          if (slide !== consultantSlideIndex) {
-            setConsultantSlideIndex(slide)
-          }
+          // React will automatically prevent a re-render if the state is the same
+          setConsultantSlideIndex(slide)
         }
       }
     }
@@ -178,7 +174,7 @@ export function HowItWorksScreen() {
                     lineHeight: '1.1'
                   }
                 },
-                'Everything You Need. Before You Ask.'
+                "You're dream school awaits."
               ),
               React.createElement(
                 'p',
@@ -1716,7 +1712,7 @@ export function HowItWorksScreen() {
                         padding: '32px',
                         textAlign: 'center',
                         transform: isVisible[`feature-${i}`] ? 'translateY(0)' : 'translateY(20px)',
-                        opacity: 1,
+                        opacity: isVisible[`feature-${i}`] ? 1 : 0,
                         transition: 'all 0.6s ease',
                         transitionDelay: `${i * 0.1}s`
                       }
@@ -1771,7 +1767,7 @@ export function HowItWorksScreen() {
                 position: 'relative' as const,
                 zIndex: 1,
                 transform: isVisible['final-cta-content'] ? 'translateY(0)' : 'translateY(40px)',
-                opacity: 1,
+                opacity: isVisible['final-cta-content'] ? 1 : 0,
                 transition: 'all 0.8s ease'
               }
             },
@@ -1787,7 +1783,7 @@ export function HowItWorksScreen() {
                     letterSpacing: '-0.02em',
                     lineHeight: '1.1',
                     transform: isVisible['final-cta-title'] ? 'translateY(0)' : 'translateY(30px)',
-                    opacity: 1,
+                    opacity: isVisible['final-cta-title'] ? 1 : 0,
                     transition: 'all 0.8s ease 0.2s'
                   }
                 },
@@ -1803,7 +1799,7 @@ export function HowItWorksScreen() {
                     marginBottom: '48px',
                     lineHeight: '1.6',
                     transform: isVisible['final-cta-subtitle'] ? 'translateY(0)' : 'translateY(30px)',
-                    opacity: 1,
+                    opacity: isVisible['final-cta-subtitle'] ? 1 : 0,
                     transition: 'all 0.8s ease 0.4s'
                   }
                 },
@@ -1819,7 +1815,7 @@ export function HowItWorksScreen() {
                     justifyContent: 'center',
                     flexWrap: 'wrap' as const,
                     transform: isVisible['final-cta-buttons'] ? 'translateY(0)' : 'translateY(30px)',
-                    opacity: 1,
+                    opacity: isVisible['final-cta-buttons'] ? 1 : 0,
                     transition: 'all 0.8s ease 0.6s'
                   }
                 },
