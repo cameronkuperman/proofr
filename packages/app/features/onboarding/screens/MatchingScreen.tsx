@@ -12,12 +12,17 @@ export function MatchingScreen({ state, onComplete }: MatchingScreenProps) {
   const isStudent = state.role === 'student'
 
   useEffect(() => {
+    console.log('MatchingScreen mounted, starting timer...')
     // Navigate to home after animation completes
     const timer = setTimeout(() => {
+      console.log('Timer completed, calling onComplete')
       onComplete()
     }, 2500) // Reduced from 4000ms to 2500ms
 
-    return () => clearTimeout(timer)
+    return () => {
+      console.log('MatchingScreen unmounting, clearing timer')
+      clearTimeout(timer)
+    }
   }, [onComplete])
 
   return (

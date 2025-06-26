@@ -4,7 +4,7 @@ import { ActivityIndicator, View } from 'react-native'
 
 import { UserDetailScreen } from 'app/features/user/detail-screen'
 import { OnboardingNavigator } from 'app/features/onboarding/OnboardingNavigator.native'
-import { HomeScreen } from 'app/features/home/screen'
+import { TabNavigator } from './tabs'
 
 // AsyncStorage might not be available in all environments
 let AsyncStorage: any
@@ -21,7 +21,7 @@ try {
 const Stack = createNativeStackNavigator<{
   onboarding: { skipWelcome?: boolean }
   login: undefined
-  home: undefined
+  tabs: undefined
   'user-detail': {
     id: string
   }
@@ -34,6 +34,13 @@ export function NativeNavigation() {
 
   useEffect(() => {
     checkAuthState()
+    
+    // Listen for auth state changes
+    const interval = setInterval(() => {
+      checkAuthState()
+    }, 1000) // Check every second
+    
+    return () => clearInterval(interval)
   }, [])
 
   const checkAuthState = async () => {
@@ -97,8 +104,8 @@ export function NativeNavigation() {
         // Authenticated and completed onboarding
         <>
           <Stack.Screen
-            name="home"
-            component={HomeScreen}
+            name="tabs"
+            component={TabNavigator}
             options={{
               headerShown: false,
             }}

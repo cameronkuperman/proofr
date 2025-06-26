@@ -174,16 +174,14 @@ export function OnboardingNavigator({ route }: OnboardingNavigatorProps) {
   }
 
   const completeOnboarding = async () => {
+    console.log('completeOnboarding called')
     try {
       // Save onboarding state
       await AsyncStorage.setItem('onboardingState', JSON.stringify(onboardingState))
       await AsyncStorage.setItem('onboardingComplete', 'true')
+      await AsyncStorage.setItem('authToken', 'temp-token') // Temporary auth token
       
-      // Navigate to home
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'home' }],
-      })
+      console.log('Saved onboarding state, navigation will update automatically...')
     } catch (error) {
       console.error('Error completing onboarding:', error)
     }

@@ -33,6 +33,7 @@
     "singleQuote": true
   },
   "dependencies": {
+    "@react-navigation/bottom-tabs": "^7.4.2",
     "@supabase/supabase-js": "^2.50.0",
     "expo": "^53.0.0",
     "framer-motion": "^12.19.1",
