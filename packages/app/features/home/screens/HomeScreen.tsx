@@ -156,20 +156,40 @@ export function HomeScreen() {
     setShowVerificationPopup(false)
   }
 
+  const handleViewProfile = () => {
+    console.log('View profile:', mockConsultants[currentMatchIndex].name)
+    // TODO: Navigate to profile or show modal
+  }
+
+  const handleSkipAll = () => {
+    setShowQuickMatch(false)
+    setCurrentMatchIndex(0)
+    setSwipeCount(0)
+  }
+
+  const handleAddAll = () => {
+    // Add remaining consultants to requests
+    const remaining = mockConsultants.slice(currentMatchIndex)
+    console.log('Adding all remaining consultants:', remaining.length)
+    setShowQuickMatch(false)
+    setCurrentMatchIndex(0)
+    setSwipeCount(0)
+  }
+
   const currentConsultant = mockConsultants[currentMatchIndex]
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#FAFAFA' }}>
+    <View style={{ flex: 1, backgroundColor: '#FAF7F0' }}>
       <SafeAreaView style={{ flex: 1 }}>
         <ScrollView showsVerticalScrollIndicator={false}>
           {/* Header */}
           <View style={{
-            backgroundColor: '#fff',
+            backgroundColor: '#FFFFFF',
             paddingHorizontal: 20,
             paddingTop: 16,
             paddingBottom: 12,
             borderBottomWidth: 1,
-            borderBottomColor: '#F0F0F0',
+            borderBottomColor: '#F5E6D3',
           }}>
             {/* Logo and Actions */}
             <View style={{
@@ -181,7 +201,7 @@ export function HomeScreen() {
               <Text style={{
                 fontSize: 28,
                 fontWeight: '700',
-                color: '#1a1f36',
+                color: '#2C2825',
               }}>
                 Proofr
               </Text>
@@ -190,7 +210,7 @@ export function HomeScreen() {
                 <TouchableOpacity
                   onPress={() => setShowQuickMatch(true)}
                   style={{
-                    backgroundColor: '#1DBF73',
+                    backgroundColor: '#D4A574',
                     paddingHorizontal: 16,
                     paddingVertical: 8,
                     borderRadius: 20,
@@ -210,7 +230,7 @@ export function HomeScreen() {
                 </TouchableOpacity>
                 
                 <TouchableOpacity>
-                  <Ionicons name="notifications-outline" size={24} color="#1a1f36" />
+                  <Ionicons name="notifications-outline" size={24} color="#2C2825" />
                 </TouchableOpacity>
               </View>
             </View>
@@ -682,10 +702,13 @@ export function HomeScreen() {
           <SafeAreaView style={{ flex: 1 }}>
             <View style={{
               flex: 1,
-              backgroundColor: '#fff',
+              backgroundColor: '#FFFFFF',
               marginTop: 50,
               borderTopLeftRadius: 20,
               borderTopRightRadius: 20,
+              borderWidth: 1,
+              borderColor: '#F5E6D3',
+              borderBottomWidth: 0,
             }}>
               {/* Header */}
               <View style={{
@@ -694,19 +717,19 @@ export function HomeScreen() {
                 alignItems: 'center',
                 padding: 20,
                 borderBottomWidth: 1,
-                borderBottomColor: '#F0F0F0',
+                borderBottomColor: '#F5E6D3',
               }}>
                 <View>
                   <Text style={{
                     fontSize: 24,
                     fontWeight: '700',
-                    color: '#1a1f36',
+                    color: '#2C2825',
                   }}>
                     Quick Matches
                   </Text>
                   <Text style={{
                     fontSize: 14,
-                    color: '#666',
+                    color: '#8B7355',
                     marginTop: 4,
                   }}>
                     Swipe right to add to requests • {5 - swipeCount} left
@@ -718,12 +741,12 @@ export function HomeScreen() {
                     width: 36,
                     height: 36,
                     borderRadius: 18,
-                    backgroundColor: '#F0F0F0',
+                    backgroundColor: '#FAF7F0',
                     justifyContent: 'center',
                     alignItems: 'center',
                   }}
                 >
-                  <Ionicons name="close" size={24} color="#666" />
+                  <Ionicons name="close" size={24} color="#8B7355" />
                 </TouchableOpacity>
               </View>
 
@@ -746,6 +769,7 @@ export function HomeScreen() {
                       onSwipeLeft={() => handleSwipe('left')}
                       onSwipeRight={() => handleSwipe('right')}
                       onSwipeUp={() => handleSwipe('up')}
+                      onViewProfile={handleViewProfile}
                       isFirst={isFirst}
                       cardIndex={cardIndex}
                     />
@@ -753,19 +777,64 @@ export function HomeScreen() {
                 })}
               </View>
 
-              {/* Swipe Instructions */}
+              {/* Bottom Actions */}
               <View style={{
                 paddingBottom: 30,
                 paddingHorizontal: 20,
-                alignItems: 'center',
               }}>
+                {/* Instructions */}
                 <Text style={{
                   fontSize: 14,
-                  color: '#666',
+                  color: '#8B7355',
                   textAlign: 'center',
+                  marginBottom: 16,
                 }}>
                   Swipe right to request • Left to pass • Up for priority
                 </Text>
+                
+                {/* Buttons */}
+                <View style={{
+                  flexDirection: 'row',
+                  gap: 12,
+                }}>
+                  <TouchableOpacity
+                    onPress={handleSkipAll}
+                    style={{
+                      flex: 1,
+                      backgroundColor: '#F5E6D3',
+                      paddingVertical: 14,
+                      borderRadius: 25,
+                      alignItems: 'center',
+                    }}
+                  >
+                    <Text style={{
+                      fontSize: 16,
+                      fontWeight: '600',
+                      color: '#8B7355',
+                    }}>
+                      Skip All
+                    </Text>
+                  </TouchableOpacity>
+                  
+                  <TouchableOpacity
+                    onPress={handleAddAll}
+                    style={{
+                      flex: 1,
+                      backgroundColor: '#68A357',
+                      paddingVertical: 14,
+                      borderRadius: 25,
+                      alignItems: 'center',
+                    }}
+                  >
+                    <Text style={{
+                      fontSize: 16,
+                      fontWeight: '600',
+                      color: '#fff',
+                    }}>
+                      Request All ({mockConsultants.length - currentMatchIndex})
+                    </Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
           </SafeAreaView>
