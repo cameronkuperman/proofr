@@ -1,22 +1,100 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { TextLink } from 'solito/link'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
+import { signInWithEmail, signInWithGoogle, getCurrentUser } from '../../../../../lib/auth-helpers'
+
+interface FormError {
+  field?: string
+  message: string
+}
 
 export function SignInScreen() {
+  const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [checkingAuth, setCheckingAuth] = useState(false)
+  const [error, setError] = useState<FormError | null>(null)
 
-  const handleSignIn = (e: React.FormEvent) => {
+  const validateForm = (): boolean => {
+    if (!email || !email.includes('@')) {
+      setError({ field: 'email', message: 'Please enter a valid email address' })
+      return false
+    }
+    if (!password || password.length < 6) {
+      setError({ field: 'password', message: 'Password must be at least 6 characters' })
+      return false
+    }
+    return true
+  }
+
+  const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log('Sign in attempted with:', { email, password })
+    
+    if (!validateForm()) return
+    
+    setLoading(true)
+    setError(null)
+
+    try {
+      const { user } = await signInWithEmail(email, password)
+      
+      if (!user) {
+        throw new Error('Sign in failed')
+      }
+
+      // Check user type and redirect accordingly
+      const currentUser = await getCurrentUser()
+      if (currentUser) {
+        if (currentUser.userType === 'consultant') {
+          router.push('/consultant-dashboard')
+        } else {
+          router.push('/student-dashboard')
+        }
+      }
+    } catch (err: any) {
+      console.error('Sign in error:', err)
+      
+      // Handle specific error cases
+      if (err.message?.includes('Invalid login credentials')) {
+        setError({ message: 'Invalid email or password' })
+      } else if (err.message?.includes('Email not confirmed')) {
+        setError({ message: 'Please check your email to confirm your account' })
+      } else if (err.message?.includes('Network')) {
+        setError({ message: 'Network error. Please check your connection' })
+      } else {
+        setError({ message: 'Failed to sign in. Please try again' })
+      }
+    } finally {
+      setLoading(false)
+    }
   }
 
-  const handleSocialLogin = (provider: string) => {
-    console.log(`${provider} login attempted`)
+  const handleSocialLogin = async (provider: string) => {
+    if (provider !== 'google') {
+      setError({ message: `${provider} login is not yet implemented` })
+      return
+    }
+
+    setLoading(true)
+    setError(null)
+
+    try {
+      // For OAuth, we need to know the user type
+      // Since this is sign-in, we'll check after they come back
+      await signInWithGoogle()
+      // OAuth will redirect automatically
+    } catch (err: any) {
+      console.error('Social login error:', err)
+      setError({ message: err.message || 'Failed to sign in with Google' })
+      setLoading(false)
+    }
   }
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 flex items-center justify-center px-4 py-8">
@@ -38,11 +116,23 @@ export function SignInScreen() {
 
         {/* Sign In Form */}
         <div className="bg-white/5 backdrop-blur-lg rounded-2xl p-8 shadow-2xl border border-white/10 animate-slide-up">
+          {/* Error Message */}
+          {error && (
+            <div className="mb-4 bg-red-500/20 border border-red-500/50 rounded-lg px-4 py-3 animate-fade-in">
+              <p className="text-red-200 text-sm">{error.message}</p>
+            </div>
+          )}
+
           {/* Social Login Buttons */}
           <div className="space-y-3 mb-6">
             <button
               onClick={() => handleSocialLogin('google')}
-              className="w-full flex items-center justify-center gap-4 bg-white hover:bg-gray-50 text-gray-700 font-medium py-3 px-4 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              disabled={loading}
+              className={`w-full flex items-center justify-center gap-4 ${
+                loading 
+                  ? 'bg-gray-600 cursor-not-allowed' 
+                  : 'bg-white hover:bg-gray-50'
+              } text-gray-700 font-medium py-3 px-4 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5`}
             >
               <Image
                 src="/images/google-logo.webp"
@@ -56,7 +146,12 @@ export function SignInScreen() {
 
             <button
               onClick={() => handleSocialLogin('apple')}
-              className="w-full flex items-center justify-center gap-4 bg-black hover:bg-gray-900 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              disabled={loading}
+              className={`w-full flex items-center justify-center gap-4 ${
+                loading 
+                  ? 'bg-gray-800 cursor-not-allowed' 
+                  : 'bg-black hover:bg-gray-900'
+              } text-white font-semibold py-3 px-4 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5`}
             >
               <Image
                 src="/images/apple logo.png"
@@ -70,7 +165,12 @@ export function SignInScreen() {
 
             <button
               onClick={() => handleSocialLogin('linkedin')}
-              className="w-full flex items-center justify-center gap-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              disabled={loading}
+              className={`w-full flex items-center justify-center gap-4 ${
+                loading 
+                  ? 'bg-blue-800 cursor-not-allowed' 
+                  : 'bg-blue-600 hover:bg-blue-700'
+              } text-white font-semibold py-3 px-4 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5`}
             >
               <div className="w-6 h-6 bg-white rounded-sm flex items-center justify-center">
                 <span className="text-blue-600 font-bold text-sm">in</span>
@@ -95,10 +195,16 @@ export function SignInScreen() {
               <input
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Email or Username"
-                className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent transition-all duration-200"
+                onChange={(e) => {
+                  setEmail(e.target.value)
+                  if (error?.field === 'email') setError(null)
+                }}
+                placeholder="Email Address"
+                className={`w-full bg-white/10 border ${
+                  error?.field === 'email' ? 'border-red-500' : 'border-white/20'
+                } rounded-xl px-4 py-3 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent transition-all duration-200`}
                 required
+                disabled={loading}
               />
             </div>
 
@@ -106,15 +212,22 @@ export function SignInScreen() {
               <input
                 type={showPassword ? 'text' : 'password'}
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value)
+                  if (error?.field === 'password') setError(null)
+                }}
                 placeholder="Password"
-                className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 pr-16 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent transition-all duration-200"
+                className={`w-full bg-white/10 border ${
+                  error?.field === 'password' ? 'border-red-500' : 'border-white/20'
+                } rounded-xl px-4 py-3 pr-16 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent transition-all duration-200`}
                 required
+                disabled={loading}
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-4 top-1/2 transform -translate-y-1/2 text-cyan-400 font-semibold text-sm hover:text-cyan-300 transition-colors duration-200"
+                tabIndex={-1}
               >
                 {showPassword ? 'Hide' : 'Show'}
               </button>
@@ -130,9 +243,14 @@ export function SignInScreen() {
 
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-white font-bold py-3 px-4 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              disabled={loading}
+              className={`w-full ${
+                loading 
+                  ? 'bg-gray-600 cursor-not-allowed' 
+                  : 'bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400'
+              } text-white font-bold py-3 px-4 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5`}
             >
-              Log in
+              {loading ? 'Signing in...' : 'Log in'}
             </button>
           </form>
 
@@ -140,7 +258,7 @@ export function SignInScreen() {
           <div className="text-center mt-6 pt-6 border-t border-white/10">
             <p className="text-white/70">
               Don't have an account?{' '}
-              <TextLink href="/onboarding">
+              <TextLink href="/sign-up">
                 <span className="text-cyan-400 hover:text-cyan-300 font-bold transition-colors duration-200">
                   Sign up
                 </span>

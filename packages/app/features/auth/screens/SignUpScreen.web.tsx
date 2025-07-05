@@ -3,8 +3,12 @@
 import React, { useState } from 'react'
 import { TextLink } from 'solito/link'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
+import { signUpWithEmail, signUpWithGoogle, UserType } from '../../../../../lib/auth-helpers'
 
 export function SignUpScreen() {
+  const router = useRouter()
+  const [userType, setUserType] = useState<UserType | null>(null)
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -14,22 +18,82 @@ export function SignUpScreen() {
   })
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }))
+    setError(null)
   }
 
-  const handleSignUp = (e: React.FormEvent) => {
+  const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (formData.password !== formData.confirmPassword) {
-      alert('Passwords do not match!')
+    
+    if (!userType) {
+      setError('Please select whether you are a student or consultant')
       return
     }
-    console.log('Sign up attempted with:', formData)
+    
+    if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match!')
+      return
+    }
+    
+    if (formData.password.length < 8) {
+      setError('Password must be at least 8 characters long')
+      return
+    }
+    
+    setLoading(true)
+    setError(null)
+    
+    try {
+      const { user, error: signUpError } = await signUpWithEmail({
+        email: formData.email,
+        password: formData.password,
+        userType,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+      })
+      
+      if (signUpError) {
+        throw signUpError
+      }
+      
+      if (user) {
+        // Redirect to onboarding
+        router.push('/onboarding')
+      }
+    } catch (err: any) {
+      console.error('Sign up error:', err)
+      setError(err.message || 'Failed to create account. Please try again.')
+    } finally {
+      setLoading(false)
+    }
   }
 
-  const handleSocialLogin = (provider: string) => {
-    console.log(`${provider} sign up attempted`)
+  const handleSocialLogin = async (provider: string) => {
+    if (!userType) {
+      setError('Please select whether you are a student or consultant')
+      return
+    }
+    
+    setLoading(true)
+    setError(null)
+    
+    try {
+      if (provider === 'google') {
+        await signUpWithGoogle(userType)
+        // OAuth will redirect automatically
+      } else {
+        setError(`${provider} login is not yet implemented`)
+      }
+    } catch (err: any) {
+      console.error('Social login error:', err)
+      setError(err.message || 'Failed to sign in. Please try again.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -52,6 +116,53 @@ export function SignUpScreen() {
 
         {/* Sign Up Form */}
         <div className="bg-white/5 backdrop-blur-lg rounded-2xl p-8 shadow-2xl border border-white/10 animate-slide-up">
+          {/* User Type Selection */}
+          {!userType && (
+            <div className="mb-6">
+              <h2 className="text-lg font-semibold text-white mb-4 text-center">I want to:</h2>
+              <div className="grid grid-cols-2 gap-4">
+                <button
+                  onClick={() => setUserType('student')}
+                  className="bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl p-4 transition-all duration-200 group"
+                >
+                  <div className="text-3xl mb-2">🎓</div>
+                  <div className="text-white font-semibold">Get Help</div>
+                  <div className="text-xs text-white/60 mt-1">I'm a student</div>
+                </button>
+                <button
+                  onClick={() => setUserType('consultant')}
+                  className="bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl p-4 transition-all duration-200 group"
+                >
+                  <div className="text-3xl mb-2">💼</div>
+                  <div className="text-white font-semibold">Give Help</div>
+                  <div className="text-xs text-white/60 mt-1">I'm a consultant</div>
+                </button>
+              </div>
+            </div>
+          )}
+          
+          {/* Show selected user type */}
+          {userType && (
+            <div className="mb-4 flex items-center justify-between bg-white/10 rounded-lg px-4 py-2">
+              <span className="text-white/80 text-sm">
+                Signing up as a <strong>{userType}</strong>
+              </span>
+              <button
+                onClick={() => setUserType(null)}
+                className="text-cyan-400 hover:text-cyan-300 text-sm font-semibold"
+              >
+                Change
+              </button>
+            </div>
+          )}
+          
+          {/* Error Message */}
+          {error && (
+            <div className="mb-4 bg-red-500/20 border border-red-500/50 rounded-lg px-4 py-3">
+              <p className="text-red-200 text-sm">{error}</p>
+            </div>
+          )}
+          
           {/* Social Login Buttons */}
           <div className="space-y-3 mb-6">
             <button
@@ -183,9 +294,14 @@ export function SignUpScreen() {
 
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-white font-bold py-3 px-4 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              disabled={loading || !userType}
+              className={`w-full font-bold py-3 px-4 rounded-xl transition-all duration-200 shadow-lg ${
+                loading || !userType
+                  ? 'bg-gray-600 cursor-not-allowed'
+                  : 'bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 hover:shadow-xl transform hover:-translate-y-0.5'
+              } text-white`}
             >
-              Create Account
+              {loading ? 'Creating Account...' : 'Create Account'}
             </button>
           </form>
 

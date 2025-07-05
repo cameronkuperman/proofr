@@ -20,7 +20,7 @@ export function NavigationBar() {
 
         {/* Navigation Links */}
         <div className={styles.navLinks}>
-          <TextLink href="/browse">
+          <TextLink href="/student-dashboard">
             <span className={styles.navLink}>Browse Consultants</span>
           </TextLink>
           <TextLink href="/how-it-works">

@@ -58,22 +58,62 @@ export default function BrowseConsultants() {
   const [consultants, setConsultants] = useState([])
 useEffect(() => {
   const fetchConsultants = async () => {
-    console.log('Attempting to fetch from Supabase...')
-    const {data, error} = await supabase.from('consultants').select('*')
-    console.log('Supabase response:', { data, error })
-    console.log('Data length:', data?.length)
+    console.log('Fetching consultants from Supabase...')
+    
+    // Use the active_consultants view which joins users and filters approved consultants
+    const { data, error } = await supabase
+      .from('active_consultants')
+      .select(`
+        *,
+        services:services(
+          id,
+          service_type,
+          title,
+          prices,
+          delivery_type
+        )
+      `)
+      .order('rating', { ascending: false })
     
     if (error) {
       console.error('Supabase error:', error)
+      return
     }
     
     if (data && data.length > 0) {
+      console.log('Fetched consultants:', data.length)
       console.log('First consultant:', data[0])
-      setConsultants(data)
+      
+      // Transform data to match existing component expectations
+      const transformedData = data.map(consultant => ({
+        ...consultant,
+        // Map services to expected format
+        services: consultant.services?.reduce((acc, service) => {
+          acc[service.service_type] = service.prices.map(price => `$${price}`)
+          return acc
+        }, {}) || {},
+        // Ensure all expected fields exist
+        review_count: consultant.total_reviews || 0,
+        about_me: consultant.bio || consultant.long_bio || 'No bio available',
+        working: consultant.is_available && !consultant.vacation_mode,
+        college: consultant.current_college || 'University',
+        verified: consultant.verification_status === 'approved',  // Blue checkmark only for approved
+        years_experience: new Date().getFullYear() - (consultant.graduation_year || new Date().getFullYear()),
+        location: consultant.timezone || 'Remote',
+        price: consultant.services?.[0]?.prices?.[0] || 50, // Use first service's first price
+        // Map tier fields (these might need adjustment based on your tier logic)
+        ivy: false, // TODO: Calculate from colleges_attended
+        ivy_plus: false, // TODO: Calculate from colleges_attended
+        T20: false // TODO: Calculate from colleges_attended
+      }))
+      
+      setConsultants(transformedData)
     } else {
-      console.log('No data returned or empty array')
+      console.log('No consultants found')
+      setConsultants([])
     }
   }
+  
   fetchConsultants()
 }, [])
   // Enhanced filtering logic

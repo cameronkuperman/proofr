@@ -1,36 +1,149 @@
 import * as React from 'react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { getCurrentUser, updateStudentProfile, updateConsultantProfile, submitConsultantVerification } from '../../../../../lib/auth-helpers'
 
-interface FormData {
-  // Common fields
-  email: string
-  password: string
-  confirmPassword: string
-  
-  // Student fields
-  name?: string
-  currentSchool?: string
-  schoolType?: 'high-school' | 'college'
-  interests?: string
-  preferredCollege?: string
-  
-  // Consultant fields
-  fullName?: string
-  university?: string
-  graduationYear?: string
-  major?: string
-  specialties?: string[]
-  hourlyRate?: string
+interface StudentFormData {
+  current_school: string
+  school_type: 'high-school' | 'college'
+  interests: string[]
+  preferred_colleges: string[]
+  grade_level?: string
+  bio?: string
+}
+
+interface ConsultantFormData {
+  current_college: string
+  graduation_year: string
+  major: string
+  bio: string
+  long_bio: string
+  edu_email: string
+  specializations: string[]
 }
 
 export function OnboardingScreen() {
-  const [step, setStep] = useState<'role-selection' | 'student-form' | 'consultant-form'>('role-selection')
-  const [formData, setFormData] = useState<FormData>({
-    email: '',
-    password: '',
-    confirmPassword: ''
+  const router = useRouter()
+  const [loading, setLoading] = useState(true)
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [userType, setUserType] = useState<'student' | 'consultant' | null>(null)
+  const [userId, setUserId] = useState<string | null>(null)
+  
+  const [studentData, setStudentData] = useState<StudentFormData>({
+    current_school: '',
+    school_type: 'high-school',
+    interests: [],
+    preferred_colleges: [],
+    grade_level: '',
+    bio: ''
   })
-  const [isAnimating, setIsAnimating] = useState(false)
+  
+  // Temporary string states for comma-separated inputs
+  const [interestsInput, setInterestsInput] = useState('')
+  const [collegesInput, setCollegesInput] = useState('')
+  
+  const [consultantData, setConsultantData] = useState<ConsultantFormData>({
+    current_college: '',
+    graduation_year: '',
+    major: '',
+    bio: '',
+    long_bio: '',
+    edu_email: '',
+    specializations: []
+  })
+
+  useEffect(() => {
+    checkUser()
+  }, [])
+
+  const checkUser = async () => {
+    try {
+      const user = await getCurrentUser()
+      if (!user) {
+        router.push('/sign-up')
+        return
+      }
+      
+      setUserId(user.id)
+      setUserType(user.userType)
+      
+      // Check if onboarding is already completed
+      if (user.profile?.onboarding_completed) {
+        if (user.userType === 'consultant') {
+          router.push('/consultant-dashboard')
+        } else {
+          router.push('/student-dashboard')
+        }
+        return
+      }
+    } catch (error) {
+      console.error('Error checking user:', error)
+      router.push('/sign-up')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleStudentSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setSubmitting(true)
+    setError(null)
+    
+    // Process comma-separated values before submission
+    const interests = interestsInput.split(',').map(i => i.trim()).filter(i => i)
+    const colleges = collegesInput.split(',').map(c => c.trim()).filter(c => c)
+    
+    try {
+      await updateStudentProfile(userId!, {
+        ...studentData,
+        interests,
+        preferred_colleges: colleges,
+        onboarding_completed: true
+      })
+      
+      router.push('/student-dashboard')
+    } catch (error: any) {
+      console.error('Error updating profile:', error)
+      setError(error.message || 'Failed to update profile')
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  const handleConsultantSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setSubmitting(true)
+    setError(null)
+    
+    try {
+      // Update consultant profile
+      await updateConsultantProfile(userId!, {
+        current_college: consultantData.current_college,
+        graduation_year: parseInt(consultantData.graduation_year),
+        major: consultantData.major,
+        bio: consultantData.bio,
+        long_bio: consultantData.long_bio
+      })
+      
+      // Submit for verification
+      const { autoVerified } = await submitConsultantVerification(userId!, {
+        edu_email: consultantData.edu_email,
+        university_name: consultantData.current_college
+      })
+      
+      if (autoVerified) {
+        router.push('/consultant-dashboard')
+      } else {
+        router.push('/consultant-dashboard?status=pending-verification')
+      }
+    } catch (error: any) {
+      console.error('Error updating profile:', error)
+      setError(error.message || 'Failed to update profile')
+    } finally {
+      setSubmitting(false)
+    }
+  }
 
   const inputStyle = {
     width: '100%',
@@ -45,33 +158,34 @@ export function OnboardingScreen() {
     color: '#374151'
   }
 
-  const handleRoleSelection = (role: 'student' | 'consultant') => {
-    setIsAnimating(true)
-    setTimeout(() => {
-      setStep(role === 'student' ? 'student-form' : 'consultant-form')
-      setIsAnimating(false)
-    }, 300)
-  }
-
-  const handleInputChange = (field: keyof FormData, value: string | string[]) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }))
-  }
-
-  const handleBack = () => {
-    setIsAnimating(true)
-    setTimeout(() => {
-      setStep('role-selection')
-      setIsAnimating(false)
-    }, 300)
-  }
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    console.log('Form submitted:', formData)
-    // Handle form submission here
+  if (loading) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: 'linear-gradient(135deg, #ffffff 0%, #f0fdff 100%)'
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{
+            width: '48px',
+            height: '48px',
+            border: '3px solid #e2e8f0',
+            borderTopColor: '#3b82f6',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite',
+            margin: '0 auto 16px'
+          }} />
+          <p style={{ color: '#64748b', fontSize: '16px' }}>Loading your profile...</p>
+        </div>
+        <style jsx>{`
+          @keyframes spin {
+            to { transform: rotate(360deg); }
+          }
+        `}</style>
+      </div>
+    )
   }
 
   return (
@@ -84,7 +198,7 @@ export function OnboardingScreen() {
       justifyContent: 'center',
       padding: '20px'
     }}>
-      {/* Navigation Header */}
+      {/* Header */}
       <header style={{
         position: 'fixed',
         top: 0,
@@ -105,7 +219,6 @@ export function OnboardingScreen() {
           alignItems: 'center',
           justifyContent: 'space-between'
         }}>
-          {/* Logo */}
           <div style={{
             display: 'flex',
             alignItems: 'center',
@@ -134,203 +247,31 @@ export function OnboardingScreen() {
               letterSpacing: '-0.02em'
             }}>proofr</span>
           </div>
-
-          {/* Back Button */}
-          {step !== 'role-selection' && (
-            <button 
-              onClick={handleBack}
-              style={{
-                background: 'none',
-                border: '1px solid #e2e8f0',
-                color: '#64748b',
-                padding: '8px 16px',
-                borderRadius: '8px',
-                fontSize: '14px',
-                fontWeight: '500',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease'
-              }}
-              onMouseEnter={(e) => {
-                (e.target as HTMLElement).style.borderColor = '#3b82f6'
-                ;(e.target as HTMLElement).style.color = '#3b82f6'
-              }}
-              onMouseLeave={(e) => {
-                (e.target as HTMLElement).style.borderColor = '#e2e8f0'
-                ;(e.target as HTMLElement).style.color = '#64748b'
-              }}
-            >
-              ← Back
-            </button>
-          )}
         </div>
       </header>
 
       {/* Main Content */}
       <div style={{
         width: '100%',
-        maxWidth: step === 'role-selection' ? '800px' : '500px',
-        transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-        transform: isAnimating ? 'scale(0.95) translateY(20px)' : 'scale(1) translateY(0)',
-        opacity: isAnimating ? 0 : 1,
+        maxWidth: '500px',
         marginTop: '72px'
       }}>
-        
-        {/* Role Selection */}
-        {step === 'role-selection' && (
+        {error && (
           <div style={{
-            textAlign: 'center'
+            background: '#fee2e2',
+            border: '1px solid #fecaca',
+            borderRadius: '12px',
+            padding: '12px 16px',
+            marginBottom: '16px',
+            color: '#dc2626',
+            fontSize: '14px'
           }}>
-            {/* Header */}
-            <div style={{ marginBottom: '48px' }}>
-              <h1 style={{
-                fontSize: '48px',
-                fontWeight: '900',
-                margin: '0 0 16px 0',
-                background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-                letterSpacing: '-0.02em'
-              }}>
-                Welcome to Proofr
-              </h1>
-              <p style={{
-                fontSize: '18px',
-                color: '#64748b',
-                margin: '0',
-                fontWeight: '400'
-              }}>
-                Choose your path to get started
-              </p>
-            </div>
-
-            {/* Role Selection Cards */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: '24px'
-            }}>
-              {/* Student Card */}
-              <div
-                onClick={() => handleRoleSelection('student')}
-                style={{
-                  background: 'white',
-                  borderRadius: '24px',
-                  padding: '40px 32px',
-                  border: '2px solid rgba(226, 232, 240, 0.8)',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                  boxShadow: '0 4px 24px rgba(0, 0, 0, 0.06)',
-                  position: 'relative',
-                  overflow: 'hidden'
-                }}
-                onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLElement).style.transform = 'translateY(-8px)'
-                  ;(e.currentTarget as HTMLElement).style.borderColor = '#3b82f6'
-                  ;(e.currentTarget as HTMLElement).style.boxShadow = '0 12px 40px rgba(59, 130, 246, 0.15)'
-                }}
-                onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLElement).style.transform = 'translateY(0)'
-                  ;(e.currentTarget as HTMLElement).style.borderColor = 'rgba(226, 232, 240, 0.8)'
-                  ;(e.currentTarget as HTMLElement).style.boxShadow = '0 4px 24px rgba(0, 0, 0, 0.06)'
-                }}
-              >
-                <div style={{
-                  width: '80px',
-                  height: '80px',
-                  background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
-                  borderRadius: '20px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  margin: '0 auto 24px auto',
-                  boxShadow: '0 8px 24px rgba(59, 130, 246, 0.3)'
-                }}>
-                  <span style={{ fontSize: '32px' }}>🎓</span>
-                </div>
-                <h3 style={{
-                  fontSize: '24px',
-                  fontWeight: '800',
-                  color: '#0f172a',
-                  margin: '0 0 12px 0',
-                  letterSpacing: '-0.01em'
-                }}>
-                  I'm a Student
-                </h3>
-                <p style={{
-                  fontSize: '16px',
-                  color: '#64748b',
-                  margin: '0',
-                  lineHeight: '1.5',
-                  fontWeight: '400'
-                }}>
-                  Get personalized guidance from current students at your dream schools
-                </p>
-              </div>
-
-              {/* Consultant Card */}
-              <div
-                onClick={() => handleRoleSelection('consultant')}
-                style={{
-                  background: 'white',
-                  borderRadius: '24px',
-                  padding: '40px 32px',
-                  border: '2px solid rgba(226, 232, 240, 0.8)',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                  boxShadow: '0 4px 24px rgba(0, 0, 0, 0.06)',
-                  position: 'relative',
-                  overflow: 'hidden'
-                }}
-                onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLElement).style.transform = 'translateY(-8px)'
-                  ;(e.currentTarget as HTMLElement).style.borderColor = '#3b82f6'
-                  ;(e.currentTarget as HTMLElement).style.boxShadow = '0 12px 40px rgba(59, 130, 246, 0.15)'
-                }}
-                onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLElement).style.transform = 'translateY(0)'
-                  ;(e.currentTarget as HTMLElement).style.borderColor = 'rgba(226, 232, 240, 0.8)'
-                  ;(e.currentTarget as HTMLElement).style.boxShadow = '0 4px 24px rgba(0, 0, 0, 0.06)'
-                }}
-              >
-                <div style={{
-                  width: '80px',
-                  height: '80px',
-                  background: 'linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%)',
-                  borderRadius: '20px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  margin: '0 auto 24px auto',
-                  boxShadow: '0 8px 24px rgba(29, 78, 216, 0.3)'
-                }}>
-                  <span style={{ fontSize: '32px' }}>👨‍🏫</span>
-                </div>
-                <h3 style={{
-                  fontSize: '24px',
-                  fontWeight: '800',
-                  color: '#0f172a',
-                  margin: '0 0 12px 0',
-                  letterSpacing: '-0.01em'
-                }}>
-                  I'm a Consultant
-                </h3>
-                <p style={{
-                  fontSize: '16px',
-                  color: '#64748b',
-                  margin: '0',
-                  lineHeight: '1.5',
-                  fontWeight: '400'
-                }}>
-                  Share your experience and help students get into their dream schools
-                </p>
-              </div>
-            </div>
+            {error}
           </div>
         )}
 
         {/* Student Form */}
-        {step === 'student-form' && (
+        {userType === 'student' && (
           <div style={{
             background: 'white',
             borderRadius: '24px',
@@ -359,7 +300,7 @@ export function OnboardingScreen() {
                 margin: '0 0 8px 0',
                 letterSpacing: '-0.02em'
               }}>
-                Student Registration
+                Complete Your Profile
               </h2>
               <p style={{
                 fontSize: '16px',
@@ -367,13 +308,13 @@ export function OnboardingScreen() {
                 margin: '0',
                 fontWeight: '400'
               }}>
-                Tell us about yourself to get started
+                Tell us about yourself to get personalized help
               </p>
             </div>
 
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleStudentSubmit}>
               <div style={{ display: 'grid', gap: '20px' }}>
-                {/* Name */}
+                {/* Bio */}
                 <div>
                   <label style={{
                     display: 'block',
@@ -382,17 +323,13 @@ export function OnboardingScreen() {
                     color: '#374151',
                     marginBottom: '6px'
                   }}>
-                    Full Name *
+                    Short Bio
                   </label>
-                  <input
-                    type="text"
-                    value={formData.name || ''}
-                    onChange={(e) => handleInputChange('name', e.target.value)}
-                    style={inputStyle}
-                    onFocus={(e) => (e.target as HTMLElement).style.borderColor = '#3b82f6'}
-                    onBlur={(e) => (e.target as HTMLElement).style.borderColor = '#e2e8f0'}
-                    placeholder="Enter your full name"
-                    required
+                  <textarea
+                    value={studentData.bio}
+                    onChange={(e) => setStudentData({...studentData, bio: e.target.value})}
+                    style={{...inputStyle, minHeight: '80px', resize: 'vertical'}}
+                    placeholder="Tell us a bit about yourself and your goals"
                   />
                 </div>
 
@@ -409,11 +346,9 @@ export function OnboardingScreen() {
                   </label>
                   <input
                     type="text"
-                    value={formData.currentSchool || ''}
-                    onChange={(e) => handleInputChange('currentSchool', e.target.value)}
+                    value={studentData.current_school}
+                    onChange={(e) => setStudentData({...studentData, current_school: e.target.value})}
                     style={inputStyle}
-                    onFocus={(e) => (e.target as HTMLElement).style.borderColor = '#3b82f6'}
-                    onBlur={(e) => (e.target as HTMLElement).style.borderColor = '#e2e8f0'}
                     placeholder="Your high school or college"
                     required
                   />
@@ -431,37 +366,62 @@ export function OnboardingScreen() {
                     I am currently in *
                   </label>
                   <div style={{ display: 'flex', gap: '12px' }}>
-                    {['high-school', 'college'].map((type) => (
+                    {(['high-school', 'college'] as const).map((type) => (
                       <label key={type} style={{
                         display: 'flex',
                         alignItems: 'center',
                         cursor: 'pointer',
                         padding: '12px 16px',
-                        border: `1px solid ${formData.schoolType === type ? '#3b82f6' : '#e2e8f0'}`,
+                        border: `1px solid ${studentData.school_type === type ? '#3b82f6' : '#e2e8f0'}`,
                         borderRadius: '12px',
                         transition: 'all 0.2s ease',
                         flex: 1,
                         justifyContent: 'center',
-                        background: formData.schoolType === type ? 'rgba(59, 130, 246, 0.05)' : '#f8fafb'
+                        background: studentData.school_type === type ? 'rgba(59, 130, 246, 0.05)' : '#f8fafb'
                       }}>
                         <input
                           type="radio"
                           name="schoolType"
                           value={type}
-                          checked={formData.schoolType === type}
-                          onChange={(e) => handleInputChange('schoolType', e.target.value)}
+                          checked={studentData.school_type === type}
+                          onChange={(e) => setStudentData({...studentData, school_type: type})}
                           style={{ display: 'none' }}
                         />
                         <span style={{
                           fontSize: '16px',
                           fontWeight: '500',
-                          color: formData.schoolType === type ? '#3b82f6' : '#64748b'
+                          color: studentData.school_type === type ? '#3b82f6' : '#64748b'
                         }}>
                           {type === 'high-school' ? 'High School' : 'College'}
                         </span>
                       </label>
                     ))}
                   </div>
+                </div>
+
+                {/* Grade Level */}
+                <div>
+                  <label style={{
+                    display: 'block',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    color: '#374151',
+                    marginBottom: '6px'
+                  }}>
+                    Grade Level
+                  </label>
+                  <select
+                    value={studentData.grade_level}
+                    onChange={(e) => setStudentData({...studentData, grade_level: e.target.value})}
+                    style={inputStyle}
+                  >
+                    <option value="">Select grade level</option>
+                    <option value="freshman">Freshman</option>
+                    <option value="sophomore">Sophomore</option>
+                    <option value="junior">Junior</option>
+                    <option value="senior">Senior</option>
+                    <option value="transfer">Transfer Student</option>
+                  </select>
                 </div>
 
                 {/* Interests */}
@@ -477,14 +437,19 @@ export function OnboardingScreen() {
                   </label>
                   <input
                     type="text"
-                    value={formData.interests || ''}
-                    onChange={(e) => handleInputChange('interests', e.target.value)}
+                    value={interestsInput}
+                    onChange={(e) => setInterestsInput(e.target.value)}
+                    onBlur={(e) => {
+                      const interests = e.target.value.split(',').map(i => i.trim()).filter(i => i)
+                      setStudentData({...studentData, interests})
+                    }}
                     style={inputStyle}
-                    onFocus={(e) => (e.target as HTMLElement).style.borderColor = '#3b82f6'}
-                    onBlur={(e) => (e.target as HTMLElement).style.borderColor = '#e2e8f0'}
                     placeholder="e.g., Computer Science, Pre-Med, Business"
                     required
                   />
+                  <p style={{ fontSize: '12px', color: '#64748b', marginTop: '4px' }}>
+                    Separate multiple interests with commas
+                  </p>
                 </div>
 
                 {/* Preferred Colleges */}
@@ -500,119 +465,48 @@ export function OnboardingScreen() {
                   </label>
                   <input
                     type="text"
-                    value={formData.preferredCollege || ''}
-                    onChange={(e) => handleInputChange('preferredCollege', e.target.value)}
+                    value={collegesInput}
+                    onChange={(e) => setCollegesInput(e.target.value)}
+                    onBlur={(e) => {
+                      const colleges = e.target.value.split(',').map(c => c.trim()).filter(c => c)
+                      setStudentData({...studentData, preferred_colleges: colleges})
+                    }}
                     style={inputStyle}
-                    onFocus={(e) => (e.target as HTMLElement).style.borderColor = '#3b82f6'}
-                    onBlur={(e) => (e.target as HTMLElement).style.borderColor = '#e2e8f0'}
                     placeholder="e.g., Harvard, Stanford, MIT"
                     required
                   />
-                </div>
-
-                {/* Email */}
-                <div>
-                  <label style={{
-                    display: 'block',
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    color: '#374151',
-                    marginBottom: '6px'
-                  }}>
-                    Email Address *
-                  </label>
-                  <input
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => handleInputChange('email', e.target.value)}
-                    style={inputStyle}
-                    onFocus={(e) => (e.target as HTMLElement).style.borderColor = '#3b82f6'}
-                    onBlur={(e) => (e.target as HTMLElement).style.borderColor = '#e2e8f0'}
-                    placeholder="your.email@example.com"
-                    required
-                  />
-                </div>
-
-                {/* Password */}
-                <div>
-                  <label style={{
-                    display: 'block',
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    color: '#374151',
-                    marginBottom: '6px'
-                  }}>
-                    Password *
-                  </label>
-                  <input
-                    type="password"
-                    value={formData.password}
-                    onChange={(e) => handleInputChange('password', e.target.value)}
-                    style={inputStyle}
-                    onFocus={(e) => (e.target as HTMLElement).style.borderColor = '#3b82f6'}
-                    onBlur={(e) => (e.target as HTMLElement).style.borderColor = '#e2e8f0'}
-                    placeholder="Create a secure password"
-                    required
-                  />
-                </div>
-
-                {/* Confirm Password */}
-                <div>
-                  <label style={{
-                    display: 'block',
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    color: '#374151',
-                    marginBottom: '6px'
-                  }}>
-                    Confirm Password *
-                  </label>
-                  <input
-                    type="password"
-                    value={formData.confirmPassword}
-                    onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-                    style={inputStyle}
-                    onFocus={(e) => (e.target as HTMLElement).style.borderColor = '#3b82f6'}
-                    onBlur={(e) => (e.target as HTMLElement).style.borderColor = '#e2e8f0'}
-                    placeholder="Confirm your password"
-                    required
-                  />
+                  <p style={{ fontSize: '12px', color: '#64748b', marginTop: '4px' }}>
+                    List your top choice schools separated by commas
+                  </p>
                 </div>
               </div>
 
               <button
                 type="submit"
+                disabled={submitting}
                 style={{
                   width: '100%',
-                  background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+                  background: submitting ? '#94a3b8' : 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
                   color: 'white',
                   border: 'none',
                   padding: '16px',
                   borderRadius: '12px',
                   fontSize: '16px',
                   fontWeight: '600',
-                  cursor: 'pointer',
+                  cursor: submitting ? 'not-allowed' : 'pointer',
                   marginTop: '24px',
                   transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-                  boxShadow: '0 4px 12px rgba(59, 130, 246, 0.25)'
-                }}
-                onMouseEnter={(e) => {
-                  (e.target as HTMLElement).style.transform = 'translateY(-2px)'
-                  ;(e.target as HTMLElement).style.boxShadow = '0 8px 20px rgba(59, 130, 246, 0.35)'
-                }}
-                onMouseLeave={(e) => {
-                  (e.target as HTMLElement).style.transform = 'translateY(0)'
-                  ;(e.target as HTMLElement).style.boxShadow = '0 4px 12px rgba(59, 130, 246, 0.25)'
+                  boxShadow: submitting ? 'none' : '0 4px 12px rgba(59, 130, 246, 0.25)'
                 }}
               >
-                Create Student Account
+                {submitting ? 'Saving...' : 'Complete Profile'}
               </button>
             </form>
           </div>
         )}
 
         {/* Consultant Form */}
-        {step === 'consultant-form' && (
+        {userType === 'consultant' && (
           <div style={{
             background: 'white',
             borderRadius: '24px',
@@ -641,7 +535,7 @@ export function OnboardingScreen() {
                 margin: '0 0 8px 0',
                 letterSpacing: '-0.02em'
               }}>
-                Consultant Application
+                Complete Your Profile
               </h2>
               <p style={{
                 fontSize: '16px',
@@ -649,35 +543,12 @@ export function OnboardingScreen() {
                 margin: '0',
                 fontWeight: '400'
               }}>
-                Join our community of expert consultants
+                Set up your consultant profile for verification
               </p>
             </div>
 
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleConsultantSubmit}>
               <div style={{ display: 'grid', gap: '20px' }}>
-                {/* Full Name */}
-                <div>
-                  <label style={{
-                    display: 'block',
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    color: '#374151',
-                    marginBottom: '6px'
-                  }}>
-                    Full Name *
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.fullName || ''}
-                    onChange={(e) => handleInputChange('fullName', e.target.value)}
-                    style={inputStyle}
-                    onFocus={(e) => (e.target as HTMLElement).style.borderColor = '#3b82f6'}
-                    onBlur={(e) => (e.target as HTMLElement).style.borderColor = '#e2e8f0'}
-                    placeholder="Enter your full name"
-                    required
-                  />
-                </div>
-
                 {/* University */}
                 <div>
                   <label style={{
@@ -687,18 +558,42 @@ export function OnboardingScreen() {
                     color: '#374151',
                     marginBottom: '6px'
                   }}>
-                    University *
+                    Current University *
                   </label>
                   <input
                     type="text"
-                    value={formData.university || ''}
-                    onChange={(e) => handleInputChange('university', e.target.value)}
+                    value={consultantData.current_college}
+                    onChange={(e) => setConsultantData({...consultantData, current_college: e.target.value})}
                     style={inputStyle}
-                    onFocus={(e) => (e.target as HTMLElement).style.borderColor = '#3b82f6'}
-                    onBlur={(e) => (e.target as HTMLElement).style.borderColor = '#e2e8f0'}
                     placeholder="e.g., Harvard University, Stanford"
                     required
                   />
+                </div>
+
+                {/* University Email */}
+                <div>
+                  <label style={{
+                    display: 'block',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    color: '#374151',
+                    marginBottom: '6px'
+                  }}>
+                    University Email (.edu) *
+                  </label>
+                  <input
+                    type="email"
+                    value={consultantData.edu_email}
+                    onChange={(e) => setConsultantData({...consultantData, edu_email: e.target.value})}
+                    style={inputStyle}
+                    placeholder="your.name@university.edu"
+                    pattern=".*\.edu$"
+                    title="Please enter a valid .edu email address"
+                    required
+                  />
+                  <p style={{ fontSize: '12px', color: '#64748b', marginTop: '4px' }}>
+                    Used for instant verification if it matches your university
+                  </p>
                 </div>
 
                 {/* Graduation Year */}
@@ -714,12 +609,11 @@ export function OnboardingScreen() {
                   </label>
                   <input
                     type="text"
-                    value={formData.graduationYear || ''}
-                    onChange={(e) => handleInputChange('graduationYear', e.target.value)}
+                    value={consultantData.graduation_year}
+                    onChange={(e) => setConsultantData({...consultantData, graduation_year: e.target.value})}
                     style={inputStyle}
-                    onFocus={(e) => (e.target as HTMLElement).style.borderColor = '#3b82f6'}
-                    onBlur={(e) => (e.target as HTMLElement).style.borderColor = '#e2e8f0'}
                     placeholder="e.g., 2024, 2025"
+                    pattern="[0-9]{4}"
                     required
                   />
                 </div>
@@ -737,17 +631,15 @@ export function OnboardingScreen() {
                   </label>
                   <input
                     type="text"
-                    value={formData.major || ''}
-                    onChange={(e) => handleInputChange('major', e.target.value)}
+                    value={consultantData.major}
+                    onChange={(e) => setConsultantData({...consultantData, major: e.target.value})}
                     style={inputStyle}
-                    onFocus={(e) => (e.target as HTMLElement).style.borderColor = '#3b82f6'}
-                    onBlur={(e) => (e.target as HTMLElement).style.borderColor = '#e2e8f0'}
                     placeholder="e.g., Computer Science, Economics"
                     required
                   />
                 </div>
 
-                {/* Specialties */}
+                {/* Short Bio */}
                 <div>
                   <label style={{
                     display: 'block',
@@ -756,35 +648,78 @@ export function OnboardingScreen() {
                     color: '#374151',
                     marginBottom: '6px'
                   }}>
-                    Consulting Specialties
+                    Short Bio (for profile cards) *
+                  </label>
+                  <textarea
+                    value={consultantData.bio}
+                    onChange={(e) => setConsultantData({...consultantData, bio: e.target.value})}
+                    style={{...inputStyle, minHeight: '60px', resize: 'vertical'}}
+                    placeholder="Brief introduction (appears on browse page)"
+                    maxLength={150}
+                    required
+                  />
+                  <p style={{ fontSize: '12px', color: '#64748b', marginTop: '4px' }}>
+                    {consultantData.bio.length}/150 characters
+                  </p>
+                </div>
+
+                {/* Long Bio */}
+                <div>
+                  <label style={{
+                    display: 'block',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    color: '#374151',
+                    marginBottom: '6px'
+                  }}>
+                    Detailed Bio (for full profile) *
+                  </label>
+                  <textarea
+                    value={consultantData.long_bio}
+                    onChange={(e) => setConsultantData({...consultantData, long_bio: e.target.value})}
+                    style={{...inputStyle, minHeight: '120px', resize: 'vertical'}}
+                    placeholder="Tell students about your experience, achievements, and how you can help them"
+                    required
+                  />
+                </div>
+
+                {/* Specializations */}
+                <div>
+                  <label style={{
+                    display: 'block',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    color: '#374151',
+                    marginBottom: '6px'
+                  }}>
+                    Areas of Expertise
                   </label>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-                    {['Essay Reviews', 'Mock Interviews', 'Application Strategy', 'Resume Building', 'Scholarship Guidance', 'School-Specific Advice'].map((specialty) => (
+                    {['Essay Reviews', 'Mock Interviews', 'Application Strategy', 'Resume Building', 'Scholarship Guidance', 'Test Prep'].map((specialty) => (
                       <label key={specialty} style={{
                         display: 'flex',
                         alignItems: 'center',
                         cursor: 'pointer',
                         padding: '8px 12px',
-                        border: `1px solid ${(formData.specialties || []).includes(specialty) ? '#3b82f6' : '#e2e8f0'}`,
+                        border: `1px solid ${consultantData.specializations.includes(specialty) ? '#3b82f6' : '#e2e8f0'}`,
                         borderRadius: '8px',
                         transition: 'all 0.2s ease',
-                        background: (formData.specialties || []).includes(specialty) ? 'rgba(59, 130, 246, 0.05)' : '#f8fafb',
+                        background: consultantData.specializations.includes(specialty) ? 'rgba(59, 130, 246, 0.05)' : '#f8fafb',
                         fontSize: '14px'
                       }}>
                         <input
                           type="checkbox"
-                          checked={(formData.specialties || []).includes(specialty)}
+                          checked={consultantData.specializations.includes(specialty)}
                           onChange={(e) => {
-                            const current = formData.specialties || []
                             const updated = e.target.checked 
-                              ? [...current, specialty]
-                              : current.filter(s => s !== specialty)
-                            handleInputChange('specialties', updated)
+                              ? [...consultantData.specializations, specialty]
+                              : consultantData.specializations.filter(s => s !== specialty)
+                            setConsultantData({...consultantData, specializations: updated})
                           }}
                           style={{ marginRight: '8px' }}
                         />
                         <span style={{
-                          color: (formData.specialties || []).includes(specialty) ? '#3b82f6' : '#64748b',
+                          color: consultantData.specializations.includes(specialty) ? '#3b82f6' : '#64748b',
                           fontWeight: '500'
                         }}>
                           {specialty}
@@ -793,126 +728,27 @@ export function OnboardingScreen() {
                     ))}
                   </div>
                 </div>
-
-                {/* Hourly Rate */}
-                <div>
-                  <label style={{
-                    display: 'block',
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    color: '#374151',
-                    marginBottom: '6px'
-                  }}>
-                    Desired Hourly Rate *
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.hourlyRate || ''}
-                    onChange={(e) => handleInputChange('hourlyRate', e.target.value)}
-                    style={inputStyle}
-                    onFocus={(e) => (e.target as HTMLElement).style.borderColor = '#3b82f6'}
-                    onBlur={(e) => (e.target as HTMLElement).style.borderColor = '#e2e8f0'}
-                    placeholder="e.g., $40, $60"
-                    required
-                  />
-                </div>
-
-                {/* Email */}
-                <div>
-                  <label style={{
-                    display: 'block',
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    color: '#374151',
-                    marginBottom: '6px'
-                  }}>
-                    Email Address *
-                  </label>
-                  <input
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => handleInputChange('email', e.target.value)}
-                    style={inputStyle}
-                    onFocus={(e) => (e.target as HTMLElement).style.borderColor = '#3b82f6'}
-                    onBlur={(e) => (e.target as HTMLElement).style.borderColor = '#e2e8f0'}
-                    placeholder="your.email@example.com"
-                    required
-                  />
-                </div>
-
-                {/* Password */}
-                <div>
-                  <label style={{
-                    display: 'block',
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    color: '#374151',
-                    marginBottom: '6px'
-                  }}>
-                    Password *
-                  </label>
-                  <input
-                    type="password"
-                    value={formData.password}
-                    onChange={(e) => handleInputChange('password', e.target.value)}
-                    style={inputStyle}
-                    onFocus={(e) => (e.target as HTMLElement).style.borderColor = '#3b82f6'}
-                    onBlur={(e) => (e.target as HTMLElement).style.borderColor = '#e2e8f0'}
-                    placeholder="Create a secure password"
-                    required
-                  />
-                </div>
-
-                {/* Confirm Password */}
-                <div>
-                  <label style={{
-                    display: 'block',
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    color: '#374151',
-                    marginBottom: '6px'
-                  }}>
-                    Confirm Password *
-                  </label>
-                  <input
-                    type="password"
-                    value={formData.confirmPassword}
-                    onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-                    style={inputStyle}
-                    onFocus={(e) => (e.target as HTMLElement).style.borderColor = '#3b82f6'}
-                    onBlur={(e) => (e.target as HTMLElement).style.borderColor = '#e2e8f0'}
-                    placeholder="Confirm your password"
-                    required
-                  />
-                </div>
               </div>
 
               <button
                 type="submit"
+                disabled={submitting}
                 style={{
                   width: '100%',
-                  background: 'linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%)',
+                  background: submitting ? '#94a3b8' : 'linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%)',
                   color: 'white',
                   border: 'none',
                   padding: '16px',
                   borderRadius: '12px',
                   fontSize: '16px',
                   fontWeight: '600',
-                  cursor: 'pointer',
+                  cursor: submitting ? 'not-allowed' : 'pointer',
                   marginTop: '24px',
                   transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-                  boxShadow: '0 4px 12px rgba(29, 78, 216, 0.25)'
-                }}
-                onMouseEnter={(e) => {
-                  (e.target as HTMLElement).style.transform = 'translateY(-2px)'
-                  ;(e.target as HTMLElement).style.boxShadow = '0 8px 20px rgba(29, 78, 216, 0.35)'
-                }}
-                onMouseLeave={(e) => {
-                  (e.target as HTMLElement).style.transform = 'translateY(0)'
-                  ;(e.target as HTMLElement).style.boxShadow = '0 4px 12px rgba(29, 78, 216, 0.25)'
+                  boxShadow: submitting ? 'none' : '0 4px 12px rgba(29, 78, 216, 0.25)'
                 }}
               >
-                Submit Application
+                {submitting ? 'Submitting...' : 'Submit for Verification'}
               </button>
             </form>
           </div>
@@ -920,4 +756,4 @@ export function OnboardingScreen() {
       </div>
     </div>
   )
-} 
+}

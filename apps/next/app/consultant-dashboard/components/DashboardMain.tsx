@@ -1,46 +1,43 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useConsultantData } from '../../../../../lib/hooks/useConsultantData'
+import { supabase } from '../../../../../lib/supabase'
+import { LogoutButton } from '../../../../../lib/components/LogoutButton'
 
-/*
-SUPABASE INTEGRATION TODO:
-=====================================
+// Loading skeleton component
+const DashboardSkeleton = () => (
+  <div className="animate-pulse">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      {[...Array(4)].map((_, i) => (
+        <div key={i} className="bg-gray-200 rounded-2xl h-32"></div>
+      ))}
+    </div>
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="lg:col-span-2 bg-gray-200 rounded-2xl h-96"></div>
+      <div className="bg-gray-200 rounded-2xl h-96"></div>
+    </div>
+  </div>
+)
 
-1. CONSULTANT STATS TABLE:
-   - Table: consultant_stats
-   - Fields: consultant_id, active_gigs, completed_this_week, total_earnings, avg_rating, response_time_hours, client_satisfaction_percent
-   - Real-time subscription for live updates
-   - Query: SELECT * FROM consultant_stats WHERE consultant_id = $1
-
-2. URGENT TASKS TABLE:  
-   - Table: consultant_tasks
-   - Fields: id, consultant_id, title, client_name, deadline, priority, task_type, payment_amount, status
-   - Query: SELECT * FROM consultant_tasks WHERE consultant_id = $1 AND status = 'urgent' ORDER BY deadline ASC
-   - Real-time subscription for new urgent tasks
-
-3. GIG REQUESTS TABLE:
-   - Table: gig_requests  
-   - Fields: id, client_name, service_type, target_university, budget, compatibility_score, created_at, status
-   - Query: SELECT * FROM gig_requests WHERE status = 'pending' AND target_consultant_id = $1 ORDER BY created_at DESC
-   - Real-time subscription for new requests
-
-4. REAL-TIME SUBSCRIPTIONS:
-   - Set up Supabase real-time subscriptions for:
-     * New gig requests: supabase.channel('gig_requests').on('postgres_changes', {event: 'INSERT'})
-     * Task updates: supabase.channel('consultant_tasks').on('postgres_changes', {event: '*'})
-     * Stats updates: supabase.channel('consultant_stats').on('postgres_changes', {event: 'UPDATE'})
-
-5. API FUNCTIONS TO CREATE:
-   - fetchConsultantStats(consultantId): Promise<ConsultantStats>
-   - fetchUrgentTasks(consultantId): Promise<Task[]>
-   - fetchGigRequests(consultantId): Promise<GigRequest[]>
-   - acceptGigRequest(requestId): Promise<void>
-   - declineGigRequest(requestId): Promise<void>
-*/
+// Error component
+const DashboardError = ({ error, onRetry }: { error: Error, onRetry: () => void }) => (
+  <div className="text-center py-12">
+    <div className="text-6xl mb-4">⚠️</div>
+    <h3 className="text-xl font-semibold text-gray-800 mb-2">Something went wrong</h3>
+    <p className="text-gray-600 mb-4">{error.message}</p>
+    <button
+      onClick={onRetry}
+      className="px-6 py-2 bg-proofr-cyan text-white rounded-lg hover:bg-cyan-600 transition-colors"
+    >
+      Try Again
+    </button>
+  </div>
+)
 
 // Professional Chart Component for Earnings
 const EarningsChart = ({ data, timeframe }: { data: number[], timeframe: string }) => {
-  const maxValue = Math.max(...data)
+  const maxValue = Math.max(...data, 1) // Prevent division by zero
   const points = data.map((value, index) => ({
     x: (index / (data.length - 1)) * 100,
     y: 100 - (value / maxValue) * 80
@@ -83,10 +80,10 @@ const EarningsChart = ({ data, timeframe }: { data: number[], timeframe: string 
       </svg>
       <div className="absolute bottom-2 left-0 right-0 flex justify-between text-xs text-gray-500 px-4">
         {timeframe === 'week' ? 
-          ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => <span key={day}>{day}</span>) :
+          ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].slice(0, data.length).map(day => <span key={day}>{day}</span>) :
           timeframe === 'month' ?
-          ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].map(month => <span key={month}>{month}</span>) :
-          ['2023', 'Q2', 'Q3', 'Q4', '2024', 'Q2', 'Q3', 'Q4', '2025', 'Q2', 'Q3', 'Q4'].map(period => <span key={period}>{period}</span>)
+          ['Week 1', 'Week 2', 'Week 3', 'Week 4'].slice(0, data.length).map(week => <span key={week}>{week}</span>) :
+          ['Q1', 'Q2', 'Q3', 'Q4'].slice(0, data.length).map(quarter => <span key={quarter}>{quarter}</span>)
         }
       </div>
     </div>
@@ -94,524 +91,318 @@ const EarningsChart = ({ data, timeframe }: { data: number[], timeframe: string 
 }
 
 // Professional Performance Indicator
-const PerformanceIndicator = ({ percentage, label, comparison }: { percentage: number, label: string, comparison: string }) => {
+const PerformanceIndicator = ({ percentage, label }: { percentage: number, label: string }) => {
   const circumference = 2 * Math.PI * 45
   const strokeDasharray = circumference
   const strokeDashoffset = circumference - (percentage / 100) * circumference
 
   return (
-    <div className="flex items-center space-x-4">
-      <div className="relative w-24 h-24">
-        <svg className="w-24 h-24 transform -rotate-90" viewBox="0 0 100 100">
-          <circle
-            cx="50"
-            cy="50"
-            r="45"
-            stroke="currentColor"
-            strokeWidth="8"
-            fill="none"
-            className="text-gray-200 dark:text-gray-700"
-          />
-          <circle
-            cx="50"
-            cy="50"
-            r="45"
-            stroke="url(#progressGradient)"
-            strokeWidth="8"
-            fill="none"
-            strokeDasharray={strokeDasharray}
-            strokeDashoffset={strokeDashoffset}
-            strokeLinecap="round"
-          />
-          <defs>
-            <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#1a1f3a" />
-              <stop offset="100%" stopColor="#00bcd4" />
-            </linearGradient>
-          </defs>
-        </svg>
-        <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-xl font-bold bg-gradient-to-r from-proofr-navy to-proofr-cyan bg-clip-text text-transparent">{percentage}%</span>
+    <div className="relative w-32 h-32">
+      <svg className="w-32 h-32 transform -rotate-90">
+        <circle
+          cx="64"
+          cy="64"
+          r="45"
+          stroke="#e5e7eb"
+          strokeWidth="10"
+          fill="none"
+        />
+        <circle
+          cx="64"
+          cy="64"
+          r="45"
+          stroke="#00bcd4"
+          strokeWidth="10"
+          fill="none"
+          strokeDasharray={strokeDasharray}
+          strokeDashoffset={strokeDashoffset}
+          strokeLinecap="round"
+          className="transition-all duration-500 ease-out"
+        />
+      </svg>
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-2xl font-bold text-gray-800">{percentage}%</div>
+          <div className="text-xs text-gray-500">{label}</div>
         </div>
-      </div>
-      <div>
-        <p className="font-semibold text-gray-900 dark:text-white">{label}</p>
-        <p className="text-sm text-proofr-cyan dark:text-proofr-cyan font-medium">{comparison}</p>
       </div>
     </div>
   )
 }
 
-export default function DashboardMain({ onNavigate }: { onNavigate?: (tab: string) => void }) {
-  const [timeframe, setTimeframe] = useState('week')
-  const [showQuickActions, setShowQuickActions] = useState(false)
-
-  // TODO: Replace with actual Supabase data fetching
-  const [stats] = useState({
-    activeGigs: 12,
-    completedThisWeek: 8,
-    totalEarnings: 2840,
-    totalEarningsThisMonth: 4250,
-    avgRating: 4.9,
-    responseTime: '2h',
-    clientSatisfaction: 98,
-    profileViews: 324,
-    proposalsSent: 18,
-    hireRate: 67
+export default function DashboardMain() {
+  const { profile, stats, loading, error, refetch } = useConsultantData()
+  const [recentBookings, setRecentBookings] = useState<any[]>([])
+  const [earningsData, setEarningsData] = useState({
+    week: [0, 0, 0, 0, 0, 0, 0],
+    month: [0, 0, 0, 0],
+    year: [0, 0, 0, 0]
   })
+  const [selectedTimeframe, setSelectedTimeframe] = useState<'week' | 'month' | 'year'>('week')
 
-  const [earningsData] = useState({
-    week: [320, 450, 280, 680, 890, 1240, 780],
-    month: [2840, 3200, 2950, 4100, 3800, 4250, 4890, 5100, 4750, 5200, 4950, 5300],
-    year: [28400, 32000, 29500, 41000, 38000, 42500, 48900, 51000, 47500, 52000, 49500, 53000]
-  })
+  // Fetch recent bookings
+  useEffect(() => {
+    if (!profile?.id) return
 
-  const [urgentTasks] = useState([
-    {
-      id: 1,
-      title: 'Harvard Application Essay Review',
-      client: 'Sarah M.',
-      deadline: '2 hours',
-      priority: 'high',
-      type: 'Essay Review',
-      payment: 150,
-      status: 'In Progress'
-    },
-    {
-      id: 2,
-      title: 'Stanford Supplemental Essays',
-      client: 'Mike K.',
-      deadline: '6 hours',
-      priority: 'high',
-      type: 'Essay Review',
-      payment: 200,
-      status: 'Pending'
-    },
-    {
-      id: 3,
-      title: 'Interview Prep Session',
-      client: 'Emma L.',
-      deadline: '1 day',
-      priority: 'medium',
-      type: 'Interview Prep',
-      payment: 100,
-      status: 'Scheduled'
+    const fetchRecentBookings = async () => {
+      const { data, error } = await supabase
+        .from('bookings')
+        .select(`
+          *,
+          students (name),
+          services (title)
+        `)
+        .eq('consultant_id', profile.id)
+        .order('created_at', { ascending: false })
+        .limit(5)
+
+      if (!error && data) {
+        setRecentBookings(data)
+      }
     }
-  ])
 
-  const [newRequests] = useState([
+    fetchRecentBookings()
+
+    // Subscribe to new bookings
+    const subscription = supabase
+      .channel('recent-bookings')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'bookings',
+          filter: `consultant_id=eq.${profile.id}`
+        },
+        () => {
+          fetchRecentBookings()
+        }
+      )
+      .subscribe()
+
+    return () => {
+      subscription.unsubscribe()
+    }
+  }, [profile?.id])
+
+  // Fetch earnings data
+  useEffect(() => {
+    if (!profile?.id) return
+
+    const fetchEarningsData = async () => {
+      const now = new Date()
+      
+      // Week data
+      const weekData = await Promise.all(
+        [...Array(7)].map(async (_, i) => {
+          const date = new Date(now)
+          date.setDate(now.getDate() - (6 - i))
+          const startOfDay = new Date(date.setHours(0, 0, 0, 0))
+          const endOfDay = new Date(date.setHours(23, 59, 59, 999))
+          
+          const { data } = await supabase
+            .from('bookings')
+            .select('final_price')
+            .eq('consultant_id', profile.id)
+            .eq('status', 'completed')
+            .gte('completed_at', startOfDay.toISOString())
+            .lte('completed_at', endOfDay.toISOString())
+          
+          return data?.reduce((sum, b) => sum + (b.final_price || 0), 0) || 0
+        })
+      )
+
+      setEarningsData(prev => ({ ...prev, week: weekData }))
+    }
+
+    fetchEarningsData()
+  }, [profile?.id])
+
+  if (loading) return <DashboardSkeleton />
+  if (error) return <DashboardError error={error} onRetry={refetch} />
+  if (!profile || !stats) return null
+
+  const quickStats = [
     {
-      id: 1,
-      client: 'Alex Chen',
-      service: 'Personal Statement Review',
-      university: 'MIT',
-      budget: 175,
-      compatibility: 95,
-      timePosted: '5 min ago'
+      title: "Today's Earnings",
+      value: `$${stats.todayEarnings.toFixed(2)}`,
+      change: '+12%',
+      positive: true,
+      icon: '💰'
     },
     {
-      id: 2,
-      client: 'Maria Rodriguez',
-      service: 'Application Strategy',
-      university: 'Stanford',
-      budget: 300,
-      compatibility: 88,
-      timePosted: '12 min ago'
+      title: 'Active Clients',
+      value: stats.activeClients.toString(),
+      change: `${stats.pendingBookings} pending`,
+      positive: true,
+      icon: '👥'
+    },
+    {
+      title: 'Average Rating',
+      value: stats.averageRating.toFixed(1),
+      change: `${stats.totalReviews} reviews`,
+      positive: true,
+      icon: '⭐'
+    },
+    {
+      title: 'Response Time',
+      value: `${stats.responseTime}h`,
+      change: 'avg',
+      positive: stats.responseTime <= 24,
+      icon: '⏱️'
     }
-  ])
+  ]
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    <div className="p-6 lg:p-8">
+      {/* Header with Logout */}
+      <div className="flex justify-between items-center mb-8">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">
+            Welcome back, {profile.name}! 👋
+          </h1>
+          <p className="text-gray-600">
+            {profile.vacation_mode 
+              ? "You're currently in vacation mode. Your profile is hidden from students."
+              : "Here's your performance overview for today."}
+          </p>
+        </div>
+        <LogoutButton />
+      </div>
 
-      {/* Professional Header */}
-      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-8 py-6">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 via-proofr-navy to-proofr-cyan bg-clip-text text-transparent dark:from-white dark:via-gray-100 dark:to-proofr-cyan">
-              Dashboard Overview
-            </h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-2 text-lg">Welcome back, John Doe</p>
-          </div>
-          <div className="mt-4 sm:mt-0 flex items-center space-x-4">
-                         <select 
-               value={timeframe} 
-               onChange={(e) => setTimeframe(e.target.value)}
-               className="px-4 py-3 border border-gray-200/50 dark:border-gray-600/50 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-proofr-cyan bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm text-gray-900 dark:text-white shadow-lg"
-             >
-               <option value="week">Last 7 days</option>
-               <option value="month">Last 12 months</option>
-               <option value="year">Last 12 months (quarterly)</option>
-             </select>
-            <button className="px-4 py-2 bg-white/80 dark:bg-gray-700/80 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-white dark:hover:bg-gray-700 transition-colors text-sm font-medium backdrop-blur-sm border border-gray-200/50 dark:border-gray-600/50">
-              <svg className="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-              Schedule
-            </button>
-            <div className="relative">
-              <button 
-                onClick={() => setShowQuickActions(!showQuickActions)}
-                className="px-6 py-3 bg-gradient-to-r from-proofr-navy to-proofr-cyan text-white rounded-xl hover:shadow-xl hover:shadow-proofr-cyan/25 transition-all duration-300 text-sm font-medium backdrop-blur-sm border border-white/20"
-              >
-                Quick Task
-              </button>
-              {showQuickActions && (
-                <div className="absolute right-0 mt-2 w-48 bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl rounded-xl shadow-2xl border border-gray-200/50 dark:border-gray-700/50 z-10">
-                  <div className="py-2">
-                    <button className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 rounded-lg mx-2">Create New Gig</button>
-                    <button className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 rounded-lg mx-2">Schedule Call</button>
-                    <button className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 rounded-lg mx-2">Export Data</button>
-                    <button className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50 rounded-lg mx-2">Generate Report</button>
-                  </div>
-                </div>
-              )}
+      {/* Quick Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        {quickStats.map((stat, index) => (
+          <div
+            key={index}
+            className="bg-white rounded-2xl p-6 border border-gray-100 hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+          >
+            <div className="flex items-start justify-between mb-3">
+              <div>
+                <p className="text-sm text-gray-500 mb-1">{stat.title}</p>
+                <p className="text-2xl font-bold text-gray-800">{stat.value}</p>
+              </div>
+              <div className="text-2xl">{stat.icon}</div>
+            </div>
+            <div className="flex items-center gap-1">
+              <span className={`text-xs font-medium ${stat.positive ? 'text-green-600' : 'text-red-600'}`}>
+                {stat.change}
+              </span>
             </div>
           </div>
+        ))}
+      </div>
+
+      {/* Main Content Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Earnings Chart */}
+        <div className="lg:col-span-2 bg-white rounded-2xl p-6 border border-gray-100">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-semibold text-gray-800">Earnings Overview</h2>
+            <div className="flex gap-2">
+              {(['week', 'month', 'year'] as const).map((timeframe) => (
+                <button
+                  key={timeframe}
+                  onClick={() => setSelectedTimeframe(timeframe)}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    selectedTimeframe === timeframe
+                      ? 'bg-proofr-cyan text-white'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  {timeframe.charAt(0).toUpperCase() + timeframe.slice(1)}
+                </button>
+              ))}
+            </div>
+          </div>
+          
+          <div className="mb-4">
+            <div className="text-3xl font-bold text-gray-800">
+              ${selectedTimeframe === 'week' 
+                ? earningsData.week.reduce((a, b) => a + b, 0).toFixed(2)
+                : selectedTimeframe === 'month'
+                ? stats.monthlyEarnings.toFixed(2)
+                : stats.totalEarnings.toFixed(2)
+              }
+            </div>
+            <p className="text-sm text-gray-500">
+              Total earnings this {selectedTimeframe}
+            </p>
+          </div>
+          
+          <EarningsChart data={earningsData[selectedTimeframe]} timeframe={selectedTimeframe} />
+        </div>
+
+        {/* Recent Activity */}
+        <div className="bg-white rounded-2xl p-6 border border-gray-100">
+          <h2 className="text-xl font-semibold text-gray-800 mb-6">Recent Activity</h2>
+          
+          <div className="space-y-4">
+            {recentBookings.length > 0 ? (
+              recentBookings.map((booking) => (
+                <div key={booking.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div className="flex-1">
+                    <p className="font-medium text-gray-800">
+                      {booking.students?.name || 'Student'}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      {booking.services?.title || 'Service'}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-semibold text-gray-800">
+                      ${booking.final_price}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {new Date(booking.created_at).toLocaleDateString()}
+                    </p>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p className="text-gray-500 text-center py-8">No recent bookings</p>
+            )}
+          </div>
+          
+          {recentBookings.length > 0 && (
+            <button className="w-full mt-4 py-3 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors">
+              View All Bookings
+            </button>
+          )}
         </div>
       </div>
 
-      {/* Scrollable Content */}
-      <div className="px-8 py-8 max-w-7xl mx-auto space-y-8">
+      {/* Performance Metrics */}
+      <div className="mt-8 bg-white rounded-2xl p-6 border border-gray-100">
+        <h2 className="text-xl font-semibold text-gray-800 mb-6">Performance Metrics</h2>
         
-        {/* Key Performance Indicators */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative">
-          {/* Total Earnings */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow duration-200">
-            <div className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm font-medium mb-2">Total Earnings</p>
-                  <p className="text-3xl font-bold bg-gradient-to-r from-proofr-navy to-proofr-cyan bg-clip-text text-transparent">
-                    ${stats.totalEarningsThisMonth}
-                  </p>
-                  <div className="flex items-center mt-3">
-                    <div className="flex items-center bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 rounded-full px-3 py-1 text-xs font-semibold">
-                      +15.3%
-                    </div>
-                  </div>
-                </div>
-                <div className="w-14 h-14 bg-gradient-to-br from-proofr-navy to-proofr-cyan rounded-xl flex items-center justify-center shadow-lg">
-                  <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
-                  </svg>
-                </div>
-              </div>
-            </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="flex flex-col items-center">
+            <PerformanceIndicator 
+              percentage={Math.min(100, (stats.completedBookings / Math.max(1, stats.completedBookings + stats.pendingBookings)) * 100)}
+              label="Completion Rate"
+            />
           </div>
-
-          {/* Active Projects */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow duration-200">
-            <div className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm font-medium mb-2">Active Projects</p>
-                  <p className="text-3xl font-bold bg-gradient-to-r from-proofr-navy to-proofr-cyan bg-clip-text text-transparent">
-                    {stats.activeGigs}
-                  </p>
-                  <div className="flex items-center mt-3">
-                    <div className="flex items-center bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 rounded-full px-3 py-1 text-xs font-semibold">
-                      +2 this week
-                    </div>
-                  </div>
-                </div>
-                <div className="w-14 h-14 bg-gradient-to-br from-proofr-cyan to-proofr-navy rounded-xl flex items-center justify-center shadow-lg">
-                  <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                </div>
-              </div>
-            </div>
+          <div className="flex flex-col items-center">
+            <PerformanceIndicator 
+              percentage={Math.min(100, (stats.averageRating / 5) * 100)}
+              label="Satisfaction"
+            />
           </div>
-
-          {/* Client Rating */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow duration-200">
-            <div className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm font-medium mb-2">Client Rating</p>
-                  <p className="text-3xl font-bold bg-gradient-to-r from-proofr-navy to-proofr-cyan bg-clip-text text-transparent">
-                    {stats.avgRating}
-                  </p>
-                  <div className="flex items-center mt-3">
-                    <div className="flex items-center bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400 rounded-full px-3 py-1 text-xs font-semibold">
-                      Top 8%
-                    </div>
-                  </div>
-                </div>
-                <div className="w-14 h-14 bg-gradient-to-br from-proofr-navy to-proofr-cyan rounded-xl flex items-center justify-center shadow-lg">
-                  <svg className="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                  </svg>
-                </div>
-              </div>
-            </div>
+          <div className="flex flex-col items-center">
+            <PerformanceIndicator 
+              percentage={Math.min(100, 100 - (stats.responseTime / 48) * 100)}
+              label="Response Speed"
+            />
           </div>
-
-          {/* Response Time */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow duration-200">
-            <div className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm font-medium mb-2">Response Time</p>
-                  <p className="text-3xl font-bold bg-gradient-to-r from-proofr-navy to-proofr-cyan bg-clip-text text-transparent">
-                    {stats.responseTime}
-                  </p>
-                  <div className="flex items-center mt-3">
-                    <div className="flex items-center bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 rounded-full px-3 py-1 text-xs font-semibold">
-                      Faster than 89%
-                    </div>
-                  </div>
-                </div>
-                <div className="w-14 h-14 bg-gradient-to-br from-proofr-cyan to-proofr-navy rounded-xl flex items-center justify-center shadow-lg">
-                  <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Professional Analytics Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Earnings Chart */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow duration-200">
-            <div>
-              <div className="p-8 border-b border-gray-100/50 dark:border-gray-700/50">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-2xl font-bold bg-gradient-to-r from-gray-900 via-proofr-navy to-proofr-cyan bg-clip-text text-transparent dark:from-white dark:via-gray-100 dark:to-proofr-cyan">
-                    Earnings Overview
-                  </h2>
-                  <div className="flex items-center space-x-2">
-                    <button 
-                      onClick={() => setTimeframe('week')}
-                      className={`px-4 py-2 text-sm rounded-xl transition-colors ${
-                        timeframe === 'week' ? 'bg-gradient-to-r from-proofr-navy to-proofr-cyan text-white shadow-lg' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
-                      }`}
-                    >
-                      Week
-                    </button>
-                    <button 
-                      onClick={() => setTimeframe('month')}
-                      className={`px-4 py-2 text-sm rounded-xl transition-colors ${
-                        timeframe === 'month' ? 'bg-gradient-to-r from-proofr-navy to-proofr-cyan text-white shadow-lg' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
-                      }`}
-                    >
-                      Month
-                    </button>
-                    <button 
-                      onClick={() => setTimeframe('year')}
-                      className={`px-4 py-2 text-sm rounded-xl transition-colors ${
-                        timeframe === 'year' ? 'bg-gradient-to-r from-proofr-navy to-proofr-cyan text-white shadow-lg' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
-                      }`}
-                    >
-                      Year
-                    </button>
-                  </div>
-                </div>
-              </div>
-              <div className="p-8">
-                <div className="mb-6">
-                  <p className="text-3xl font-bold bg-gradient-to-r from-proofr-navy to-proofr-cyan bg-clip-text text-transparent">
-                    ${earningsData[timeframe as keyof typeof earningsData].reduce((a, b) => a + b, 0).toLocaleString()}
-                  </p>
-                  <p className="text-gray-600 dark:text-gray-400 mt-1">
-                    {timeframe === 'week' ? 'Last 7 days' : 
-                     timeframe === 'month' ? 'Last 12 months' : 
-                     'Last 12 months (quarterly)'}
-                  </p>
-                </div>
-                <EarningsChart 
-                  data={earningsData[timeframe as keyof typeof earningsData]} 
-                  timeframe={timeframe} 
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Performance Metrics */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow duration-200">
-            <div>
-              <div className="p-8 border-b border-gray-100/50 dark:border-gray-700/50">
-                <h2 className="text-2xl font-bold bg-gradient-to-r from-gray-900 via-proofr-navy to-proofr-cyan bg-clip-text text-transparent dark:from-white dark:via-gray-100 dark:to-proofr-cyan">
-                  Performance Metrics
-                </h2>
-              </div>
-              <div className="p-8 space-y-6">
-                <PerformanceIndicator 
-                  percentage={stats.hireRate} 
-                  label="Hire Rate" 
-                  comparison="Better than 65% of consultants"
-                />
-                <PerformanceIndicator 
-                  percentage={stats.clientSatisfaction} 
-                  label="Client Satisfaction" 
-                  comparison="Top 5% of consultants"
-                />
-                <div className="grid grid-cols-2 gap-4 pt-6 border-t border-gray-100/50 dark:border-gray-700/50">
-                  <div className="text-center p-4 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-2xl border border-blue-200/20 dark:border-blue-700/20">
-                    <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.profileViews}</p>
-                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Profile Views</p>
-                  </div>
-                  <div className="text-center p-4 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-2xl border border-green-200/20 dark:border-green-700/20">
-                    <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.proposalsSent}</p>
-                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Proposals Sent</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Active Projects Table */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow duration-200">
-          <div>
-            <div className="p-8 border-b border-gray-100/50 dark:border-gray-700/50">
-              <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold bg-gradient-to-r from-gray-900 via-proofr-navy to-proofr-cyan bg-clip-text text-transparent dark:from-white dark:via-gray-100 dark:to-proofr-cyan">
-                  Active Projects
-                </h2>
-                <button 
-                  onClick={() => onNavigate?.('gigs')}
-                  className="text-sm text-proofr-cyan hover:text-proofr-navy dark:hover:text-proofr-cyan/80 transition-colors font-medium"
-                >
-                  View All Projects
-                </button>
-              </div>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50 dark:bg-gray-900">
-                  <tr>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Project</th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Client</th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Status</th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Deadline</th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Value</th>
-                  </tr>
-                </thead>
-                <tbody className="bg-transparent divide-y divide-gray-200/50 dark:divide-gray-700/50">
-                  {urgentTasks.map((task) => (
-                    <tr key={task.id} className="hover:bg-gray-50/50 dark:hover:bg-gray-700/50 transition-colors">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <div className={`w-3 h-3 rounded-full mr-3 shadow-sm ${
-                            task.priority === 'high' ? 'bg-gradient-to-r from-proofr-coral to-red-500' : 'bg-gradient-to-r from-yellow-400 to-orange-400'
-                          }`}></div>
-                          <div>
-                            <div className="text-sm font-semibold text-gray-900 dark:text-white">{task.title}</div>
-                            <div className="text-sm text-gray-600 dark:text-gray-400">{task.type}</div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{task.client}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${
-                          task.status === 'In Progress' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400' :
-                          task.status === 'Pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400' :
-                          'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
-                        }`}>
-                          {task.status}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">{task.deadline}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-bold bg-gradient-to-r from-proofr-navy to-proofr-cyan bg-clip-text text-transparent">${task.payment}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
-        {/* Pending Requests */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow duration-200">
-          <div>
-            <div className="p-8 border-b border-gray-100/50 dark:border-gray-700/50">
-              <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold bg-gradient-to-r from-gray-900 via-proofr-navy to-proofr-cyan bg-clip-text text-transparent dark:from-white dark:via-gray-100 dark:to-proofr-cyan">
-                  Pending Requests
-                </h2>
-                <span className="text-sm bg-gradient-to-r from-proofr-coral to-red-500 text-white px-4 py-2 rounded-full font-semibold shadow-lg">
-                  {newRequests.length} new
-                </span>
-              </div>
-            </div>
-            <div className="p-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {newRequests.map((request) => (
-                  <div key={request.id} className="border border-gray-200 dark:border-gray-600 rounded-xl p-6 hover:border-proofr-cyan dark:hover:border-proofr-cyan transition-all duration-300 bg-gray-50 dark:bg-gray-900 hover:shadow-md">
-                    <div className="flex items-start justify-between mb-4">
-                      <div>
-                        <h3 className="font-semibold text-gray-900 dark:text-white text-lg">{request.service}</h3>
-                        <p className="text-gray-600 dark:text-gray-400 mt-1">by {request.client}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-2xl font-bold bg-gradient-to-r from-proofr-navy to-proofr-cyan bg-clip-text text-transparent">${request.budget}</p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{request.timePosted}</p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-3">
-                        <span className="text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-3 py-1 rounded-full font-medium">
-                          {request.university}
-                        </span>
-                        <div className="flex items-center space-x-1">
-                          <span className="text-xs text-green-600 dark:text-green-400 font-medium">Match:</span>
-                          <span className="text-xs font-bold text-green-600 dark:text-green-400">{request.compatibility}%</span>
-                        </div>
-                      </div>
-                      <div className="flex space-x-3">
-                        <button className="px-4 py-2 text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors font-medium">
-                          Decline
-                        </button>
-                        <button className="px-4 py-2 text-xs bg-gradient-to-r from-proofr-navy to-proofr-cyan text-white rounded-xl hover:shadow-lg hover:shadow-proofr-cyan/25 transition-all duration-300 font-medium">
-                          Accept
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-6 text-center">
-                <button
-                  onClick={() => onNavigate?.('gigs')}
-                  className="px-6 py-3 bg-gradient-to-r from-proofr-navy to-proofr-cyan text-white rounded-xl hover:shadow-xl hover:shadow-proofr-cyan/25 transition-all duration-300 font-medium"
-                >
-                  View All Requests →
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* CTA Section */}
-        <div className="relative overflow-hidden bg-gradient-to-br from-proofr-navy via-proofr-cyan to-indigo-600 rounded-3xl p-10 text-white border border-white/20 shadow-2xl shadow-proofr-navy/30">
-          <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent opacity-50"></div>
-          <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl from-white/5 to-transparent rounded-full blur-3xl"></div>
-          <div className="absolute bottom-0 left-0 w-72 h-72 bg-gradient-to-tr from-proofr-coral/20 to-transparent rounded-full blur-2xl"></div>
-          
-          <div className="relative z-10">
-            <div className="flex flex-col md:flex-row md:items-center justify-between">
-              <div>
-                <h3 className="text-3xl font-bold mb-3 bg-gradient-to-r from-white via-blue-100 to-cyan-100 bg-clip-text text-transparent">
-                  Maximize Your Earnings
-                </h3>
-                <p className="text-white/90 text-lg leading-relaxed">College application season is approaching. Optimize your profile and availability to capture peak demand.</p>
-              </div>
-              <div className="mt-8 md:mt-0 flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
-                <button className="px-8 py-4 bg-white/10 backdrop-blur-md rounded-xl hover:bg-white/20 transition-all duration-300 font-semibold border border-white/20 hover:scale-105">
-                  Update Profile
-                </button>
-                <button className="px-8 py-4 bg-white text-proofr-navy rounded-xl hover:bg-gray-100 transition-all duration-300 font-semibold shadow-lg hover:scale-105">
-                  View Analytics
-                </button>
-              </div>
-            </div>
+          <div className="flex flex-col items-center">
+            <PerformanceIndicator 
+              percentage={profile.is_available ? 100 : 0}
+              label="Availability"
+            />
           </div>
         </div>
       </div>
     </div>
   )
-} 
+}
