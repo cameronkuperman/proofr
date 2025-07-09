@@ -84,34 +84,6 @@ export default function AboutPage() {
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
       <NavigationBar />
       
-      {/* The Story Section - Why We Built This */}
-      <section className="py-32 px-6 bg-gradient-to-b from-white to-gray-50">
-        <div className="max-w-3xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="space-y-8"
-          >
-            <h1 className="text-5xl font-bold text-gray-900">Why we built Proofr</h1>
-            
-            <div className="prose prose-lg prose-gray max-w-none">
-              <p className="text-xl text-gray-700 leading-relaxed">
-                I watched my classmates write themselves into colleges without the proper stats. I saw families spend <span className="font-semibold text-gray-900">$10,000 to $15,000</span> on consulting. And I saw a disturbing pattern emerge.
-              </p>
-              
-              <p className="text-lg text-gray-600 leading-relaxed">
-                When I needed help with my essays, I didn't turn to expensive consultants. I asked friends—Christian at Cornell, Phong at Duke. They helped me understand cultural fit, suggested word changes, caught errors. The substance was mine, but their perspective was invaluable.
-              </p>
-              
-              <p className="text-lg text-gray-600 leading-relaxed">
-                That's when it hit me: <span className="font-medium text-gray-800">Why should this kind of help cost a fortune?</span>
-              </p>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-      
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
         <div className="absolute inset-0 bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 opacity-70" />
@@ -358,13 +330,13 @@ export default function AboutPage() {
             viewport={{ once: true }}
             className="max-w-3xl mx-auto mb-16"
           >
-            <h2 className="text-4xl font-bold text-gray-900 mb-8">The bimodal reality</h2>
-            <div className="space-y-6">
-              <p className="text-lg text-gray-700 leading-relaxed">
-                The college admissions process has become a <span className="font-semibold">$3 billion industry</span> that serves primarily the wealthy. We witnessed a disturbing bimodal distribution: those with means get in, those without struggle—regardless of merit.
+            <h2 className="text-4xl font-bold text-gray-900 mb-10 leading-tight">The bimodal reality</h2>
+            <div className="space-y-8">
+              <p className="text-xl text-gray-800 leading-[1.8] font-normal">
+                The college admissions process has become a <span className="font-bold text-gray-900 bg-red-50 px-2 py-0.5 rounded">$3 billion industry</span> that serves primarily the wealthy. We witnessed a disturbing bimodal distribution: those with means get in, those without struggle—regardless of merit.
               </p>
-              <p className="text-lg text-gray-600 leading-relaxed">
-                It's not about IQ or potential anymore. It's about whether your family can afford to turn your genuine thoughts into polished prose. Essays have become less about substance and more about who can pay for the best packaging.
+              <p className="text-lg text-gray-700 leading-[1.75] font-light">
+                It's not about IQ or potential anymore. It's about whether your family can afford to turn your genuine thoughts into polished prose. Essays have become less about <span className="font-medium text-gray-900">substance</span> and more about who can pay for the <span className="font-medium text-gray-900">best packaging</span>.
               </p>
             </div>
           </motion.div>
@@ -493,6 +465,40 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* The Story Section - Why We Built This */}
+      <section className="py-32 px-6 bg-gradient-to-b from-white to-gray-50">
+        <div className="max-w-3xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="space-y-10"
+          >
+            <h2 className="text-5xl font-bold text-gray-900 leading-tight">Why we built Proofr</h2>
+            
+            <div className="space-y-8">
+              <p className="text-xl text-gray-800 leading-[1.8] font-normal">
+                I watched my classmates write themselves into colleges without the proper stats. I saw families spend <span className="font-semibold text-gray-900 bg-yellow-50 px-1 py-0.5 rounded">$10,000 to $15,000</span> on consulting. And I saw a disturbing pattern emerge.
+              </p>
+              
+              <p className="text-lg text-gray-700 leading-[1.75] font-light">
+                When I needed help with my essays, I didn't turn to expensive consultants. I asked friends—<span className="font-medium text-gray-900">Christian at Cornell, Phong at Duke</span>. They helped me understand cultural fit, suggested word changes, caught errors. The substance was mine, but their perspective was invaluable.
+              </p>
+              
+              <p className="text-lg text-gray-700 leading-[1.75] font-light">
+                That's when it hit me: <span className="font-medium text-gray-900 italic">"Why should this kind of help cost a fortune?"</span>
+              </p>
+              
+              <div className="pt-6 border-t border-gray-200">
+                <p className="text-lg text-gray-600 leading-[1.75] font-light italic">
+                  Everyone deserves access to the guidance that helped us succeed. That's why we built Proofr.
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* The Solution - For Students and Consultants */}
       <section className="py-32 px-6 bg-gray-50">
         <div className="max-w-6xl mx-auto">
@@ -502,12 +508,12 @@ export default function AboutPage() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
             >
-              <h3 className="text-3xl font-bold text-gray-900 mb-6">For students</h3>
-              <div className="space-y-4">
-                <p className="text-lg text-gray-700 leading-relaxed">
-                  Access the same quality of guidance that got us into top schools—at a fraction of the cost. Connect with recent grads who understand your challenges and can help your authentic voice shine through.
+              <h3 className="text-3xl font-bold text-gray-900 mb-8">For students</h3>
+              <div className="space-y-6">
+                <p className="text-lg text-gray-700 leading-[1.75] font-light">
+                  Access the same quality of guidance that got us into top schools—at a <span className="font-medium text-gray-900">fraction of the cost</span>. Connect with recent grads who understand your challenges and can help your authentic voice shine through.
                 </p>
-                <p className="text-lg text-gray-600">
+                <p className="text-lg text-gray-600 leading-[1.75] font-light italic">
                   Because your potential shouldn't be limited by your parent's bank account.
                 </p>
               </div>
@@ -518,12 +524,12 @@ export default function AboutPage() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
             >
-              <h3 className="text-3xl font-bold text-gray-900 mb-6">For consultants</h3>
-              <div className="space-y-4">
-                <p className="text-lg text-gray-700 leading-relaxed">
-                  College students deserve better than <span className="font-semibold">$16.50-$23.50/hour</span> work-study jobs with rigid schedules. On Proofr, consultants earn an average of <span className="font-semibold text-green-600">$75-$90/hour</span> on their own terms.
+              <h3 className="text-3xl font-bold text-gray-900 mb-8">For consultants</h3>
+              <div className="space-y-6">
+                <p className="text-lg text-gray-700 leading-[1.75] font-light">
+                  College students deserve better than <span className="font-medium text-red-600 bg-red-50 px-2 py-0.5 rounded">$16.50-$23.50/hour</span> work-study jobs with rigid schedules. On Proofr, consultants earn an average of <span className="font-semibold text-green-700 bg-green-50 px-2 py-0.5 rounded">$75-$90/hour</span> on their own terms.
                 </p>
-                <p className="text-lg text-gray-600">
+                <p className="text-lg text-gray-600 leading-[1.75] font-light">
                   Control your schedule. Help students like you once were. Earn what you're actually worth.
                 </p>
               </div>
@@ -580,7 +586,7 @@ export default function AboutPage() {
             className="text-center mb-16"
           >
             <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-purple-700 to-blue-700 bg-clip-text text-transparent">Your Story, Our Mission</h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-12">
+            <p className="text-xl text-gray-700 max-w-3xl mx-auto mb-12 leading-[1.7] font-light">
               Type your dream school and watch the magic happen
             </p>
           </motion.div>
@@ -801,9 +807,8 @@ export default function AboutPage() {
             className="text-center mb-16"
           >
             <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-blue-700 to-purple-700 bg-clip-text text-transparent">Your Story, Amplified</h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Whether English is your second language, you&apos;re first-gen, or just need someone who gets it - 
-              we match you with consultants who&apos;ve walked your path.
+            <p className="text-xl text-gray-700 max-w-3xl mx-auto leading-[1.8] font-light">
+              Whether English is your second language, you&apos;re first-gen, or just need someone who gets it—we match you with consultants who&apos;ve walked your path.
             </p>
           </motion.div>
 
@@ -861,7 +866,7 @@ export default function AboutPage() {
                   </motion.div>
                   <h3 className="text-xl font-bold mb-2 text-gray-800">{feature.title}</h3>
                   <p className="text-sm font-semibold text-purple-600 mb-3">{feature.stats}</p>
-                  <p className="text-gray-700">{feature.description}</p>
+                  <p className="text-gray-700 text-sm leading-relaxed">{feature.description}</p>
                 </div>
               </motion.div>
             ))}
@@ -950,8 +955,35 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* Our Vision */}
+      <section className="py-32 px-6 bg-white">
+        <div className="max-w-3xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="space-y-10"
+          >
+            <h2 className="text-4xl font-bold text-gray-900 mb-10 leading-tight">The endgame</h2>
+            <div className="space-y-8">
+              <p className="text-xl text-gray-800 leading-[1.8] font-normal">
+                We believe essays should matter less. They've become too easy to game, too dependent on polish over substance. Until that changes, we're here to <span className="font-semibold text-gray-900">level the playing field</span>.
+              </p>
+              <p className="text-lg text-gray-700 leading-[1.75] font-light">
+                Our vision? A world where merit is measured by factors within your control—your <span className="font-medium text-gray-900">knowledge</span>, your <span className="font-medium text-gray-900">problem-solving</span>, your <span className="font-medium text-gray-900">potential</span>—not your family's ability to hire help.
+              </p>
+              <blockquote className="border-l-4 border-purple-600 pl-8 py-2 my-10 bg-purple-50 rounded-r-lg">
+                <p className="text-xl text-gray-800 italic leading-[1.7] font-light">
+                  "The best consultants aren't professionals in ivory towers. They're students who just walked this path and remember every step."
+                </p>
+              </blockquote>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+      
       {/* Join the Movement */}
-      <section className="py-24 px-6">
+      <section className="py-24 px-6 bg-gradient-to-b from-gray-50 to-white">
         <div className="max-w-4xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -959,7 +991,7 @@ export default function AboutPage() {
             viewport={{ once: true }}
           >
             <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-purple-700 to-pink-700 bg-clip-text text-transparent">Ready to Change Your Story?</h2>
-            <p className="text-xl text-gray-600 mb-12">
+            <p className="text-xl text-gray-700 mb-12 leading-[1.7] font-light">
               Join thousands of students and consultants building a more equitable future for college admissions.
             </p>
             

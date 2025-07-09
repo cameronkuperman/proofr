@@ -225,7 +225,7 @@ export function HomeScreen() {
   const themedColors = useThemedColors()
   const primaryColors = usePrimaryColors()
   
-  const [showQuickMatch, setShowQuickMatch] = useState(true)
+  const [showQuickMatch, setShowQuickMatch] = useState(false)
   const [currentMatchIndex, setCurrentMatchIndex] = useState(0)
   const [swipeCount, setSwipeCount] = useState(0)
   const [showVerificationPopup, setShowVerificationPopup] = useState(false)
@@ -242,7 +242,7 @@ export function HomeScreen() {
     console.log('  - showQuickMatch:', showQuickMatch)
     console.log('  - currentMatchIndex:', currentMatchIndex)
     console.log('  - showMorePrompt:', showMorePrompt)
-    console.log('  - currentConsultant:', mockConsultants[currentMatchIndex]?.name)
+    console.log('  - currentMatch:', mockMatches[currentMatchIndex]?.consultant.name)
   }, [showQuickMatch, currentMatchIndex, showMorePrompt])
 
   const checkUserRoleAndVerification = async () => {
@@ -252,7 +252,8 @@ export function HomeScreen() {
       
       if (onboardingState) {
         const state = JSON.parse(onboardingState)
-        if (state.role === 'consultant' && !state.consultantData.isVerified && verificationDismissed !== 'true') {
+        // Only show for consultants, not students
+        if (state.role === 'consultant' && state.consultantData && !state.consultantData.isVerified && verificationDismissed !== 'true') {
           setShowVerificationPopup(true)
         }
       }
@@ -267,16 +268,16 @@ export function HomeScreen() {
     // Get current values
     const currentIndex = currentMatchIndex
     const currentCount = swipeCount
-    const consultant = mockConsultants[currentIndex]
+    const currentMatch = mockMatches[currentIndex]
     
-    console.log(`[HomeScreen] Current state - index: ${currentIndex}, swipeCount: ${currentCount}, consultant: ${consultant.name}`)
+    console.log(`[HomeScreen] Current state - index: ${currentIndex}, swipeCount: ${currentCount}, consultant: ${currentMatch.consultant.name}`)
     
     if (direction === 'right') {
-      console.log(`Added ${consultant.name} to requests`)
+      console.log(`Added ${currentMatch.consultant.name} - ${currentMatch.service.type} to requests`)
     } else if (direction === 'up') {
-      console.log(`Super liked ${consultant.name} - premium rate`)
+      console.log(`Priority booking for ${currentMatch.consultant.name} - ${currentMatch.service.type}`)
     } else {
-      console.log(`Skipped ${consultant.name}`)
+      console.log(`Skipped ${currentMatch.consultant.name} - ${currentMatch.service.type}`)
     }
     
     // Update swipe count
@@ -284,7 +285,7 @@ export function HomeScreen() {
     setSwipeCount(newSwipeCount)
     
     // Check if this is the last card or 5th swipe
-    if (currentIndex >= mockConsultants.length - 1 || newSwipeCount >= 5) {
+    if (currentIndex >= mockMatches.length - 1 || newSwipeCount >= 5) {
       console.log('[HomeScreen] Reached end of cards or swipe limit')
       // Show the "want more?" prompt after animation
       setTimeout(() => {
@@ -311,7 +312,7 @@ export function HomeScreen() {
   }
 
   const handleViewProfile = () => {
-    console.log('View profile:', mockConsultants[currentMatchIndex].name)
+    console.log('View profile:', mockMatches[currentMatchIndex].consultant.name)
     // TODO: Navigate to profile or show modal
   }
 
@@ -325,8 +326,8 @@ export function HomeScreen() {
 
   const handleAddAll = () => {
     // Add remaining consultants to requests
-    const remaining = mockConsultants.slice(currentMatchIndex)
-    console.log('[HomeScreen] Add All clicked - adding consultants:', remaining.map(c => c.name).join(', '))
+    const remaining = mockMatches.slice(currentMatchIndex)
+    console.log('[HomeScreen] Add All clicked - adding services:', remaining.map(m => `${m.consultant.name} - ${m.service.type}`).join(', '))
     setShowQuickMatch(false)
     setCurrentMatchIndex(0)
     setSwipeCount(0)
@@ -355,9 +356,10 @@ export function HomeScreen() {
       <SafeAreaView style={{ flex: 1 }}>
         <ScrollView 
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 100 }}
+          contentContainerStyle={{ flexGrow: 1, paddingBottom: 100 }}
           bounces={true}
           scrollEventThrottle={16}
+          nestedScrollEnabled={true}
         >
           {/* Header */}
           <View style={{
@@ -1232,15 +1234,21 @@ export function HomeScreen() {
                     console.log('[HomeScreen] Skip All TouchableOpacity pressed')
                     handleSkipAll()
                   }}
-                  style={{ padding: 10 }}
+                  style={{ 
+                    padding: 15, 
+                    marginLeft: -5,
+                    borderRadius: 8,
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)'
+                  }}
+                  activeOpacity={0.7}
                 >
-                  <Text style={{ color: '#FFF', fontSize: 16 }}>Skip All</Text>
+                  <Text style={{ color: '#FFF', fontSize: 16, fontWeight: '500' }}>Skip All</Text>
                 </TouchableOpacity>
                 
                 <View style={{ alignItems: 'center' }}>
                   <Text style={{ color: '#FFF', fontSize: 18, fontWeight: '600' }}>Quick Match</Text>
                   <Text style={{ color: '#FFF', opacity: 0.7, fontSize: 14 }}>
-                    {currentMatchIndex + 1} of {mockConsultants.length}
+                    {currentMatchIndex + 1} of {mockMatches.length}
                   </Text>
                 </View>
                 
@@ -1249,7 +1257,13 @@ export function HomeScreen() {
                     console.log('[HomeScreen] Add All TouchableOpacity pressed')
                     handleAddAll()
                   }}
-                  style={{ padding: 10 }}
+                  style={{ 
+                    padding: 15, 
+                    marginRight: -5,
+                    borderRadius: 8,
+                    backgroundColor: `${primaryColors.primary}20`
+                  }}
+                  activeOpacity={0.7}
                 >
                   <Text style={{ color: primaryColors.primary, fontSize: 16, fontWeight: '600' }}>Add All</Text>
                 </TouchableOpacity>
@@ -1355,12 +1369,12 @@ export function HomeScreen() {
           </View>
         </Modal>
 
-        {/* Verification Popup */}
-        <VerificationPopup
+        {/* Verification Popup - Disabled for now */}
+        {/* <VerificationPopup
           isVisible={showVerificationPopup}
           onDismiss={handleVerificationDismiss}
           onComplete={handleVerificationComplete}
-        />
+        /> */}
       </SafeAreaView>
     </View>
   )

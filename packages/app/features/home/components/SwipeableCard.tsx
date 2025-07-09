@@ -12,9 +12,9 @@ import { useTheme, useThemedColors, usePrimaryColors } from '../../../contexts/T
 import { colors } from '../../../constants/colors'
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window')
-const SWIPE_THRESHOLD = 80 // Lowered for easier swiping
+const SWIPE_THRESHOLD = 80
 const SWIPE_OUT_DURATION = 250
-const ROTATION_MULTIPLIER = 0.15 // Slightly less rotation for professional look
+const ROTATION_MULTIPLIER = 0.15
 
 interface SwipeableCardProps {
   consultant: any
@@ -46,21 +46,17 @@ export function SwipeableCard({
   const { isDark } = useTheme()
   const themedColors = useThemedColors()
   const primaryColors = usePrimaryColors()
-  
+
   const position = useRef(new Animated.ValueXY()).current
   const rotation = useRef(new Animated.Value(0)).current
   const actionOpacity = useRef(new Animated.Value(0)).current
   const lastTap = useRef(0)
   const animating = useRef(false)
-  
-  console.log('[SwipeableCard] Rendering card for:', consultant.name, 'isFirst:', isFirst)
 
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
       onMoveShouldSetPanResponder: () => true,
-      onStartShouldSetPanResponderCapture: () => true,
-      onMoveShouldSetPanResponderCapture: () => true,
       onPanResponderGrant: () => {
         position.setOffset({
           x: (position.x as any)._value || 0,
@@ -70,34 +66,30 @@ export function SwipeableCard({
       },
       onPanResponderMove: Animated.event(
         [null, { dx: position.x, dy: position.y }],
-        { 
+        {
           useNativeDriver: false,
-          listener: (_evt: any, gestureState: any) => {
-            // Rotation based on X position
-            rotation.setValue(gestureState.dx * ROTATION_MULTIPLIER)
-            
-            // Show action labels
-            const opacity = Math.min(Math.abs(gestureState.dx) / SWIPE_THRESHOLD, 1)
+          listener: (_evt, gs) => {
+            rotation.setValue(gs.dx * ROTATION_MULTIPLIER)
+            const opacity = Math.min(Math.abs(gs.dx) / SWIPE_THRESHOLD, 1)
             actionOpacity.setValue(opacity)
-          }
+          },
         }
       ),
-      onPanResponderRelease: (_evt, gestureState) => {
+      onPanResponderRelease: (_evt, gs) => {
         position.flattenOffset()
 
-        // Check if it's a tap (minimal movement)
-        if (Math.abs(gestureState.dx) < 5 && Math.abs(gestureState.dy) < 5) {
+        // tap vs swipe
+        if (Math.abs(gs.dx) < 5 && Math.abs(gs.dy) < 5) {
           handleCardPress()
           resetPosition()
           return
         }
 
-        // Check for swipe up (super like)
-        if (gestureState.dy < -SWIPE_THRESHOLD && Math.abs(gestureState.dx) < SWIPE_THRESHOLD) {
+        if (gs.dy < -SWIPE_THRESHOLD && Math.abs(gs.dx) < SWIPE_THRESHOLD) {
           swipeCard('up')
-        } else if (gestureState.dx > SWIPE_THRESHOLD) {
+        } else if (gs.dx > SWIPE_THRESHOLD) {
           swipeCard('right')
-        } else if (gestureState.dx < -SWIPE_THRESHOLD) {
+        } else if (gs.dx < -SWIPE_THRESHOLD) {
           swipeCard('left')
         } else {
           resetPosition()
@@ -112,14 +104,9 @@ export function SwipeableCard({
 
     let x = 0
     let y = 0
-
-    if (direction === 'right') {
-      x = screenWidth + 100
-    } else if (direction === 'left') {
-      x = -screenWidth - 100
-    } else if (direction === 'up') {
-      y = -screenHeight
-    }
+    if (direction === 'right') x = screenWidth + 100
+    if (direction === 'left') x = -screenWidth - 100
+    if (direction === 'up') y = -screenHeight
 
     Animated.timing(position, {
       toValue: { x, y },
@@ -127,12 +114,10 @@ export function SwipeableCard({
       useNativeDriver: false,
     }).start(() => {
       animating.current = false
-      
       if (direction === 'right') onSwipeRight()
-      else if (direction === 'left') onSwipeLeft()
-      else if (direction === 'up') onSwipeUp()
-      
-      // Reset position after callback to prevent flash
+      if (direction === 'left') onSwipeLeft()
+      if (direction === 'up') onSwipeUp()
+      // reset immediately after
       setTimeout(() => {
         position.setValue({ x: 0, y: 0 })
         rotation.setValue(0)
@@ -166,55 +151,41 @@ export function SwipeableCard({
       inputRange: [-screenWidth, 0, screenWidth],
       outputRange: ['-30deg', '0deg', '30deg'],
     })
-
     return {
       ...position.getLayout(),
-      transform: [
-        { translateX: position.x },
-        { translateY: position.y },
-        { rotate }
-      ],
+      transform: [{ translateX: position.x }, { translateY: position.y }, { rotate }],
     }
   }
 
-  const getLikeOpacity = () => {
-    return position.x.interpolate({
+  const getLikeOpacity = () =>
+    position.x.interpolate({
       inputRange: [-SWIPE_THRESHOLD, 0, SWIPE_THRESHOLD],
       outputRange: [0, 0, 1],
       extrapolate: 'clamp',
     })
-  }
-
-  const getNopeOpacity = () => {
-    return position.x.interpolate({
+  const getNopeOpacity = () =>
+    position.x.interpolate({
       inputRange: [-SWIPE_THRESHOLD, 0, SWIPE_THRESHOLD],
       outputRange: [1, 0, 0],
       extrapolate: 'clamp',
     })
-  }
-
-  const getSuperLikeOpacity = () => {
-    return position.y.interpolate({
+  const getSuperLikeOpacity = () =>
+    position.y.interpolate({
       inputRange: [-SWIPE_THRESHOLD, 0],
       outputRange: [1, 0],
       extrapolate: 'clamp',
     })
-  }
 
   const scale = 1 - cardIndex * 0.05
   const translateY = cardIndex * 10
 
   const handleCardPress = () => {
     if (!isFirst) return
-    
     const now = Date.now()
     const DOUBLE_PRESS_DELAY = 300
-    
     if (now - lastTap.current < DOUBLE_PRESS_DELAY) {
-      // Double tap - quick like
       swipeCard('right')
     } else {
-      // Single tap - view profile
       lastTap.current = now
       setTimeout(() => {
         if (Date.now() - lastTap.current >= DOUBLE_PRESS_DELAY) {
@@ -240,426 +211,156 @@ export function SwipeableCard({
         isFirst && getCardStyle(),
       ]}
     >
-      <View
-        {...(isFirst ? panResponder.panHandlers : {})}
-        style={{
-          width: '100%',
-          height: '100%',
-          maxWidth: 400,
-          maxHeight: 600,
-        }}
-      >
-        <View style={{
-          width: '100%',
-          height: '100%',
-          backgroundColor: themedColors.surface.raised,
-          borderRadius: 24,
-          padding: 24,
-          shadowColor: isDark ? colors.primary[500] : '#000',
-          shadowOffset: { width: 0, height: 8 },
-          shadowOpacity: isDark ? 0.3 : 0.15,
-          shadowRadius: 20,
-          elevation: 10,
-          borderWidth: 1,
-          borderColor: themedColors.border.default,
-          overflow: 'hidden',
-        }}>
-        {/* Subtle gradient overlay */}
-        <View style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          height: 100,
-          backgroundColor: '#FFF8F3',
-          opacity: 0.4,
-        }} />
-        {/* LIKE label */}
-        {isFirst && (
-          <Animated.View
-            style={{
-              position: 'absolute',
-              top: 50,
-              left: 40,
-              zIndex: 1000,
-              opacity: getLikeOpacity(),
-              transform: [{ rotate: '-30deg' }],
-            }}
-          >
-            <View style={{
-              borderWidth: 2,
-              borderColor: primaryColors.primary,
-              borderRadius: 20,
-              paddingHorizontal: 20,
-              paddingVertical: 10,
-              backgroundColor: isDark ? colors.primary[900] : colors.primary[50],
-              shadowColor: primaryColors.primary,
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.2,
-              shadowRadius: 8,
-            }}>
-              <Text style={{
-                fontSize: 26,
-                fontWeight: '600',
-                color: primaryColors.primary,
-                letterSpacing: 1.5,
-              }}>
-                CONNECT
-              </Text>
-            </View>
-          </Animated.View>
-        )}
-
-        {/* NOPE label */}
-        {isFirst && (
-          <Animated.View
-            style={{
-              position: 'absolute',
-              top: 50,
-              right: 40,
-              zIndex: 1000,
-              opacity: getNopeOpacity(),
-              transform: [{ rotate: '30deg' }],
-            }}
-          >
-            <View style={{
-              borderWidth: 2,
-              borderColor: '#E8B4B8',
-              borderRadius: 20,
-              paddingHorizontal: 20,
-              paddingVertical: 10,
-              backgroundColor: 'rgba(232, 180, 184, 0.05)',
-              shadowColor: '#E8B4B8',
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.2,
-              shadowRadius: 8,
-            }}>
-              <Text style={{
-                fontSize: 26,
-                fontWeight: '600',
-                color: '#E8B4B8',
-                letterSpacing: 1.5,
-              }}>
-                SKIP
-              </Text>
-            </View>
-          </Animated.View>
-        )}
-
-        {/* SUPER LIKE label */}
-        {isFirst && (
-          <Animated.View
-            style={{
-              position: 'absolute',
-              bottom: 100,
-              alignSelf: 'center',
-              zIndex: 1000,
-              opacity: getSuperLikeOpacity(),
-            }}
-          >
-            <View style={{
-              borderWidth: 2,
-              borderColor: '#D4AF37',
-              borderRadius: 20,
-              paddingHorizontal: 20,
-              paddingVertical: 10,
-              backgroundColor: 'rgba(212, 175, 55, 0.05)',
-              shadowColor: '#D4AF37',
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.3,
-              shadowRadius: 10,
-            }}>
-              <Text style={{
-                fontSize: 26,
-                fontWeight: '600',
-                color: '#D4AF37',
-                letterSpacing: 1.5,
-              }}>
-                PRIORITY
-              </Text>
-            </View>
-          </Animated.View>
-        )}
-
-        {/* Service Type Badge */}
-        {service && (
-          <View style={{
-            position: 'absolute',
-            top: 20,
-            left: 20,
-            right: 20,
-            backgroundColor: 'rgba(212, 175, 55, 0.95)',
-            paddingHorizontal: 16,
-            paddingVertical: 8,
-            borderRadius: 20,
-            alignSelf: 'center',
-          }}>
-            <Text style={{
-              color: '#FFF',
-              fontSize: 14,
-              fontWeight: '700',
-              textAlign: 'center',
-              letterSpacing: 0.5,
-            }}>
-              {service.type.toUpperCase()}
-            </Text>
-          </View>
-        )}
-
-        {/* Card Content */}
-        <View style={{ marginTop: service ? 60 : 20 }}>
-          {/* Consultant Info */}
-          <View style={{ flexDirection: 'row', marginBottom: 16 }}>
-            <Image
-              source={{ uri: consultant.image }}
-              style={{
-                width: 72,
-                height: 72,
-                borderRadius: 36,
-                backgroundColor: themedColors.surface.sunken,
-                marginRight: 16,
-                borderWidth: 2,
-                borderColor: colors.university[consultant.university.toLowerCase()] || primaryColors.primary,
-              }}
-            />
-            
-            <View style={{ flex: 1 }}>
-              <Text style={{
-                fontSize: 20,
-                fontWeight: '700',
-                color: '#2C2825',
-              }}>
-                {consultant.name}
-              </Text>
-            
-              <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4, marginBottom: 8 }}>
-                <View style={{
-                  backgroundColor: '#F8E5D3',
-                  paddingHorizontal: 10,
-                  paddingVertical: 4,
-                  borderRadius: 12,
-                  marginRight: 8,
-                  borderWidth: 1,
-                  borderColor: '#D4AF37',
-                }}>
-                  <Text style={{
-                    color: '#8B6F47',
-                    fontSize: 11,
-                    fontWeight: '600',
-                    letterSpacing: 0.5,
-                  }}>
-                    {consultant.university} '{consultant.year.slice(2)}
-                  </Text>
-                </View>
-                <Text style={{
-                  fontSize: 13,
-                  color: '#8B7355',
-                }}>
-                  {consultant.major}
-                </Text>
-              </View>
-            
-            <View style={{ flexDirection: 'row' }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 12 }}>
-                <Ionicons name="star" size={14} color="#D4A574" />
-                <Text style={{ color: '#2C2825', marginLeft: 4, fontSize: 12 }}>
-                  {consultant.rating}
-                </Text>
-              </View>
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <Ionicons name="checkmark-circle" size={14} color="#68A357" />
-                <Text style={{ color: '#2C2825', marginLeft: 4, fontSize: 12 }}>
-                  {consultant.acceptanceRate}
-                </Text>
-              </View>
-            </View>
-          </View>
-        </View>
-
-        {/* Service Details */}
-        {service && (
-          <View style={{
-            backgroundColor: 'rgba(248, 229, 211, 0.3)',
-            borderRadius: 12,
-            padding: 16,
-            marginBottom: 16,
+      <View {...(isFirst ? panResponder.panHandlers : {})} style={{ flex: 1, maxWidth: 400, maxHeight: 600 }}>
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: themedColors.surface.raised,
+            borderRadius: 24,
+            padding: 24,
+            shadowColor: isDark ? colors.primary[500] : '#000',
+            shadowOffset: { width: 0, height: 8 },
+            shadowOpacity: isDark ? 0.3 : 0.15,
+            shadowRadius: 20,
+            elevation: 10,
             borderWidth: 1,
-            borderColor: '#F8E5D3',
-          }}>
-            <Text style={{
-              fontSize: 15,
-              color: '#2C2825',
-              lineHeight: 22,
-              marginBottom: 12,
-            }}>
-              {service.description}
-            </Text>
-            
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-              {service.includes.map((item: string, index: number) => (
-                <View key={index} style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                }}>
-                  <Ionicons name="checkmark-circle" size={14} color="#68A357" />
-                  <Text style={{
-                    fontSize: 12,
-                    color: '#4A4541',
-                    marginLeft: 4,
-                  }}>
-                    {item}
+            borderColor: themedColors.border.default,
+            overflow: 'hidden',
+          }}
+        >
+          {/* gradient overlay */}
+          <View style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 100, backgroundColor: '#FFF8F3', opacity: 0.4 }} />
+
+          {isFirst && (
+            <Animated.View style={{ position: 'absolute', top: 50, left: 40, zIndex: 1, opacity: getLikeOpacity(), transform: [{ rotate: '-30deg' }] }}>
+              <View style={{ borderWidth: 2, borderColor: primaryColors.primary, borderRadius: 20, padding: 10, backgroundColor: isDark ? colors.primary[900] : colors.primary[50] }}>
+                <Text style={{ fontSize: 26, fontWeight: '600', color: primaryColors.primary }}>CONNECT</Text>
+              </View>
+            </Animated.View>
+          )}
+
+          {isFirst && (
+            <Animated.View style={{ position: 'absolute', top: 50, right: 40, zIndex: 1, opacity: getNopeOpacity(), transform: [{ rotate: '30deg' }] }}>
+              <View style={{ borderWidth: 2, borderColor: '#E8B4B8', borderRadius: 20, padding: 10, backgroundColor: 'rgba(232,180,184,0.05)' }}>
+                <Text style={{ fontSize: 26, fontWeight: '600', color: '#E8B4B8' }}>SKIP</Text>
+              </View>
+            </Animated.View>
+          )}
+
+          {isFirst && (
+            <Animated.View style={{ position: 'absolute', bottom: 100, zIndex: 1, opacity: getSuperLikeOpacity() }}>
+              <View style={{ borderWidth: 2, borderColor: '#D4AF37', borderRadius: 20, padding: 10, backgroundColor: 'rgba(212,175,55,0.05)' }}>
+                <Text style={{ fontSize: 26, fontWeight: '600', color: '#D4AF37' }}>PRIORITY</Text>
+              </View>
+            </Animated.View>
+          )}
+
+          {service && (
+            <View style={{ position: 'absolute', top: 20, left: 20, right: 20, backgroundColor: 'rgba(212,175,55,0.95)', padding: 8, borderRadius: 20 }}>
+              <Text style={{ color: '#FFF', fontSize: 14, fontWeight: '700', textAlign: 'center' }}>
+                {service.type.toUpperCase()}
+              </Text>
+            </View>
+          )}
+
+          <View style={{ marginTop: service ? 60 : 20, flex: 1 }}>
+            {/* Consultant Info */}
+            <View style={{ flexDirection: 'row', marginBottom: 16 }}>
+              <Image source={{ uri: consultant.image }} style={{ width: 72, height: 72, borderRadius: 36, marginRight: 16 }} />
+              <View style={{ flex: 1 }}>
+                <Text style={{ fontSize: 20, fontWeight: '700', color: '#2C2825' }}>{consultant.name}</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4, marginBottom: 8 }}>
+                  <View style={{ backgroundColor: '#F8E5D3', padding: 4, borderRadius: 12, marginRight: 8 }}>
+                    <Text style={{ color: '#8B6F47', fontSize: 11, fontWeight: '600' }}>
+                      {consultant.university} '{consultant.year.slice(2)}
+                    </Text>
+                  </View>
+                  <Text style={{ fontSize: 13, color: '#8B7355' }}>{consultant.major}</Text>
+                </View>
+                <View style={{ flexDirection: 'row' }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 12 }}>
+                    <Ionicons name="star" size={14} color="#D4A574" />
+                    <Text style={{ marginLeft: 4 }}>{consultant.rating}</Text>
+                  </View>
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Ionicons name="checkmark-circle" size={14} color="#68A357" />
+                    <Text style={{ marginLeft: 4 }}>{consultant.acceptanceRate}</Text>
+                  </View>
+                </View>
+              </View>
+            </View>
+
+            {/* Service Details */}
+            {service && (
+              <View style={{ backgroundColor: 'rgba(248,229,211,0.3)', borderRadius: 12, padding: 16, marginBottom: 16, borderWidth: 1, borderColor: '#F8E5D3' }}>
+                <Text style={{ marginBottom: 12 }}>{service.description}</Text>
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                  {service.includes.map((item: string, i: number) => (
+                    <View key={i} style={{ flexDirection: 'row', alignItems: 'center', marginRight: 8, marginBottom: 4 }}>
+                      <Ionicons name="checkmark-circle" size={14} color="#68A357" />
+                      <Text style={{ marginLeft: 4, fontSize: 12 }}>{item}</Text>
+                    </View>
+                  ))}
+                </View>
+              </View>
+            )}
+
+            {/* Match Reason */}
+            {matchReason && (
+              <View style={{ backgroundColor: 'rgba(104,163,87,0.1)', borderRadius: 12, padding: 12, marginBottom: 16 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Ionicons name="sparkles" size={16} color="#68A357" />
+                  <Text style={{ marginLeft: 8 }}>{matchReason}</Text>
+                </View>
+              </View>
+            )}
+
+            {/* Stats */}
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 16 }}>
+              {['rating', 'studentsHelped', 'acceptanceRate', 'responseTime'].map((stat, i) => (
+                <View key={i} style={{ alignItems: 'center' }}>
+                  <Text style={{ fontSize: 20, fontWeight: '700' }}>
+                    {String(consultant[stat]).replace(/[<>]/g, '').trim()}
+                  </Text>
+                  <Text style={{ fontSize: 11, marginTop: 2, color: '#8B7355' }}>
+                    {stat === 'studentsHelped'
+                      ? 'Students'
+                      : stat === 'acceptanceRate'
+                      ? 'Success'
+                      : stat === 'responseTime'
+                      ? 'Response'
+                      : 'Rating'}
                   </Text>
                 </View>
               ))}
             </View>
-          </View>
-        )}
 
-        {/* Match Reason */}
-        {matchReason && (
-          <View style={{
-            backgroundColor: 'rgba(104, 163, 87, 0.1)',
-            borderRadius: 12,
-            padding: 12,
-            marginBottom: 16,
-            borderWidth: 1,
-            borderColor: 'rgba(104, 163, 87, 0.3)',
-          }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Ionicons name="sparkles" size={16} color="#68A357" />
-              <Text style={{
-                fontSize: 14,
-                color: '#2C2825',
-                marginLeft: 8,
-                fontWeight: '500',
-              }}>
-                {matchReason}
-              </Text>
+            {/* Bottom Bar */}
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingTop: 16, borderTopWidth: 1, borderTopColor: '#F8E5D3' }}>
+              <View>
+                <Text style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: 1 }}>
+                  {service ? 'Service Price' : 'Hourly Rate'}
+                </Text>
+                <Text style={{ fontSize: 22, fontWeight: '600', marginTop: 2 }}>
+                  {service ? service.price : consultant.price}
+                </Text>
+                {service && <Text style={{ fontSize: 12, marginTop: 2 }}>{service.duration}</Text>}
+              </View>
+              <View style={{ alignItems: 'flex-end' }}>
+                {availability && (
+                  <View style={{ flexDirection: 'row', alignItems: 'center', padding: 6, borderRadius: 16, marginBottom: 8, backgroundColor: instantBooking ? 'rgba(104,163,87,0.1)' : 'rgba(212,175,55,0.1)' }}>
+                    <Ionicons name={instantBooking ? 'flash' : 'calendar'} size={14} color={instantBooking ? '#68A357' : '#D4AF37'} />
+                    <Text style={{ marginLeft: 4, fontSize: 12, fontWeight: '600' }}>{availability}</Text>
+                  </View>
+                )}
+                <View style={{ flexDirection: 'row', alignItems: 'center', padding: 6, borderRadius: 16, backgroundColor: 'rgba(212,175,55,0.05)' }}>
+                  <Ionicons name="arrow-up" size={14} color="#D4AF37" />
+                  <Text style={{ marginLeft: 4, fontSize: 11 }}>Swipe up for priority</Text>
+                </View>
+              </View>
             </View>
           </View>
-        )}
-
-        <View style={{ marginBottom: 16 }}>
-          <Text style={{
-            fontSize: 14,
-            color: '#8B7355',
-            marginBottom: 8,
-          }}>
-            Specializes in
-          </Text>
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-            {consultant.specialties.map((specialty: string, index: number) => (
-              <View key={index} style={{
-                backgroundColor: 'rgba(232, 180, 184, 0.1)',
-                paddingHorizontal: 14,
-                paddingVertical: 7,
-                borderRadius: 18,
-                marginRight: 8,
-                marginBottom: 8,
-                borderWidth: 1,
-                borderColor: '#F8E5D3',
-              }}>
-                <Text style={{
-                  color: '#8B6F47',
-                  fontSize: 13,
-                  fontWeight: '500',
-                  letterSpacing: 0.3,
-                }}>
-                  {specialty}
-                </Text>
-              </View>
-            ))}
-          </View>
         </View>
-
-        <View style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          marginBottom: 16,
-        }}>
-          <View>
-            <Text style={{ fontSize: 12, color: '#8B7355' }}>
-              Response time
-            </Text>
-            <Text style={{ fontSize: 14, color: '#2C2825', fontWeight: '600' }}>
-              {consultant.responseTime}
-            </Text>
-          </View>
-          <View>
-            <Text style={{ fontSize: 12, color: '#8B7355' }}>
-              Next available
-            </Text>
-            <Text style={{ fontSize: 14, color: '#2C2825', fontWeight: '600' }}>
-              {consultant.nextAvailable}
-            </Text>
-          </View>
-          <View>
-            <Text style={{ fontSize: 12, color: '#8B7355' }}>
-              Students helped
-            </Text>
-            <Text style={{ fontSize: 14, color: '#2C2825', fontWeight: '600' }}>
-              {consultant.studentsHelped}
-            </Text>
-          </View>
-        </View>
-
-        <View style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          paddingTop: 16,
-          borderTopWidth: 1,
-          borderTopColor: '#F8E5D3',
-          marginTop: 'auto',
-        }}>
-          <View>
-            <Text style={{ 
-              fontSize: 11, 
-              color: '#8B7355',
-              letterSpacing: 1,
-              textTransform: 'uppercase',
-            }}>
-              {service ? 'Service Price' : 'Hourly Rate'}
-            </Text>
-            <Text style={{
-              fontSize: 22,
-              fontWeight: '600',
-              color: '#3E2723',
-              marginTop: 2,
-            }}>
-              {service ? service.price : consultant.price}
-            </Text>
-            {service && (
-              <Text style={{
-                fontSize: 12,
-                color: '#8B7355',
-                marginTop: 2,
-              }}>
-                {service.duration}
-              </Text>
-            )}
-          </View>
-          <View style={{ 
-            flexDirection: 'row', 
-            alignItems: 'center',
-            backgroundColor: 'rgba(212, 175, 55, 0.05)',
-            paddingHorizontal: 12,
-            paddingVertical: 6,
-            borderRadius: 16,
-          }}>
-            <Ionicons name="sparkles" size={14} color="#D4AF37" />
-            <Text style={{
-              color: '#8B6F47',
-              fontSize: 11,
-              marginLeft: 4,
-              fontWeight: '500',
-              letterSpacing: 0.3,
-            }}>
-              Swipe up for priority request
-            </Text>
-          </View>
-        </View>
-      </View>
       </View>
     </Animated.View>
   )
