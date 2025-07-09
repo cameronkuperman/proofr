@@ -6,6 +6,7 @@ import { View, Text } from 'react-native'
 // Import screens
 import { HomeScreen } from '../../features/home/screens/HomeScreen'
 import { ProfileScreen } from '../../features/profile/screens/ProfileScreen'
+import { MessagesScreen } from '../../features/messages/screens/MessagesScreen.native'
 
 const Tab = createBottomTabNavigator()
 
@@ -44,7 +45,7 @@ export function TabNavigator() {
       />
       <Tab.Screen
         name="Messages"
-        component={() => <ComingSoonScreen title="Messages" />}
+        component={MessagesScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="chatbubbles" size={size} color={color} />

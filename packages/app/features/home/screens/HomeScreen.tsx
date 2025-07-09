@@ -99,6 +99,7 @@ export function HomeScreen() {
   const [swipeCount, setSwipeCount] = useState(0)
   const [showVerificationPopup, setShowVerificationPopup] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState('all')
+  const [showMorePrompt, setShowMorePrompt] = useState(false)
 
   useEffect(() => {
     checkUserRoleAndVerification()
@@ -133,11 +134,9 @@ export function HomeScreen() {
     
     // Check if this is the last card or 5th swipe
     if (currentMatchIndex >= mockConsultants.length - 1 || swipeCount >= 4) {
-      // Delay closing to allow swipe animation to complete
+      // Show the "want more?" prompt after animation
       setTimeout(() => {
-        setShowQuickMatch(false)
-        setCurrentMatchIndex(0) // Reset for next time
-        setSwipeCount(0)
+        setShowMorePrompt(true)
       }, 300)
       return
     }
@@ -171,6 +170,21 @@ export function HomeScreen() {
     // Add remaining consultants to requests
     const remaining = mockConsultants.slice(currentMatchIndex)
     console.log('Adding all remaining consultants:', remaining.length)
+    setShowQuickMatch(false)
+    setCurrentMatchIndex(0)
+    setSwipeCount(0)
+  }
+
+  const handleSeeMore = () => {
+    // Reset for another round of matches
+    setShowMorePrompt(false)
+    setCurrentMatchIndex(0)
+    setSwipeCount(0)
+  }
+
+  const handleThatsEnough = () => {
+    // Close everything and reset
+    setShowMorePrompt(false)
     setShowQuickMatch(false)
     setCurrentMatchIndex(0)
     setSwipeCount(0)
@@ -750,92 +764,271 @@ export function HomeScreen() {
                 </TouchableOpacity>
               </View>
 
-              {/* Swipe Card Stack */}
-              <View style={{
-                flex: 1,
-                position: 'relative',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
-                {/* Show stack of cards */}
-                {mockConsultants.slice(currentMatchIndex, currentMatchIndex + 3).reverse().map((consultant, index, array) => {
-                  const isFirst = index === array.length - 1
-                  const cardIndex = array.length - 1 - index
-                  
-                  return (
-                    <SwipeableCard
-                      key={consultant.id}
-                      consultant={consultant}
-                      onSwipeLeft={() => handleSwipe('left')}
-                      onSwipeRight={() => handleSwipe('right')}
-                      onSwipeUp={() => handleSwipe('up')}
-                      onViewProfile={handleViewProfile}
-                      isFirst={isFirst}
-                      cardIndex={cardIndex}
-                    />
-                  )
-                })}
-              </View>
-
-              {/* Bottom Actions */}
-              <View style={{
-                paddingBottom: 30,
-                paddingHorizontal: 20,
-              }}>
-                {/* Instructions */}
-                <Text style={{
-                  fontSize: 14,
-                  color: '#8B7355',
-                  textAlign: 'center',
-                  marginBottom: 16,
-                }}>
-                  Swipe right to request • Left to pass • Up for priority
-                </Text>
-                
-                {/* Buttons */}
+              {/* Content Area */}
+              {showMorePrompt ? (
+                /* Beautiful "Want More?" Screen */
                 <View style={{
-                  flexDirection: 'row',
-                  gap: 12,
+                  flex: 1,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  paddingHorizontal: 30,
+                  paddingTop: 20,
+                  paddingBottom: 40,
                 }}>
-                  <TouchableOpacity
-                    onPress={handleSkipAll}
-                    style={{
-                      flex: 1,
-                      backgroundColor: '#F5E6D3',
-                      paddingVertical: 14,
-                      borderRadius: 25,
-                      alignItems: 'center',
-                    }}
-                  >
-                    <Text style={{
-                      fontSize: 16,
-                      fontWeight: '600',
-                      color: '#8B7355',
-                    }}>
-                      Skip All
-                    </Text>
-                  </TouchableOpacity>
                   
-                  <TouchableOpacity
-                    onPress={handleAddAll}
-                    style={{
-                      flex: 1,
-                      backgroundColor: '#68A357',
-                      paddingVertical: 14,
-                      borderRadius: 25,
-                      alignItems: 'center',
-                    }}
+                  {/* Main Content */}
+                  <MotiView
+                    from={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ type: 'spring', damping: 20 }}
+                    style={{ width: '100%', alignItems: 'center' }}
                   >
+                    {/* Icon/Symbol */}
+                    <View style={{
+                      alignItems: 'center',
+                      marginBottom: 24,
+                    }}>
+                      <View style={{
+                        width: 100,
+                        height: 100,
+                        borderRadius: 50,
+                        backgroundColor: '#FFF8F3',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        shadowColor: '#D4AF37',
+                        shadowOffset: { width: 0, height: 4 },
+                        shadowOpacity: 0.15,
+                        shadowRadius: 10,
+                        elevation: 6,
+                      }}>
+                        <Ionicons name="school" size={50} color="#D4AF37" />
+                      </View>
+                    </View>
+                    
+                    {/* Headline */}
+                    <Text style={{
+                      fontSize: 28,
+                      fontWeight: '600',
+                      color: '#3E2723',
+                      textAlign: 'center',
+                      marginBottom: 12,
+                      letterSpacing: 0.5,
+                    }}>
+                      More Elite Consultants
+                    </Text>
+                    
+                    {/* Subtext */}
                     <Text style={{
                       fontSize: 16,
-                      fontWeight: '600',
-                      color: '#fff',
+                      color: '#8B7355',
+                      textAlign: 'center',
+                      marginBottom: 32,
+                      lineHeight: 24,
+                      paddingHorizontal: 20,
                     }}>
-                      Request All ({mockConsultants.length - currentMatchIndex})
+                      Harvard, Stanford, MIT alumni are ready{'\n'}
+                      to guide your admissions journey
                     </Text>
-                  </TouchableOpacity>
+                    
+                    {/* Stats */}
+                    <View style={{
+                      flexDirection: 'row',
+                      justifyContent: 'center',
+                      marginBottom: 36,
+                      gap: 40,
+                    }}>
+                      <View style={{ alignItems: 'center' }}>
+                        <Text style={{
+                          fontSize: 28,
+                          fontWeight: '700',
+                          color: '#D4AF37',
+                        }}>
+                          {swipeCount}
+                        </Text>
+                        <Text style={{
+                          fontSize: 13,
+                          color: '#8B7355',
+                        }}>
+                          Reviewed
+                        </Text>
+                      </View>
+                      <View style={{
+                        width: 1,
+                        backgroundColor: '#F5E6D3',
+                      }} />
+                      <View style={{ alignItems: 'center' }}>
+                        <Text style={{
+                          fontSize: 28,
+                          fontWeight: '700',
+                          color: '#68A357',
+                        }}>
+                          {mockConsultants.length * 3}+
+                        </Text>
+                        <Text style={{
+                          fontSize: 13,
+                          color: '#8B7355',
+                        }}>
+                          Available
+                        </Text>
+                      </View>
+                    </View>
+
+                    {/* Success Badge */}
+                    <View style={{
+                      backgroundColor: '#F8E5D3',
+                      paddingHorizontal: 20,
+                      paddingVertical: 10,
+                      borderRadius: 20,
+                      marginBottom: 24,
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                    }}>
+                      <Ionicons name="checkmark-circle" size={16} color="#68A357" />
+                      <Text style={{
+                        fontSize: 13,
+                        color: '#3E2723',
+                        marginLeft: 6,
+                        fontWeight: '500',
+                      }}>
+                        94% acceptance rate with our consultants
+                      </Text>
+                    </View>
+                    
+                    {/* Action Buttons */}
+                    <View style={{ width: '100%', gap: 16 }}>
+                      {/* Primary CTA */}
+                      <TouchableOpacity
+                        onPress={handleSeeMore}
+                        style={{
+                          backgroundColor: '#68A357',
+                          paddingVertical: 16,
+                          borderRadius: 25,
+                          alignItems: 'center',
+                          shadowColor: '#68A357',
+                          shadowOffset: { width: 0, height: 4 },
+                          shadowOpacity: 0.2,
+                          shadowRadius: 8,
+                          elevation: 4,
+                        }}
+                      >
+                        <Text style={{
+                          fontSize: 17,
+                          fontWeight: '600',
+                          color: '#fff',
+                          letterSpacing: 0.3,
+                        }}>
+                          Continue Browsing
+                        </Text>
+                      </TouchableOpacity>
+                      
+                      {/* Secondary CTA */}
+                      <TouchableOpacity
+                        onPress={handleThatsEnough}
+                        style={{
+                          paddingVertical: 14,
+                          alignItems: 'center',
+                        }}
+                      >
+                        <Text style={{
+                          fontSize: 15,
+                          color: '#8B7355',
+                        }}>
+                          View My Matches
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  </MotiView>
                 </View>
-              </View>
+              ) : (
+                /* Swipe Card Stack */
+                <View style={{
+                  flex: 1,
+                  position: 'relative',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                  {/* Show stack of cards */}
+                  {mockConsultants.slice(currentMatchIndex, currentMatchIndex + 3).reverse().map((consultant, index, array) => {
+                    const isFirst = index === array.length - 1
+                    const cardIndex = array.length - 1 - index
+                    
+                    return (
+                      <SwipeableCard
+                        key={`${consultant.id}-${currentMatchIndex}`}
+                        consultant={consultant}
+                        onSwipeLeft={() => handleSwipe('left')}
+                        onSwipeRight={() => handleSwipe('right')}
+                        onSwipeUp={() => handleSwipe('up')}
+                        onViewProfile={handleViewProfile}
+                        isFirst={isFirst}
+                        cardIndex={cardIndex}
+                      />
+                    )
+                  })}
+                </View>
+              )}
+
+              {/* Bottom Actions - Only show when swiping */}
+              {!showMorePrompt && (
+                <View style={{
+                  paddingBottom: 30,
+                  paddingHorizontal: 20,
+                }}>
+                  {/* Instructions */}
+                  <Text style={{
+                    fontSize: 14,
+                    color: '#8B7355',
+                    textAlign: 'center',
+                    marginBottom: 16,
+                  }}>
+                    Swipe right to request • Left to pass • Up for priority
+                  </Text>
+                  
+                  {/* Buttons */}
+                  <View style={{
+                    flexDirection: 'row',
+                    gap: 12,
+                  }}>
+                    <TouchableOpacity
+                      onPress={handleSkipAll}
+                      style={{
+                        flex: 1,
+                        backgroundColor: '#F5E6D3',
+                        paddingVertical: 14,
+                        borderRadius: 25,
+                        alignItems: 'center',
+                      }}
+                    >
+                      <Text style={{
+                        fontSize: 16,
+                        fontWeight: '600',
+                        color: '#8B7355',
+                      }}>
+                        Skip All
+                      </Text>
+                    </TouchableOpacity>
+                    
+                    <TouchableOpacity
+                      onPress={handleAddAll}
+                      style={{
+                        flex: 1,
+                        backgroundColor: '#68A357',
+                        paddingVertical: 14,
+                        borderRadius: 25,
+                        alignItems: 'center',
+                      }}
+                    >
+                      <Text style={{
+                        fontSize: 16,
+                        fontWeight: '600',
+                        color: '#fff',
+                      }}>
+                        Request All ({mockConsultants.length - currentMatchIndex})
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              )}
             </View>
           </SafeAreaView>
         </View>

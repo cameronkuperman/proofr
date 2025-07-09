@@ -187,7 +187,7 @@ export default function StudentDashboard() {
             {/* Right Nav */}
             <div className="flex items-center space-x-6">
               <button 
-                onClick={() => router.push('/messages')}
+                onClick={() => router.push('/student-dashboard/messages')}
                 className="relative p-2 text-gray-600 hover:text-gray-900 transition-colors"
               >
                 <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -297,7 +297,7 @@ export default function StudentDashboard() {
                   consultant={consultant}
                   isSaved={savedConsultants.includes(consultant.id)}
                   onToggleSave={() => toggleSaveConsultant(consultant.id)}
-                  onMessage={() => router.push(`/messages?consultant=${consultant.id}`)}
+                  onMessage={() => router.push(`/student-dashboard/messages?consultant=${consultant.id}`)}
                   onViewProfile={() => router.push(`/consultant/${consultant.id}`)}
                 />
               ))}

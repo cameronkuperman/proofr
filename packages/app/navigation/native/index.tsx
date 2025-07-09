@@ -5,6 +5,7 @@ import { ActivityIndicator, View } from 'react-native'
 import { UserDetailScreen } from 'app/features/user/detail-screen'
 import { OnboardingNavigator } from 'app/features/onboarding/OnboardingNavigator.native'
 import { TabNavigator } from './tabs'
+import { ChatScreen } from 'app/features/messages/screens/ChatScreen.native'
 
 // AsyncStorage might not be available in all environments
 let AsyncStorage: any
@@ -24,6 +25,12 @@ const Stack = createNativeStackNavigator<{
   tabs: undefined
   'user-detail': {
     id: string
+  }
+  chat: {
+    userId: string
+    userName: string
+    userAvatar: string
+    isVerified?: boolean
   }
 }>()
 
@@ -115,6 +122,14 @@ export function NativeNavigation() {
             component={UserDetailScreen}
             options={{
               title: 'User',
+            }}
+          />
+          <Stack.Screen
+            name="chat"
+            component={ChatScreen}
+            options={{
+              headerShown: false,
+              animation: 'slide_from_right',
             }}
           />
         </>
