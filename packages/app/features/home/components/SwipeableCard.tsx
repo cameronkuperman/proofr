@@ -18,6 +18,10 @@ const ROTATION_MULTIPLIER = 0.15 // Slightly less rotation for professional look
 
 interface SwipeableCardProps {
   consultant: any
+  service?: any
+  matchReason?: string
+  availability?: string
+  instantBooking?: boolean
   onSwipeLeft: () => void
   onSwipeRight: () => void
   onSwipeUp: () => void
@@ -28,6 +32,10 @@ interface SwipeableCardProps {
 
 export function SwipeableCard({
   consultant,
+  service,
+  matchReason,
+  availability,
+  instantBooking,
   onSwipeLeft,
   onSwipeRight,
   onSwipeUp,
@@ -373,80 +381,83 @@ export function SwipeableCard({
           </Animated.View>
         )}
 
+        {/* Service Type Badge */}
+        {service && (
+          <View style={{
+            position: 'absolute',
+            top: 20,
+            left: 20,
+            right: 20,
+            backgroundColor: 'rgba(212, 175, 55, 0.95)',
+            paddingHorizontal: 16,
+            paddingVertical: 8,
+            borderRadius: 20,
+            alignSelf: 'center',
+          }}>
+            <Text style={{
+              color: '#FFF',
+              fontSize: 14,
+              fontWeight: '700',
+              textAlign: 'center',
+              letterSpacing: 0.5,
+            }}>
+              {service.type.toUpperCase()}
+            </Text>
+          </View>
+        )}
+
         {/* Card Content */}
-        <View style={{ flexDirection: 'row', marginBottom: 20 }}>
-          <Image
-            source={{ uri: consultant.image }}
-            style={{
-              width: 84,
-              height: 84,
-              borderRadius: 42,
-              backgroundColor: themedColors.surface.sunken,
-              marginRight: 16,
-              borderWidth: 2,
-              borderColor: colors.university[consultant.university.toLowerCase()] || primaryColors.primary,
-              shadowColor: isDark ? colors.primary[500] : '#000',
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.1,
-              shadowRadius: 4,
-              elevation: 3,
-            }}
-          />
-          
-          <View style={{ flex: 1 }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
+        <View style={{ marginTop: service ? 60 : 20 }}>
+          {/* Consultant Info */}
+          <View style={{ flexDirection: 'row', marginBottom: 16 }}>
+            <Image
+              source={{ uri: consultant.image }}
+              style={{
+                width: 72,
+                height: 72,
+                borderRadius: 36,
+                backgroundColor: themedColors.surface.sunken,
+                marginRight: 16,
+                borderWidth: 2,
+                borderColor: colors.university[consultant.university.toLowerCase()] || primaryColors.primary,
+              }}
+            />
+            
+            <View style={{ flex: 1 }}>
               <Text style={{
-                fontSize: 22,
+                fontSize: 20,
                 fontWeight: '700',
                 color: '#2C2825',
               }}>
                 {consultant.name}
               </Text>
-              {consultant.instantBooking && (
+            
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4, marginBottom: 8 }}>
                 <View style={{
-                  backgroundColor: '#68A357',
-                  paddingHorizontal: 8,
-                  paddingVertical: 2,
-                  borderRadius: 10,
-                  marginLeft: 8,
+                  backgroundColor: '#F8E5D3',
+                  paddingHorizontal: 10,
+                  paddingVertical: 4,
+                  borderRadius: 12,
+                  marginRight: 8,
+                  borderWidth: 1,
+                  borderColor: '#D4AF37',
                 }}>
                   <Text style={{
-                    color: '#fff',
-                    fontSize: 10,
+                    color: '#8B6F47',
+                    fontSize: 11,
                     fontWeight: '600',
+                    letterSpacing: 0.5,
                   }}>
-                    INSTANT
+                    {consultant.university} '{consultant.year.slice(2)}
                   </Text>
                 </View>
-              )}
-            </View>
-            
-            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
-              <View style={{
-                backgroundColor: '#F8E5D3',
-                paddingHorizontal: 12,
-                paddingVertical: 5,
-                borderRadius: 16,
-                marginRight: 8,
-                borderWidth: 1,
-                borderColor: '#D4AF37',
-              }}>
                 <Text style={{
-                  color: '#8B6F47',
-                  fontSize: 12,
-                  fontWeight: '600',
-                  letterSpacing: 0.5,
+                  fontSize: 13,
+                  color: '#8B7355',
                 }}>
-                  {consultant.university}
+                  {consultant.major}
                 </Text>
               </View>
-              <Text style={{
-                fontSize: 14,
-                color: '#8B7355',
-              }}>
-                {consultant.major}
-              </Text>
-            </View>
             
             <View style={{ flexDirection: 'row' }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 12 }}>
@@ -465,14 +476,68 @@ export function SwipeableCard({
           </View>
         </View>
 
-        <Text style={{
-          fontSize: 16,
-          color: '#4A4541',
-          marginBottom: 16,
-          lineHeight: 22,
-        }}>
-          {consultant.bio}
-        </Text>
+        {/* Service Details */}
+        {service && (
+          <View style={{
+            backgroundColor: 'rgba(248, 229, 211, 0.3)',
+            borderRadius: 12,
+            padding: 16,
+            marginBottom: 16,
+            borderWidth: 1,
+            borderColor: '#F8E5D3',
+          }}>
+            <Text style={{
+              fontSize: 15,
+              color: '#2C2825',
+              lineHeight: 22,
+              marginBottom: 12,
+            }}>
+              {service.description}
+            </Text>
+            
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+              {service.includes.map((item: string, index: number) => (
+                <View key={index} style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}>
+                  <Ionicons name="checkmark-circle" size={14} color="#68A357" />
+                  <Text style={{
+                    fontSize: 12,
+                    color: '#4A4541',
+                    marginLeft: 4,
+                  }}>
+                    {item}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          </View>
+        )}
+
+        {/* Match Reason */}
+        {matchReason && (
+          <View style={{
+            backgroundColor: 'rgba(104, 163, 87, 0.1)',
+            borderRadius: 12,
+            padding: 12,
+            marginBottom: 16,
+            borderWidth: 1,
+            borderColor: 'rgba(104, 163, 87, 0.3)',
+          }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Ionicons name="sparkles" size={16} color="#68A357" />
+              <Text style={{
+                fontSize: 14,
+                color: '#2C2825',
+                marginLeft: 8,
+                fontWeight: '500',
+              }}>
+                {matchReason}
+              </Text>
+            </View>
+          </View>
+        )}
 
         <View style={{ marginBottom: 16 }}>
           <Text style={{
@@ -554,7 +619,7 @@ export function SwipeableCard({
               letterSpacing: 1,
               textTransform: 'uppercase',
             }}>
-              Investment
+              {service ? 'Service Price' : 'Hourly Rate'}
             </Text>
             <Text style={{
               fontSize: 22,
@@ -562,8 +627,17 @@ export function SwipeableCard({
               color: '#3E2723',
               marginTop: 2,
             }}>
-              {consultant.price}
+              {service ? service.price : consultant.price}
             </Text>
+            {service && (
+              <Text style={{
+                fontSize: 12,
+                color: '#8B7355',
+                marginTop: 2,
+              }}>
+                {service.duration}
+              </Text>
+            )}
           </View>
           <View style={{ 
             flexDirection: 'row', 
