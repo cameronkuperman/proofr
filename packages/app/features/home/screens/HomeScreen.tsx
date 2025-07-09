@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import {
   View,
   Text,
@@ -9,12 +9,15 @@ import {
   FlatList,
   Dimensions,
   Modal,
+  Image,
 } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import { MotiView, AnimatePresence } from 'moti'
 import { LinearGradient } from 'expo-linear-gradient'
 import { VerificationPopup } from '../../verification/components/VerificationPopup'
 import { SwipeableCard } from '../components/SwipeableCard'
+import { useTheme, useThemedColors, usePrimaryColors } from '../../../contexts/ThemeContext'
+import { colors } from '../../../constants/colors'
 
 // AsyncStorage
 let AsyncStorage: any
@@ -29,58 +32,182 @@ try {
 
 const { width: screenWidth } = Dimensions.get('window')
 
-// Mock data
-const mockConsultants = [
+// Mock consultant-service matches for quick match
+const mockMatches = [
   {
     id: 1,
-    name: 'Sarah Chen',
-    university: 'Harvard',
-    year: '2024',
-    major: 'Computer Science',
-    rating: 4.9,
-    studentsHelped: 127,
-    price: '$50-150/hr',
-    bio: 'Helped 127 students get into Ivy League schools',
-    acceptanceRate: '94%',
-    specialties: ['Essays', 'CS Applications', 'Interview Prep'],
-    responseTime: '< 2 hours',
-    nextAvailable: 'Today',
+    consultant: {
+      name: 'Sarah Chen',
+      university: 'Harvard',
+      year: '2024',
+      major: 'Computer Science',
+      rating: 4.9,
+      studentsHelped: 127,
+      acceptanceRate: '94%',
+      responseTime: '< 2 hours',
+      image: 'https://randomuser.me/api/portraits/women/1.jpg',
+    },
+    service: {
+      type: 'Common App Essay Review',
+      description: 'In-depth review of your main essay with line-by-line feedback',
+      price: '$120',
+      duration: '48 hour turnaround',
+      includes: ['2 rounds of revisions', 'Grammar check', 'Story structure analysis'],
+    },
+    matchReason: 'Specializes in CS applications like yours',
+    availability: 'Available today',
     instantBooking: true,
-    image: 'https://randomuser.me/api/portraits/women/1.jpg',
   },
   {
     id: 2,
-    name: 'Michael Park',
-    university: 'Stanford',
-    year: '2023',
-    major: 'Economics',
-    rating: 4.8,
-    studentsHelped: 89,
-    price: '$75-200/hr',
-    bio: 'Essay specialist with 89 success stories',
-    acceptanceRate: '91%',
-    specialties: ['Essays', 'Business School', 'Scholarships'],
-    responseTime: '< 4 hours',
-    nextAvailable: 'Tomorrow',
+    consultant: {
+      name: 'Michael Park',
+      university: 'Stanford',
+      year: '2023',
+      major: 'Economics',
+      rating: 4.8,
+      studentsHelped: 89,
+      acceptanceRate: '91%',
+      responseTime: '< 4 hours',
+      image: 'https://randomuser.me/api/portraits/men/2.jpg',
+    },
+    service: {
+      type: 'Why Stanford Essay',
+      description: 'Stanford-specific essay guidance from a current student',
+      price: '$150',
+      duration: '60 min video call',
+      includes: ['Essay strategy', 'What Stanford looks for', 'Example essays'],
+    },
+    matchReason: 'You listed Stanford as a target school',
+    availability: 'Tomorrow 3pm',
     instantBooking: false,
-    image: 'https://randomuser.me/api/portraits/men/2.jpg',
   },
   {
     id: 3,
-    name: 'Emily Rodriguez',
-    university: 'MIT',
-    year: '2024',
-    major: 'Engineering',
-    rating: 5.0,
-    studentsHelped: 156,
-    price: '$100-250/hr',
-    bio: 'Perfect track record for STEM applicants',
-    acceptanceRate: '97%',
-    specialties: ['STEM Essays', 'Research Papers', 'MIT Specific'],
-    responseTime: '< 1 hour',
-    nextAvailable: 'Now',
+    consultant: {
+      name: 'Emily Rodriguez',
+      university: 'MIT',
+      year: '2024',
+      major: 'Engineering',
+      rating: 5.0,
+      studentsHelped: 156,
+      acceptanceRate: '97%',
+      responseTime: '< 1 hour',
+      image: 'https://randomuser.me/api/portraits/women/3.jpg',
+    },
+    service: {
+      type: 'STEM Activity List Review',
+      description: 'Optimize your activities list to highlight STEM achievements',
+      price: '$85',
+      duration: '45 min session',
+      includes: ['Activity descriptions', 'Impact framing', 'Order optimization'],
+    },
+    matchReason: 'Perfect for your robotics & coding activities',
+    availability: 'Available now',
     instantBooking: true,
-    image: 'https://randomuser.me/api/portraits/women/3.jpg',
+  },
+  {
+    id: 4,
+    consultant: {
+      name: 'David Kim',
+      university: 'Yale',
+      year: '2024',
+      major: 'Political Science',
+      rating: 4.7,
+      studentsHelped: 98,
+      acceptanceRate: '89%',
+      responseTime: '< 3 hours',
+      image: 'https://randomuser.me/api/portraits/men/4.jpg',
+    },
+    service: {
+      type: 'Mock Interview Prep',
+      description: 'Practice with common Ivy League interview questions',
+      price: '$100',
+      duration: '45 min mock + 15 min feedback',
+      includes: ['Recorded session', 'Detailed feedback', 'Question bank'],
+    },
+    matchReason: 'Experienced with Yale interviews',
+    availability: 'Today 6pm',
+    instantBooking: true,
+  },
+  {
+    id: 5,
+    consultant: {
+      name: 'Jessica Wu',
+      university: 'Princeton',
+      year: '2023',
+      major: 'Molecular Biology',
+      rating: 4.9,
+      studentsHelped: 112,
+      acceptanceRate: '95%',
+      responseTime: '< 2 hours',
+      image: 'https://randomuser.me/api/portraits/women/5.jpg',
+    },
+    service: {
+      type: 'Pre-Med Essay Package',
+      description: 'Complete review of all pre-med related essays',
+      price: '$250',
+      duration: '1 week support',
+      includes: ['All essays', 'BSMD strategy', 'Timeline planning'],
+    },
+    matchReason: 'You mentioned interest in pre-med track',
+    availability: 'Booking for next week',
+    instantBooking: false,
+  },
+]
+
+// Different consultants for featured section
+const featuredConsultants = [
+  {
+    id: 101,
+    name: 'Alex Thompson',
+    university: 'Columbia',
+    year: '2024',
+    major: 'Journalism',
+    rating: 4.8,
+    studentsHelped: 73,
+    price: '$55-160/hr',
+    bio: 'Storytelling expert for compelling applications',
+    acceptanceRate: '92%',
+    specialties: ['Personal Statement', 'Creative Writing', 'Journalism'],
+    responseTime: '< 6 hours',
+    nextAvailable: 'Today',
+    instantBooking: true,
+    image: 'https://randomuser.me/api/portraits/men/6.jpg',
+  },
+  {
+    id: 102,
+    name: 'Rachel Martinez',
+    university: 'Brown',
+    year: '2024',
+    major: 'International Relations',
+    rating: 4.9,
+    studentsHelped: 94,
+    price: '$70-180/hr',
+    bio: 'Helped 94 students craft unique narratives',
+    acceptanceRate: '93%',
+    specialties: ['Liberal Arts', 'Diversity Essays', 'Supplements'],
+    responseTime: '< 3 hours',
+    nextAvailable: 'Tomorrow',
+    instantBooking: true,
+    image: 'https://randomuser.me/api/portraits/women/7.jpg',
+  },
+  {
+    id: 103,
+    name: 'James Liu',
+    university: 'Cornell',
+    year: '2023',
+    major: 'Architecture',
+    rating: 4.7,
+    studentsHelped: 65,
+    price: '$80-200/hr',
+    bio: 'Architecture and design portfolio specialist',
+    acceptanceRate: '88%',
+    specialties: ['Portfolio Review', 'Art Supplements', 'Architecture'],
+    responseTime: '< 12 hours',
+    nextAvailable: 'This week',
+    instantBooking: false,
+    image: 'https://randomuser.me/api/portraits/men/8.jpg',
   },
 ]
 
@@ -94,6 +221,10 @@ const categories = [
 ]
 
 export function HomeScreen() {
+  const { isDark } = useTheme()
+  const themedColors = useThemedColors()
+  const primaryColors = usePrimaryColors()
+  
   const [showQuickMatch, setShowQuickMatch] = useState(true)
   const [currentMatchIndex, setCurrentMatchIndex] = useState(0)
   const [swipeCount, setSwipeCount] = useState(0)
@@ -102,8 +233,17 @@ export function HomeScreen() {
   const [showMorePrompt, setShowMorePrompt] = useState(false)
 
   useEffect(() => {
+    console.log('[HomeScreen] Component mounted - showQuickMatch:', showQuickMatch)
     checkUserRoleAndVerification()
   }, [])
+  
+  useEffect(() => {
+    console.log('[HomeScreen] State changed:')
+    console.log('  - showQuickMatch:', showQuickMatch)
+    console.log('  - currentMatchIndex:', currentMatchIndex)
+    console.log('  - showMorePrompt:', showMorePrompt)
+    console.log('  - currentConsultant:', mockConsultants[currentMatchIndex]?.name)
+  }, [showQuickMatch, currentMatchIndex, showMorePrompt])
 
   const checkUserRoleAndVerification = async () => {
     try {
@@ -121,29 +261,44 @@ export function HomeScreen() {
     }
   }
 
-  const handleSwipe = (direction: 'left' | 'right' | 'up') => {
-    const consultant = mockConsultants[currentMatchIndex]
+  const handleSwipe = useCallback((direction: 'left' | 'right' | 'up') => {
+    console.log(`[HomeScreen] handleSwipe START - direction: ${direction}`)
+    
+    // Get current values
+    const currentIndex = currentMatchIndex
+    const currentCount = swipeCount
+    const consultant = mockConsultants[currentIndex]
+    
+    console.log(`[HomeScreen] Current state - index: ${currentIndex}, swipeCount: ${currentCount}, consultant: ${consultant.name}`)
     
     if (direction === 'right') {
       console.log(`Added ${consultant.name} to requests`)
     } else if (direction === 'up') {
       console.log(`Super liked ${consultant.name} - premium rate`)
+    } else {
+      console.log(`Skipped ${consultant.name}`)
     }
     
-    setSwipeCount(swipeCount + 1)
+    // Update swipe count
+    const newSwipeCount = currentCount + 1
+    setSwipeCount(newSwipeCount)
     
     // Check if this is the last card or 5th swipe
-    if (currentMatchIndex >= mockConsultants.length - 1 || swipeCount >= 4) {
+    if (currentIndex >= mockConsultants.length - 1 || newSwipeCount >= 5) {
+      console.log('[HomeScreen] Reached end of cards or swipe limit')
       // Show the "want more?" prompt after animation
       setTimeout(() => {
+        console.log('[HomeScreen] Setting showMorePrompt to true')
         setShowMorePrompt(true)
       }, 300)
       return
     }
     
     // Move to next consultant
-    setCurrentMatchIndex(currentMatchIndex + 1)
-  }
+    const nextIndex = currentIndex + 1
+    console.log(`[HomeScreen] Moving to next consultant - from index ${currentIndex} to ${nextIndex}`)
+    setCurrentMatchIndex(nextIndex)
+  }, [currentMatchIndex, swipeCount])
 
   const handleVerificationDismiss = async () => {
     setShowVerificationPopup(false)
@@ -161,18 +316,21 @@ export function HomeScreen() {
   }
 
   const handleSkipAll = () => {
+    console.log('[HomeScreen] Skip All clicked')
     setShowQuickMatch(false)
     setCurrentMatchIndex(0)
     setSwipeCount(0)
+    setShowMorePrompt(false)
   }
 
   const handleAddAll = () => {
     // Add remaining consultants to requests
     const remaining = mockConsultants.slice(currentMatchIndex)
-    console.log('Adding all remaining consultants:', remaining.length)
+    console.log('[HomeScreen] Add All clicked - adding consultants:', remaining.map(c => c.name).join(', '))
     setShowQuickMatch(false)
     setCurrentMatchIndex(0)
     setSwipeCount(0)
+    setShowMorePrompt(false)
   }
 
   const handleSeeMore = () => {
@@ -190,20 +348,31 @@ export function HomeScreen() {
     setSwipeCount(0)
   }
 
-  const currentConsultant = mockConsultants[currentMatchIndex]
+  const currentMatch = mockMatches[currentMatchIndex]
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#FAF7F0' }}>
+    <View style={{ flex: 1, backgroundColor: themedColors.background.default }}>
       <SafeAreaView style={{ flex: 1 }}>
-        <ScrollView showsVerticalScrollIndicator={false}>
+        <ScrollView 
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 100 }}
+          bounces={true}
+          scrollEventThrottle={16}
+        >
           {/* Header */}
           <View style={{
-            backgroundColor: '#FFFFFF',
+            backgroundColor: themedColors.surface.raised,
             paddingHorizontal: 20,
             paddingTop: 16,
             paddingBottom: 12,
             borderBottomWidth: 1,
-            borderBottomColor: '#F5E6D3',
+            borderBottomColor: themedColors.border.default,
+            ...(isDark && {
+              shadowColor: colors.primary[500],
+              shadowOffset: { width: 0, height: 1 },
+              shadowOpacity: 0.1,
+              shadowRadius: 4,
+            }),
           }}>
             {/* Logo and Actions */}
             <View style={{
@@ -215,21 +384,34 @@ export function HomeScreen() {
               <Text style={{
                 fontSize: 28,
                 fontWeight: '700',
-                color: '#2C2825',
+                color: themedColors.text.primary,
               }}>
                 Proofr
               </Text>
               
               <View style={{ flexDirection: 'row', gap: 12 }}>
                 <TouchableOpacity
-                  onPress={() => setShowQuickMatch(true)}
+                  onPress={() => {
+                    console.log('[HomeScreen] Quick Match button pressed')
+                    // Reset state when opening
+                    setCurrentMatchIndex(0)
+                    setSwipeCount(0)
+                    setShowMorePrompt(false)
+                    setShowQuickMatch(true)
+                  }}
                   style={{
-                    backgroundColor: '#D4A574',
+                    backgroundColor: primaryColors.primary,
                     paddingHorizontal: 16,
                     paddingVertical: 8,
                     borderRadius: 20,
                     flexDirection: 'row',
                     alignItems: 'center',
+                    ...(isDark && {
+                      shadowColor: colors.primary[500],
+                      shadowOffset: { width: 0, height: 2 },
+                      shadowOpacity: 0.3,
+                      shadowRadius: 4,
+                    }),
                   }}
                 >
                   <Ionicons name="flash" size={16} color="#fff" />
@@ -244,33 +426,35 @@ export function HomeScreen() {
                 </TouchableOpacity>
                 
                 <TouchableOpacity>
-                  <Ionicons name="notifications-outline" size={24} color="#2C2825" />
+                  <Ionicons name="notifications-outline" size={24} color={themedColors.text.primary} />
                 </TouchableOpacity>
               </View>
             </View>
 
             {/* Search Bar */}
             <View style={{
-              backgroundColor: '#F7F7F7',
+              backgroundColor: isDark ? colors.gray[800] : colors.gray[100],
               borderRadius: 30,
               paddingHorizontal: 16,
               paddingVertical: 12,
               flexDirection: 'row',
               alignItems: 'center',
+              borderWidth: 1,
+              borderColor: themedColors.border.light,
             }}>
-              <Ionicons name="search" size={20} color="#666" />
+              <Ionicons name="search" size={20} color={themedColors.text.secondary} />
               <TextInput
                 placeholder="Search consultants, schools, or services"
-                placeholderTextColor="#999"
+                placeholderTextColor={themedColors.text.tertiary}
                 style={{
                   flex: 1,
                   marginLeft: 8,
                   fontSize: 16,
-                  color: '#1a1f36',
+                  color: themedColors.text.primary,
                 }}
               />
               <TouchableOpacity>
-                <Ionicons name="options-outline" size={20} color="#666" />
+                <Ionicons name="options-outline" size={20} color={themedColors.text.secondary} />
               </TouchableOpacity>
             </View>
           </View>
@@ -280,7 +464,7 @@ export function HomeScreen() {
             horizontal
             showsHorizontalScrollIndicator={false}
             style={{
-              backgroundColor: '#fff',
+              backgroundColor: themedColors.surface.raised,
               paddingVertical: 16,
             }}
             contentContainerStyle={{
@@ -293,29 +477,26 @@ export function HomeScreen() {
                 key={category.id}
                 onPress={() => setSelectedCategory(category.id)}
                 style={{
+                  flexDirection: 'row',
                   alignItems: 'center',
-                  marginRight: 16,
+                  paddingHorizontal: 16,
+                  paddingVertical: 8,
+                  borderRadius: 20,
+                  backgroundColor: selectedCategory === category.id ? primaryColors.primary : themedColors.surface.raised,
+                  borderWidth: 1,
+                  borderColor: selectedCategory === category.id ? primaryColors.primary : themedColors.border.default,
                 }}
               >
-                <View style={{
-                  width: 56,
-                  height: 56,
-                  borderRadius: 28,
-                  backgroundColor: selectedCategory === category.id ? '#1DBF73' : '#F7F7F7',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  marginBottom: 8,
-                }}>
-                  <Ionicons
-                    name={category.icon as any}
-                    size={24}
-                    color={selectedCategory === category.id ? '#fff' : '#666'}
-                  />
-                </View>
+                <Ionicons
+                  name={category.icon as any}
+                  size={16}
+                  color={selectedCategory === category.id ? '#FFF' : themedColors.text.secondary}
+                />
                 <Text style={{
-                  fontSize: 12,
-                  color: selectedCategory === category.id ? '#1DBF73' : '#666',
-                  fontWeight: selectedCategory === category.id ? '600' : '400',
+                  marginLeft: 6,
+                  fontSize: 14,
+                  fontWeight: '500',
+                  color: selectedCategory === category.id ? '#FFF' : themedColors.text.secondary,
                 }}>
                   {category.name}
                 </Text>
@@ -323,105 +504,69 @@ export function HomeScreen() {
             ))}
           </ScrollView>
 
-          {/* Urgent Help Banner */}
-          <View style={{ paddingHorizontal: 20, marginTop: 20 }}>
-            <LinearGradient
-              colors={['#1DBF73', '#00A86B']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              style={{
-                borderRadius: 16,
-                padding: 20,
-              }}
-            >
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                <View style={{ flex: 1 }}>
-                  <Text style={{
-                    fontSize: 18,
-                    fontWeight: '700',
-                    color: '#fff',
-                    marginBottom: 4,
-                  }}>
-                    Essay Due Soon? 📝
-                  </Text>
-                  <Text style={{
-                    fontSize: 14,
-                    color: 'rgba(255,255,255,0.9)',
-                  }}>
-                    Get instant help from verified consultants
-                  </Text>
-                </View>
-                <TouchableOpacity style={{
-                  backgroundColor: '#fff',
-                  paddingHorizontal: 16,
-                  paddingVertical: 8,
-                  borderRadius: 20,
-                }}>
-                  <Text style={{
-                    color: '#1DBF73',
-                    fontWeight: '600',
-                  }}>
-                    Get Help
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </LinearGradient>
-          </View>
-
           {/* Featured Consultants */}
-          <View style={{ marginTop: 32, paddingHorizontal: 20 }}>
+          <View style={{ paddingHorizontal: 20, marginTop: 24 }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
               <Text style={{
                 fontSize: 22,
                 fontWeight: '700',
-                color: '#1a1f36',
+                color: themedColors.text.primary,
               }}>
                 Featured Consultants
               </Text>
               <TouchableOpacity>
                 <Text style={{
+                  color: primaryColors.primary,
                   fontSize: 14,
-                  color: '#1DBF73',
                   fontWeight: '600',
                 }}>
-                  See all
+                  See All
                 </Text>
               </TouchableOpacity>
             </View>
 
-            {/* Consultant Cards Grid */}
-            {mockConsultants.map((consultant) => (
+            {/* Consultant Cards - Only show 3 */}
+            {featuredConsultants.slice(0, 3).map((consultant) => (
               <TouchableOpacity
                 key={consultant.id}
                 style={{
-                  backgroundColor: '#fff',
+                  backgroundColor: themedColors.surface.raised,
                   borderRadius: 16,
                   padding: 16,
                   marginBottom: 16,
-                  shadowColor: '#000',
-                  shadowOffset: { width: 0, height: 2 },
-                  shadowOpacity: 0.05,
-                  shadowRadius: 8,
-                  elevation: 2,
+                  borderWidth: 1,
+                  borderColor: themedColors.border.default,
+                  ...(isDark ? {
+                    shadowColor: colors.primary[500],
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: 0.1,
+                    shadowRadius: 8,
+                  } : {
+                    shadowColor: '#000',
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: 0.05,
+                    shadowRadius: 8,
+                    elevation: 2,
+                  }),
                 }}
               >
                 <View style={{ flexDirection: 'row' }}>
                   {/* Profile Image */}
-                  <View style={{
-                    width: 80,
-                    height: 80,
-                    borderRadius: 12,
-                    backgroundColor: '#F0F0F0',
-                    marginRight: 16,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}>
-                    <Ionicons name="person-circle" size={70} color="#DDD" />
+                  <View style={{ marginRight: 16 }}>
+                    <Image
+                      source={{ uri: consultant.image }}
+                      style={{
+                        width: 80,
+                        height: 80,
+                        borderRadius: 12,
+                        backgroundColor: themedColors.surface.sunken,
+                      }}
+                    />
                     <View style={{
                       position: 'absolute',
                       bottom: -4,
                       right: -4,
-                      backgroundColor: '#1DBF73',
+                      backgroundColor: colors.university[consultant.university.toLowerCase()] || primaryColors.primary,
                       paddingHorizontal: 8,
                       paddingVertical: 2,
                       borderRadius: 10,
@@ -443,26 +588,28 @@ export function HomeScreen() {
                         <Text style={{
                           fontSize: 18,
                           fontWeight: '600',
-                          color: '#1a1f36',
+                          color: themedColors.text.primary,
                         }}>
                           {consultant.name}
                         </Text>
                         <Text style={{
                           fontSize: 14,
-                          color: '#666',
+                          color: themedColors.text.secondary,
                         }}>
                           {consultant.major}
                         </Text>
                       </View>
                       {consultant.instantBooking && (
                         <View style={{
-                          backgroundColor: '#E8F5E9',
+                          backgroundColor: isDark ? colors.primary[800] : colors.primary[50],
                           paddingHorizontal: 8,
                           paddingVertical: 4,
                           borderRadius: 8,
+                          borderWidth: 1,
+                          borderColor: primaryColors.primary,
                         }}>
                           <Text style={{
-                            color: '#2E7D32',
+                            color: primaryColors.primary,
                             fontSize: 12,
                             fontWeight: '600',
                           }}>
@@ -475,15 +622,15 @@ export function HomeScreen() {
                     {/* Stats */}
                     <View style={{ flexDirection: 'row', marginTop: 8, gap: 16 }}>
                       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <Ionicons name="star" size={14} color="#FFB800" />
-                        <Text style={{ marginLeft: 4, fontSize: 14, color: '#1a1f36', fontWeight: '600' }}>
+                        <Ionicons name="star" size={14} color={colors.warning.main} />
+                        <Text style={{ marginLeft: 4, fontSize: 14, color: themedColors.text.primary, fontWeight: '600' }}>
                           {consultant.rating}
                         </Text>
                       </View>
-                      <Text style={{ fontSize: 14, color: '#666' }}>
+                      <Text style={{ fontSize: 14, color: themedColors.text.secondary }}>
                         {consultant.studentsHelped} students
                       </Text>
-                      <Text style={{ fontSize: 14, color: '#666' }}>
+                      <Text style={{ fontSize: 14, color: themedColors.text.secondary }}>
                         {consultant.acceptanceRate} success
                       </Text>
                     </View>
@@ -492,7 +639,7 @@ export function HomeScreen() {
                     <Text style={{
                       fontSize: 16,
                       fontWeight: '600',
-                      color: '#1a1f36',
+                      color: primaryColors.primary,
                       marginTop: 8,
                     }}>
                       {consultant.price}
@@ -508,7 +655,7 @@ export function HomeScreen() {
             <Text style={{
               fontSize: 22,
               fontWeight: '700',
-              color: '#1a1f36',
+              color: themedColors.text.primary,
               marginBottom: 16,
             }}>
               Success Stories
@@ -520,36 +667,45 @@ export function HomeScreen() {
             >
               {[1, 2, 3].map((i) => (
                 <View key={i} style={{
-                  backgroundColor: '#fff',
+                  backgroundColor: themedColors.surface.raised,
                   borderRadius: 16,
                   padding: 16,
                   width: screenWidth * 0.8,
-                  shadowColor: '#000',
-                  shadowOffset: { width: 0, height: 2 },
-                  shadowOpacity: 0.05,
-                  shadowRadius: 8,
-                  elevation: 2,
+                  borderWidth: 1,
+                  borderColor: themedColors.border.default,
+                  ...(isDark ? {
+                    shadowColor: colors.primary[500],
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: 0.1,
+                    shadowRadius: 8,
+                  } : {
+                    shadowColor: '#000',
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: 0.05,
+                    shadowRadius: 8,
+                    elevation: 2,
+                  }),
                 }}>
                   <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
                     <View style={{
                       width: 40,
                       height: 40,
                       borderRadius: 20,
-                      backgroundColor: '#F0F0F0',
+                      backgroundColor: themedColors.surface.sunken,
                       marginRight: 12,
                     }} />
                     <View>
-                      <Text style={{ fontSize: 16, fontWeight: '600', color: '#1a1f36' }}>
+                      <Text style={{ fontSize: 16, fontWeight: '600', color: themedColors.text.primary }}>
                         Alex Thompson
                       </Text>
-                      <Text style={{ fontSize: 14, color: '#666' }}>
+                      <Text style={{ fontSize: 14, color: primaryColors.primary }}>
                         Got into Harvard
                       </Text>
                     </View>
                   </View>
                   <Text style={{
                     fontSize: 14,
-                    color: '#666',
+                    color: themedColors.text.secondary,
                     lineHeight: 20,
                   }}>
                     "Sarah helped me craft the perfect essay that highlighted my unique story. Her insights were invaluable!"
@@ -564,31 +720,85 @@ export function HomeScreen() {
             <Text style={{
               fontSize: 22,
               fontWeight: '700',
-              color: '#1a1f36',
+              color: themedColors.text.primary,
               marginBottom: 16,
             }}>
               Group Sessions
             </Text>
             <View style={{
-              backgroundColor: '#E8F5E9',
+              backgroundColor: isDark ? colors.primary[900] : colors.primary[50],
               borderRadius: 16,
               padding: 16,
+              borderWidth: 1,
+              borderColor: isDark ? colors.primary[700] : colors.primary[200],
             }}>
               <Text style={{
                 fontSize: 16,
                 fontWeight: '600',
-                color: '#2E7D32',
+                color: primaryColors.primary,
                 marginBottom: 4,
               }}>
                 Save 50% with group sessions
               </Text>
               <Text style={{
                 fontSize: 14,
-                color: '#388E3C',
+                color: isDark ? colors.primary[300] : colors.primary[700],
               }}>
                 Join 3-5 students for essay workshops
               </Text>
             </View>
+          </View>
+
+          {/* Recommended for You */}
+          <View style={{ marginTop: 32, paddingHorizontal: 20 }}>
+            <Text style={{
+              fontSize: 22,
+              fontWeight: '700',
+              color: themedColors.text.primary,
+              marginBottom: 16,
+            }}>
+              Recommended for You
+            </Text>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ gap: 12 }}
+            >
+              {[
+                { title: 'Essay Review Special', subtitle: '30% off this week', color: colors.primary, icon: 'edit' },
+                { title: 'Mock Interviews', subtitle: 'Prep for success', color: colors.purple, icon: 'mic' },
+                { title: 'SAT Bootcamp', subtitle: 'Boost your score', color: colors.teal, icon: 'trending-up' },
+              ].map((item, i) => (
+                <TouchableOpacity
+                  key={i}
+                  style={{
+                    backgroundColor: isDark ? item.color[900] : item.color[50],
+                    borderRadius: 16,
+                    padding: 20,
+                    width: 160,
+                    borderWidth: 1,
+                    borderColor: isDark ? item.color[700] : item.color[200],
+                  }}
+                >
+                  <Ionicons name={item.icon as any} size={28} color={item.color[600]} />
+                  <Text style={{
+                    fontSize: 16,
+                    fontWeight: '600',
+                    color: themedColors.text.primary,
+                    marginTop: 12,
+                  }}>
+                    {item.title}
+                  </Text>
+                  <Text style={{
+                    fontSize: 14,
+                    color: themedColors.text.secondary,
+                    marginTop: 4,
+                  }}>
+                    {item.subtitle}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
           </View>
 
           {/* Application Deadlines */}
@@ -596,450 +806,562 @@ export function HomeScreen() {
             <Text style={{
               fontSize: 22,
               fontWeight: '700',
-              color: '#1a1f36',
+              color: themedColors.text.primary,
               marginBottom: 16,
             }}>
               Upcoming Deadlines
             </Text>
-            <View style={{
-              backgroundColor: '#fff',
-              borderRadius: 16,
-              padding: 16,
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.05,
-              shadowRadius: 8,
-              elevation: 2,
-            }}>
-              {[
-                { school: 'Harvard', date: 'Jan 1', days: 38 },
-                { school: 'Stanford', date: 'Jan 5', days: 42 },
-                { school: 'MIT', date: 'Jan 15', days: 52 },
-              ].map((deadline, index) => (
-                <View key={index} style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  paddingVertical: 12,
-                  borderBottomWidth: index < 2 ? 1 : 0,
-                  borderBottomColor: '#F0F0F0',
-                }}>
-                  <View>
-                    <Text style={{ fontSize: 16, fontWeight: '600', color: '#1a1f36' }}>
-                      {deadline.school}
-                    </Text>
-                    <Text style={{ fontSize: 14, color: '#666' }}>
-                      {deadline.date}
-                    </Text>
-                  </View>
+            {[
+              { school: 'Harvard', deadline: 'Jan 1', daysLeft: 45 },
+              { school: 'Stanford', deadline: 'Jan 2', daysLeft: 46 },
+              { school: 'MIT', deadline: 'Jan 1', daysLeft: 45 },
+            ].map((item) => (
+              <View key={item.school} style={{
+                backgroundColor: themedColors.surface.raised,
+                borderRadius: 12,
+                padding: 16,
+                marginBottom: 12,
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                borderWidth: 1,
+                borderColor: themedColors.border.default,
+              }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                   <View style={{
-                    backgroundColor: deadline.days < 40 ? '#FFE5E5' : '#E8F5E9',
-                    paddingHorizontal: 12,
-                    paddingVertical: 6,
-                    borderRadius: 16,
-                  }}>
-                    <Text style={{
-                      fontSize: 14,
-                      fontWeight: '600',
-                      color: deadline.days < 40 ? '#D32F2F' : '#2E7D32',
-                    }}>
-                      {deadline.days} days
+                    width: 8,
+                    height: 8,
+                    borderRadius: 4,
+                    backgroundColor: colors.university[item.school.toLowerCase()] || primaryColors.primary,
+                    marginRight: 12,
+                  }} />
+                  <View>
+                    <Text style={{ fontSize: 16, fontWeight: '600', color: themedColors.text.primary }}>
+                      {item.school}
+                    </Text>
+                    <Text style={{ fontSize: 14, color: themedColors.text.secondary }}>
+                      {item.deadline}
                     </Text>
                   </View>
                 </View>
-              ))}
-            </View>
+                <View style={{
+                  backgroundColor: item.daysLeft < 30 
+                    ? isDark ? colors.accent[800] : colors.accent[50]
+                    : isDark ? colors.primary[800] : colors.primary[50],
+                  paddingHorizontal: 12,
+                  paddingVertical: 6,
+                  borderRadius: 12,
+                }}>
+                  <Text style={{
+                    fontSize: 14,
+                    fontWeight: '600',
+                    color: item.daysLeft < 30 ? colors.accent[600] : primaryColors.primary,
+                  }}>
+                    {item.daysLeft} days
+                  </Text>
+                </View>
+              </View>
+            ))}
           </View>
 
           {/* Popular Services */}
-          <View style={{ marginTop: 32, paddingHorizontal: 20, marginBottom: 100 }}>
+          <View style={{ marginTop: 32, paddingHorizontal: 20 }}>
             <Text style={{
               fontSize: 22,
               fontWeight: '700',
-              color: '#1a1f36',
+              color: themedColors.text.primary,
               marginBottom: 16,
             }}>
               Popular Services
             </Text>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
               {[
-                { name: 'Essay Review', price: '$50', icon: 'document-text' },
-                { name: 'Mock Interview', price: '$75', icon: 'mic' },
-                { name: 'Application Strategy', price: '$100', icon: 'compass' },
-                { name: 'Resume Polish', price: '$40', icon: 'briefcase' },
-              ].map((service, index) => (
-                <TouchableOpacity key={index} style={{
-                  backgroundColor: '#fff',
-                  borderRadius: 12,
-                  padding: 16,
-                  width: (screenWidth - 52) / 2,
-                  shadowColor: '#000',
-                  shadowOffset: { width: 0, height: 2 },
-                  shadowOpacity: 0.05,
-                  shadowRadius: 8,
-                  elevation: 2,
-                }}>
-                  <Ionicons name={service.icon as any} size={24} color="#1DBF73" />
+                { name: 'Common App Essay', count: '2.3k sessions', hot: true },
+                { name: 'Interview Prep', count: '1.8k sessions' },
+                { name: 'School List Building', count: '1.5k sessions' },
+                { name: 'Scholarship Essays', count: '1.2k sessions' },
+                { name: 'Activities List', count: '987 sessions' },
+                { name: 'SAT/ACT Tutoring', count: '856 sessions' },
+              ].map((service, i) => (
+                <TouchableOpacity
+                  key={i}
+                  style={{
+                    backgroundColor: themedColors.surface.raised,
+                    borderRadius: 20,
+                    paddingHorizontal: 16,
+                    paddingVertical: 10,
+                    borderWidth: 1,
+                    borderColor: themedColors.border.default,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                  }}
+                >
                   <Text style={{
-                    fontSize: 16,
-                    fontWeight: '600',
-                    color: '#1a1f36',
-                    marginTop: 8,
+                    fontSize: 14,
+                    fontWeight: '500',
+                    color: themedColors.text.primary,
                   }}>
                     {service.name}
                   </Text>
-                  <Text style={{
-                    fontSize: 14,
-                    color: '#1DBF73',
-                    fontWeight: '600',
-                    marginTop: 4,
-                  }}>
-                    Starting at {service.price}
-                  </Text>
+                  {service.hot && (
+                    <View style={{
+                      backgroundColor: colors.accent[600],
+                      paddingHorizontal: 6,
+                      paddingVertical: 2,
+                      borderRadius: 8,
+                      marginLeft: 8,
+                    }}>
+                      <Text style={{
+                        color: '#FFF',
+                        fontSize: 10,
+                        fontWeight: '600',
+                      }}>
+                        HOT
+                      </Text>
+                    </View>
+                  )}
                 </TouchableOpacity>
               ))}
             </View>
           </View>
-        </ScrollView>
-      </SafeAreaView>
 
-      {/* Quick Match Overlay */}
-      <Modal
-        visible={showQuickMatch}
-        transparent
-        animationType="slide"
-      >
-        <View style={{
-          flex: 1,
-          backgroundColor: 'rgba(0,0,0,0.5)',
-        }}>
-          <SafeAreaView style={{ flex: 1 }}>
-            <View style={{
-              flex: 1,
-              backgroundColor: '#FFFFFF',
-              marginTop: 50,
-              borderTopLeftRadius: 20,
-              borderTopRightRadius: 20,
-              borderWidth: 1,
-              borderColor: '#F5E6D3',
-              borderBottomWidth: 0,
+          {/* Recent Reviews */}
+          <View style={{ marginTop: 32, paddingHorizontal: 20 }}>
+            <Text style={{
+              fontSize: 22,
+              fontWeight: '700',
+              color: themedColors.text.primary,
+              marginBottom: 16,
             }}>
+              Recent Reviews
+            </Text>
+            {[
+              {
+                consultant: 'Sarah Chen',
+                student: 'Anonymous',
+                rating: 5,
+                review: 'Sarah\'s essay feedback was incredible! She helped me find my voice.',
+                service: 'Essay Review',
+                verified: true,
+              },
+              {
+                consultant: 'Michael Zhang',
+                student: 'Jake M.',
+                rating: 5,
+                review: 'Mock interview was so helpful. Feel 100% more confident now!',
+                service: 'Interview Prep',
+                verified: true,
+              },
+            ].map((review, i) => (
+              <View
+                key={i}
+                style={{
+                  backgroundColor: themedColors.surface.raised,
+                  borderRadius: 12,
+                  padding: 16,
+                  marginBottom: 12,
+                  borderWidth: 1,
+                  borderColor: themedColors.border.default,
+                }}
+              >
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8 }}>
+                  <View>
+                    <Text style={{ fontSize: 16, fontWeight: '600', color: themedColors.text.primary }}>
+                      {review.consultant}
+                    </Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4 }}>
+                      {[...Array(5)].map((_, j) => (
+                        <Ionicons
+                          key={j}
+                          name="star"
+                          size={14}
+                          color={j < review.rating ? colors.warning.main : themedColors.border.default}
+                        />
+                      ))}
+                      {review.verified && (
+                        <View style={{
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          marginLeft: 8,
+                        }}>
+                          <Ionicons name="checkmark-circle" size={14} color={primaryColors.primary} />
+                          <Text style={{
+                            fontSize: 12,
+                            color: primaryColors.primary,
+                            marginLeft: 4,
+                          }}>
+                            Verified
+                          </Text>
+                        </View>
+                      )}
+                    </View>
+                  </View>
+                  <View style={{
+                    backgroundColor: isDark ? colors.gray[800] : colors.gray[100],
+                    paddingHorizontal: 12,
+                    paddingVertical: 6,
+                    borderRadius: 12,
+                  }}>
+                    <Text style={{ fontSize: 12, color: themedColors.text.secondary }}>
+                      {review.service}
+                    </Text>
+                  </View>
+                </View>
+                <Text style={{
+                  fontSize: 14,
+                  color: themedColors.text.secondary,
+                  lineHeight: 20,
+                  marginBottom: 8,
+                }}>
+                  "{review.review}"
+                </Text>
+                <Text style={{ fontSize: 12, color: themedColors.text.tertiary }}>
+                  — {review.student}
+                </Text>
+              </View>
+            ))}
+          </View>
+
+          {/* Daily Tips */}
+          <View style={{ marginTop: 32, paddingHorizontal: 20 }}>
+            <Text style={{
+              fontSize: 22,
+              fontWeight: '700',
+              color: themedColors.text.primary,
+              marginBottom: 16,
+            }}>
+              Today's Tips
+            </Text>
+            <View style={{
+              backgroundColor: isDark ? colors.primary[900] : colors.primary[50],
+              borderRadius: 16,
+              padding: 20,
+              borderWidth: 1,
+              borderColor: isDark ? colors.primary[700] : colors.primary[200],
+            }}>
+              <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
+                <View style={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: 20,
+                  backgroundColor: primaryColors.primary,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  marginRight: 12,
+                }}>
+                  <Ionicons name="bulb" size={20} color="#FFF" />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={{
+                    fontSize: 16,
+                    fontWeight: '600',
+                    color: themedColors.text.primary,
+                    marginBottom: 8,
+                  }}>
+                    Start Your Essays Early
+                  </Text>
+                  <Text style={{
+                    fontSize: 14,
+                    color: themedColors.text.secondary,
+                    lineHeight: 20,
+                  }}>
+                    The best essays go through multiple drafts. Starting early gives you time to reflect, revise, and get feedback from consultants.
+                  </Text>
+                  <TouchableOpacity style={{ marginTop: 12 }}>
+                    <Text style={{
+                      fontSize: 14,
+                      color: primaryColors.primary,
+                      fontWeight: '600',
+                    }}>
+                      Find Essay Consultants →
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </View>
+
+          {/* Your Progress */}
+          <View style={{ marginTop: 32, paddingHorizontal: 20 }}>
+            <Text style={{
+              fontSize: 22,
+              fontWeight: '700',
+              color: themedColors.text.primary,
+              marginBottom: 16,
+            }}>
+              Your Progress
+            </Text>
+            <View style={{ flexDirection: 'row', gap: 12 }}>
+              <View style={{
+                flex: 1,
+                backgroundColor: themedColors.surface.raised,
+                borderRadius: 12,
+                padding: 16,
+                borderWidth: 1,
+                borderColor: themedColors.border.default,
+                alignItems: 'center',
+              }}>
+                <Text style={{ fontSize: 28, fontWeight: '700', color: primaryColors.primary }}>
+                  3/8
+                </Text>
+                <Text style={{ fontSize: 14, color: themedColors.text.secondary, marginTop: 4 }}>
+                  Essays Done
+                </Text>
+              </View>
+              <View style={{
+                flex: 1,
+                backgroundColor: themedColors.surface.raised,
+                borderRadius: 12,
+                padding: 16,
+                borderWidth: 1,
+                borderColor: themedColors.border.default,
+                alignItems: 'center',
+              }}>
+                <Text style={{ fontSize: 28, fontWeight: '700', color: colors.purple[600] }}>
+                  12
+                </Text>
+                <Text style={{ fontSize: 14, color: themedColors.text.secondary, marginTop: 4 }}>
+                  Days Until EA
+                </Text>
+              </View>
+              <View style={{
+                flex: 1,
+                backgroundColor: themedColors.surface.raised,
+                borderRadius: 12,
+                padding: 16,
+                borderWidth: 1,
+                borderColor: themedColors.border.default,
+                alignItems: 'center',
+              }}>
+                <Text style={{ fontSize: 28, fontWeight: '700', color: colors.teal[600] }}>
+                  7
+                </Text>
+                <Text style={{ fontSize: 14, color: themedColors.text.secondary, marginTop: 4 }}>
+                  Schools Ready
+                </Text>
+              </View>
+            </View>
+          </View>
+
+          {/* Resources */}
+          <View style={{ marginTop: 32, paddingHorizontal: 20, marginBottom: 100 }}>
+            <Text style={{
+              fontSize: 22,
+              fontWeight: '700',
+              color: themedColors.text.primary,
+              marginBottom: 16,
+            }}>
+              Resources & Guides
+            </Text>
+            {[
+              { title: 'Complete Essay Guide', icon: 'book', color: colors.primary },
+              { title: 'Interview Prep Checklist', icon: 'list', color: colors.purple },
+              { title: 'Timeline Builder', icon: 'calendar', color: colors.teal },
+              { title: 'Financial Aid 101', icon: 'cash', color: colors.warning },
+            ].map((resource, i) => (
+              <TouchableOpacity
+                key={i}
+                style={{
+                  backgroundColor: themedColors.surface.raised,
+                  borderRadius: 12,
+                  padding: 16,
+                  marginBottom: 12,
+                  borderWidth: 1,
+                  borderColor: themedColors.border.default,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}
+              >
+                <View style={{
+                  width: 44,
+                  height: 44,
+                  borderRadius: 22,
+                  backgroundColor: isDark ? resource.color[800] : resource.color[100],
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  marginRight: 12,
+                }}>
+                  <Ionicons name={resource.icon as any} size={20} color={resource.color[600]} />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={{
+                    fontSize: 16,
+                    fontWeight: '600',
+                    color: themedColors.text.primary,
+                  }}>
+                    {resource.title}
+                  </Text>
+                  <Text style={{
+                    fontSize: 14,
+                    color: themedColors.text.secondary,
+                    marginTop: 2,
+                  }}>
+                    Free guide for all students
+                  </Text>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color={themedColors.text.secondary} />
+              </TouchableOpacity>
+            ))}
+          </View>
+        </ScrollView>
+
+        {/* Quick Match Modal */}
+        <Modal
+          visible={showQuickMatch}
+          animationType="slide"
+          presentationStyle="overFullScreen"
+          transparent={true}
+          onShow={() => console.log('[HomeScreen] Modal shown')}
+          onRequestClose={() => console.log('[HomeScreen] Modal close requested')}
+        >
+          <View style={{ 
+            flex: 1, 
+            backgroundColor: isDark ? 'rgba(0, 0, 0, 0.95)' : 'rgba(0, 0, 0, 0.9)',
+          }}>
+            <SafeAreaView style={{ flex: 1 }}>
               {/* Header */}
               <View style={{
                 flexDirection: 'row',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                padding: 20,
-                borderBottomWidth: 1,
-                borderBottomColor: '#F5E6D3',
+                paddingHorizontal: 20,
+                paddingTop: 20,
               }}>
-                <View>
-                  <Text style={{
-                    fontSize: 24,
-                    fontWeight: '700',
-                    color: '#2C2825',
-                  }}>
-                    Quick Matches
-                  </Text>
-                  <Text style={{
-                    fontSize: 14,
-                    color: '#8B7355',
-                    marginTop: 4,
-                  }}>
-                    Swipe right to add to requests • {5 - swipeCount} left
+                <TouchableOpacity 
+                  onPress={() => {
+                    console.log('[HomeScreen] Skip All TouchableOpacity pressed')
+                    handleSkipAll()
+                  }}
+                  style={{ padding: 10 }}
+                >
+                  <Text style={{ color: '#FFF', fontSize: 16 }}>Skip All</Text>
+                </TouchableOpacity>
+                
+                <View style={{ alignItems: 'center' }}>
+                  <Text style={{ color: '#FFF', fontSize: 18, fontWeight: '600' }}>Quick Match</Text>
+                  <Text style={{ color: '#FFF', opacity: 0.7, fontSize: 14 }}>
+                    {currentMatchIndex + 1} of {mockConsultants.length}
                   </Text>
                 </View>
-                <TouchableOpacity
-                  onPress={() => setShowQuickMatch(false)}
-                  style={{
-                    width: 36,
-                    height: 36,
-                    borderRadius: 18,
-                    backgroundColor: '#FAF7F0',
-                    justifyContent: 'center',
-                    alignItems: 'center',
+                
+                <TouchableOpacity 
+                  onPress={() => {
+                    console.log('[HomeScreen] Add All TouchableOpacity pressed')
+                    handleAddAll()
                   }}
+                  style={{ padding: 10 }}
                 >
-                  <Ionicons name="close" size={24} color="#8B7355" />
+                  <Text style={{ color: primaryColors.primary, fontSize: 16, fontWeight: '600' }}>Add All</Text>
                 </TouchableOpacity>
               </View>
 
-              {/* Content Area */}
-              {showMorePrompt ? (
-                /* Beautiful "Want More?" Screen */
-                <View style={{
-                  flex: 1,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  paddingHorizontal: 30,
-                  paddingTop: 20,
-                  paddingBottom: 40,
-                }}>
-                  
-                  {/* Main Content */}
-                  <MotiView
-                    from={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ type: 'spring', damping: 20 }}
-                    style={{ width: '100%', alignItems: 'center' }}
-                  >
-                    {/* Icon/Symbol */}
-                    <View style={{
-                      alignItems: 'center',
-                      marginBottom: 24,
-                    }}>
-                      <View style={{
-                        width: 100,
-                        height: 100,
-                        borderRadius: 50,
-                        backgroundColor: '#FFF8F3',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        shadowColor: '#D4AF37',
-                        shadowOffset: { width: 0, height: 4 },
-                        shadowOpacity: 0.15,
-                        shadowRadius: 10,
-                        elevation: 6,
-                      }}>
-                        <Ionicons name="school" size={50} color="#D4AF37" />
-                      </View>
-                    </View>
-                    
-                    {/* Headline */}
-                    <Text style={{
-                      fontSize: 28,
-                      fontWeight: '600',
-                      color: '#3E2723',
-                      textAlign: 'center',
-                      marginBottom: 12,
-                      letterSpacing: 0.5,
-                    }}>
-                      More Elite Consultants
-                    </Text>
-                    
-                    {/* Subtext */}
-                    <Text style={{
-                      fontSize: 16,
-                      color: '#8B7355',
-                      textAlign: 'center',
-                      marginBottom: 32,
-                      lineHeight: 24,
-                      paddingHorizontal: 20,
-                    }}>
-                      Harvard, Stanford, MIT alumni are ready{'\n'}
-                      to guide your admissions journey
-                    </Text>
-                    
-                    {/* Stats */}
-                    <View style={{
-                      flexDirection: 'row',
-                      justifyContent: 'center',
-                      marginBottom: 36,
-                      gap: 40,
-                    }}>
-                      <View style={{ alignItems: 'center' }}>
-                        <Text style={{
-                          fontSize: 28,
-                          fontWeight: '700',
-                          color: '#D4AF37',
-                        }}>
-                          {swipeCount}
-                        </Text>
-                        <Text style={{
-                          fontSize: 13,
-                          color: '#8B7355',
-                        }}>
-                          Reviewed
-                        </Text>
-                      </View>
-                      <View style={{
-                        width: 1,
-                        backgroundColor: '#F5E6D3',
-                      }} />
-                      <View style={{ alignItems: 'center' }}>
-                        <Text style={{
-                          fontSize: 28,
-                          fontWeight: '700',
-                          color: '#68A357',
-                        }}>
-                          {mockConsultants.length * 3}+
-                        </Text>
-                        <Text style={{
-                          fontSize: 13,
-                          color: '#8B7355',
-                        }}>
-                          Available
-                        </Text>
-                      </View>
-                    </View>
+              {/* Swipeable Card */}
+              {!showMorePrompt && currentMatch && (
+                <SwipeableCard
+                  key={`${currentMatch.id}-${currentMatchIndex}`}
+                  consultant={currentMatch.consultant}
+                  service={currentMatch.service}
+                  matchReason={currentMatch.matchReason}
+                  availability={currentMatch.availability}
+                  instantBooking={currentMatch.instantBooking}
+                  onSwipeLeft={() => handleSwipe('left')}
+                  onSwipeRight={() => handleSwipe('right')}
+                  onSwipeUp={() => handleSwipe('up')}
+                  onViewProfile={handleViewProfile}
+                  isFirst={true}
+                  cardIndex={0}
+                />
+              )}
 
-                    {/* Success Badge */}
-                    <View style={{
-                      backgroundColor: '#F8E5D3',
-                      paddingHorizontal: 20,
-                      paddingVertical: 10,
-                      borderRadius: 20,
-                      marginBottom: 24,
-                      flexDirection: 'row',
+              {/* Want More Prompt */}
+              <AnimatePresence>
+                {showMorePrompt && (
+                  <MotiView
+                    from={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    style={{
+                      flex: 1,
+                      justifyContent: 'center',
                       alignItems: 'center',
+                      paddingHorizontal: 40,
+                    }}
+                  >
+                    <View style={{
+                      backgroundColor: themedColors.surface.raised,
+                      borderRadius: 24,
+                      padding: 32,
+                      alignItems: 'center',
+                      width: '100%',
+                      borderWidth: 1,
+                      borderColor: themedColors.border.default,
                     }}>
-                      <Ionicons name="checkmark-circle" size={16} color="#68A357" />
                       <Text style={{
-                        fontSize: 13,
-                        color: '#3E2723',
-                        marginLeft: 6,
-                        fontWeight: '500',
+                        fontSize: 24,
+                        fontWeight: '700',
+                        color: themedColors.text.primary,
+                        marginBottom: 12,
                       }}>
-                        94% acceptance rate with our consultants
+                        Want to see more?
                       </Text>
-                    </View>
-                    
-                    {/* Action Buttons */}
-                    <View style={{ width: '100%', gap: 16 }}>
-                      {/* Primary CTA */}
+                      <Text style={{
+                        fontSize: 16,
+                        color: themedColors.text.secondary,
+                        textAlign: 'center',
+                        marginBottom: 24,
+                      }}>
+                        We have more amazing consultants ready to help you
+                      </Text>
+                      
                       <TouchableOpacity
                         onPress={handleSeeMore}
                         style={{
-                          backgroundColor: '#68A357',
+                          backgroundColor: primaryColors.primary,
+                          paddingHorizontal: 32,
                           paddingVertical: 16,
-                          borderRadius: 25,
-                          alignItems: 'center',
-                          shadowColor: '#68A357',
-                          shadowOffset: { width: 0, height: 4 },
-                          shadowOpacity: 0.2,
-                          shadowRadius: 8,
-                          elevation: 4,
+                          borderRadius: 24,
+                          width: '100%',
+                          marginBottom: 12,
                         }}
                       >
                         <Text style={{
-                          fontSize: 17,
+                          color: '#FFF',
+                          fontSize: 16,
                           fontWeight: '600',
-                          color: '#fff',
-                          letterSpacing: 0.3,
+                          textAlign: 'center',
                         }}>
-                          Continue Browsing
+                          Show me more
                         </Text>
                       </TouchableOpacity>
                       
-                      {/* Secondary CTA */}
                       <TouchableOpacity
                         onPress={handleThatsEnough}
                         style={{
-                          paddingVertical: 14,
-                          alignItems: 'center',
+                          paddingVertical: 12,
                         }}
                       >
                         <Text style={{
-                          fontSize: 15,
-                          color: '#8B7355',
+                          color: themedColors.text.secondary,
+                          fontSize: 16,
                         }}>
-                          View My Matches
+                          That's enough for now
                         </Text>
                       </TouchableOpacity>
                     </View>
                   </MotiView>
-                </View>
-              ) : (
-                /* Swipe Card Stack */
-                <View style={{
-                  flex: 1,
-                  position: 'relative',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}>
-                  {/* Show stack of cards */}
-                  {mockConsultants.slice(currentMatchIndex, currentMatchIndex + 3).reverse().map((consultant, index, array) => {
-                    const isFirst = index === array.length - 1
-                    const cardIndex = array.length - 1 - index
-                    
-                    return (
-                      <SwipeableCard
-                        key={`${consultant.id}-${currentMatchIndex}`}
-                        consultant={consultant}
-                        onSwipeLeft={() => handleSwipe('left')}
-                        onSwipeRight={() => handleSwipe('right')}
-                        onSwipeUp={() => handleSwipe('up')}
-                        onViewProfile={handleViewProfile}
-                        isFirst={isFirst}
-                        cardIndex={cardIndex}
-                      />
-                    )
-                  })}
-                </View>
-              )}
+                )}
+              </AnimatePresence>
+            </SafeAreaView>
+          </View>
+        </Modal>
 
-              {/* Bottom Actions - Only show when swiping */}
-              {!showMorePrompt && (
-                <View style={{
-                  paddingBottom: 30,
-                  paddingHorizontal: 20,
-                }}>
-                  {/* Instructions */}
-                  <Text style={{
-                    fontSize: 14,
-                    color: '#8B7355',
-                    textAlign: 'center',
-                    marginBottom: 16,
-                  }}>
-                    Swipe right to request • Left to pass • Up for priority
-                  </Text>
-                  
-                  {/* Buttons */}
-                  <View style={{
-                    flexDirection: 'row',
-                    gap: 12,
-                  }}>
-                    <TouchableOpacity
-                      onPress={handleSkipAll}
-                      style={{
-                        flex: 1,
-                        backgroundColor: '#F5E6D3',
-                        paddingVertical: 14,
-                        borderRadius: 25,
-                        alignItems: 'center',
-                      }}
-                    >
-                      <Text style={{
-                        fontSize: 16,
-                        fontWeight: '600',
-                        color: '#8B7355',
-                      }}>
-                        Skip All
-                      </Text>
-                    </TouchableOpacity>
-                    
-                    <TouchableOpacity
-                      onPress={handleAddAll}
-                      style={{
-                        flex: 1,
-                        backgroundColor: '#68A357',
-                        paddingVertical: 14,
-                        borderRadius: 25,
-                        alignItems: 'center',
-                      }}
-                    >
-                      <Text style={{
-                        fontSize: 16,
-                        fontWeight: '600',
-                        color: '#fff',
-                      }}>
-                        Request All ({mockConsultants.length - currentMatchIndex})
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              )}
-            </View>
-          </SafeAreaView>
-        </View>
-      </Modal>
-
-      {/* Verification Popup */}
-      <VerificationPopup
-        visible={showVerificationPopup}
-        onDismiss={handleVerificationDismiss}
-        onVerify={handleVerificationComplete}
-      />
+        {/* Verification Popup */}
+        <VerificationPopup
+          isVisible={showVerificationPopup}
+          onDismiss={handleVerificationDismiss}
+          onComplete={handleVerificationComplete}
+        />
+      </SafeAreaView>
     </View>
   )
 }

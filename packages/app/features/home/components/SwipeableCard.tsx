@@ -5,8 +5,11 @@ import {
   PanResponder,
   Animated,
   Dimensions,
+  Image,
 } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
+import { useTheme, useThemedColors, usePrimaryColors } from '../../../contexts/ThemeContext'
+import { colors } from '../../../constants/colors'
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window')
 const SWIPE_THRESHOLD = 80 // Lowered for easier swiping
@@ -32,11 +35,17 @@ export function SwipeableCard({
   isFirst,
   cardIndex = 0,
 }: SwipeableCardProps) {
+  const { isDark } = useTheme()
+  const themedColors = useThemedColors()
+  const primaryColors = usePrimaryColors()
+  
   const position = useRef(new Animated.ValueXY()).current
   const rotation = useRef(new Animated.Value(0)).current
   const actionOpacity = useRef(new Animated.Value(0)).current
   const lastTap = useRef(0)
   const animating = useRef(false)
+  
+  console.log('[SwipeableCard] Rendering card for:', consultant.name, 'isFirst:', isFirst)
 
   const panResponder = useRef(
     PanResponder.create({
@@ -235,16 +244,16 @@ export function SwipeableCard({
         <View style={{
           width: '100%',
           height: '100%',
-          backgroundColor: '#FFFFFF',
+          backgroundColor: themedColors.surface.raised,
           borderRadius: 24,
           padding: 24,
-          shadowColor: '#D4AF37',
+          shadowColor: isDark ? colors.primary[500] : '#000',
           shadowOffset: { width: 0, height: 8 },
-          shadowOpacity: 0.15,
+          shadowOpacity: isDark ? 0.3 : 0.15,
           shadowRadius: 20,
           elevation: 10,
           borderWidth: 1,
-          borderColor: '#F8E5D3',
+          borderColor: themedColors.border.default,
           overflow: 'hidden',
         }}>
         {/* Subtle gradient overlay */}
@@ -271,12 +280,12 @@ export function SwipeableCard({
           >
             <View style={{
               borderWidth: 2,
-              borderColor: '#68A357',
+              borderColor: primaryColors.primary,
               borderRadius: 20,
               paddingHorizontal: 20,
               paddingVertical: 10,
-              backgroundColor: 'rgba(104, 163, 87, 0.05)',
-              shadowColor: '#68A357',
+              backgroundColor: isDark ? colors.primary[900] : colors.primary[50],
+              shadowColor: primaryColors.primary,
               shadowOffset: { width: 0, height: 4 },
               shadowOpacity: 0.2,
               shadowRadius: 8,
@@ -284,7 +293,7 @@ export function SwipeableCard({
               <Text style={{
                 fontSize: 26,
                 fontWeight: '600',
-                color: '#68A357',
+                color: primaryColors.primary,
                 letterSpacing: 1.5,
               }}>
                 CONNECT
@@ -366,24 +375,23 @@ export function SwipeableCard({
 
         {/* Card Content */}
         <View style={{ flexDirection: 'row', marginBottom: 20 }}>
-          <View style={{
-            width: 84,
-            height: 84,
-            borderRadius: 42,
-            backgroundColor: '#FFF8F3',
-            justifyContent: 'center',
-            alignItems: 'center',
-            marginRight: 16,
-            borderWidth: 2,
-            borderColor: '#F8E5D3',
-            shadowColor: '#D4AF37',
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.1,
-            shadowRadius: 4,
-            elevation: 3,
-          }}>
-            <Ionicons name="person-circle" size={72} color="#E8B4B8" />
-          </View>
+          <Image
+            source={{ uri: consultant.image }}
+            style={{
+              width: 84,
+              height: 84,
+              borderRadius: 42,
+              backgroundColor: themedColors.surface.sunken,
+              marginRight: 16,
+              borderWidth: 2,
+              borderColor: colors.university[consultant.university.toLowerCase()] || primaryColors.primary,
+              shadowColor: isDark ? colors.primary[500] : '#000',
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.1,
+              shadowRadius: 4,
+              elevation: 3,
+            }}
+          />
           
           <View style={{ flex: 1 }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>

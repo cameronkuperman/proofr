@@ -122,7 +122,7 @@ export const colors = {
   // Light Mode Surfaces
   light: {
     background: {
-      default: '#FAFAF8', // Warm off-white
+      default: '#FAF7F0', // Warm off-white cream (unified across app)
       paper: '#FFFFFF',
       subtle: '#F8FAFC',
     },

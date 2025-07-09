@@ -5,6 +5,25 @@ import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import { NavigationBar } from 'app/features/landing/components/NavigationBar/NavigationBar'
 import styles from './about.module.css'
+import { 
+  Search, 
+  Globe, 
+  GraduationCap, 
+  Lightbulb, 
+  DollarSign, 
+  Users, 
+  TrendingDown,
+  CheckCircle,
+  XCircle,
+  Sparkles,
+  Heart,
+  BookOpen,
+  Languages,
+  ChevronDown,
+  School,
+  TreePine,
+  Cpu
+} from 'lucide-react'
 
 export default function AboutPage() {
   const [impactCount, setImpactCount] = useState({
@@ -64,6 +83,34 @@ export default function AboutPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
       <NavigationBar />
+      
+      {/* The Story Section - Why We Built This */}
+      <section className="py-32 px-6 bg-gradient-to-b from-white to-gray-50">
+        <div className="max-w-3xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="space-y-8"
+          >
+            <h1 className="text-5xl font-bold text-gray-900">Why we built Proofr</h1>
+            
+            <div className="prose prose-lg prose-gray max-w-none">
+              <p className="text-xl text-gray-700 leading-relaxed">
+                I watched my classmates write themselves into colleges without the proper stats. I saw families spend <span className="font-semibold text-gray-900">$10,000 to $15,000</span> on consulting. And I saw a disturbing pattern emerge.
+              </p>
+              
+              <p className="text-lg text-gray-600 leading-relaxed">
+                When I needed help with my essays, I didn't turn to expensive consultants. I asked friends—Christian at Cornell, Phong at Duke. They helped me understand cultural fit, suggested word changes, caught errors. The substance was mine, but their perspective was invaluable.
+              </p>
+              
+              <p className="text-lg text-gray-600 leading-relaxed">
+                That's when it hit me: <span className="font-medium text-gray-800">Why should this kind of help cost a fortune?</span>
+              </p>
+            </div>
+          </motion.div>
+        </div>
+      </section>
       
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
@@ -193,7 +240,7 @@ export default function AboutPage() {
               className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent"
               style={{ opacity: priceOpacity }}
             >
-              College admissions shouldn't cost $50,000
+              College admissions shouldn&apos;t cost $50,000
             </motion.span>
           </motion.h1>
           
@@ -298,15 +345,29 @@ export default function AboutPage() {
           animate={{ y: [0, 10, 0] }}
           transition={{ repeat: Infinity, duration: 2 }}
         >
-          <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-          </svg>
+          <ChevronDown className="w-6 h-6 text-gray-600" />
         </motion.div>
       </section>
 
-      {/* The Problem Section */}
-      <section className="py-24 px-6">
+      {/* The Problem We Saw */}
+      <section className="py-32 px-6 bg-white">
         <div className="max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            className="max-w-3xl mx-auto mb-16"
+          >
+            <h2 className="text-4xl font-bold text-gray-900 mb-8">The bimodal reality</h2>
+            <div className="space-y-6">
+              <p className="text-lg text-gray-700 leading-relaxed">
+                The college admissions process has become a <span className="font-semibold">$3 billion industry</span> that serves primarily the wealthy. We witnessed a disturbing bimodal distribution: those with means get in, those without struggle—regardless of merit.
+              </p>
+              <p className="text-lg text-gray-600 leading-relaxed">
+                It's not about IQ or potential anymore. It's about whether your family can afford to turn your genuine thoughts into polished prose. Essays have become less about substance and more about who can pay for the best packaging.
+              </p>
+            </div>
+          </motion.div>
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
@@ -314,9 +375,9 @@ export default function AboutPage() {
             className="grid md:grid-cols-3 gap-8 mb-16"
           >
             {[
-              { value: '$50,000', label: 'Average cost of traditional college consulting', icon: '💸' },
-              { value: '92%', label: 'Students priced out of quality guidance', icon: '📊' },
-              { value: '1:100', label: 'Counselor to student ratio in public schools', icon: '👥' }
+              { value: '$50,000', label: 'Average cost of traditional college consulting', icon: DollarSign },
+              { value: '92%', label: 'Students priced out of quality guidance', icon: TrendingDown },
+              { value: '1:100', label: 'Counselor to student ratio in public schools', icon: Users }
             ].map((stat, index) => (
               <motion.div
                 key={index}
@@ -330,28 +391,29 @@ export default function AboutPage() {
                 {/* Background glow */}
                 <div className="absolute inset-0 bg-gradient-to-br from-red-200 to-pink-200 rounded-3xl blur-2xl opacity-0 group-hover:opacity-30 transition-opacity" />
                 
-                <div className="relative backdrop-blur-sm bg-white/90 rounded-3xl p-8 border border-gray-200 hover:border-red-200 transition-all text-center">
-                  <motion.div 
-                    className="text-4xl mb-4 opacity-20"
-                    animate={{ rotate: [0, 360] }}
-                    transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                  >
-                    {stat.icon}
-                  </motion.div>
-                  <motion.h3 
-                    className="text-5xl font-bold text-red-500 mb-4"
-                    animate={{ scale: [1, 1.05, 1] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                  >
+                <div className="relative bg-white rounded-3xl p-8 border border-gray-100 hover:border-gray-200 transition-all text-center shadow-sm hover:shadow-md">
+                  <div className="mb-4">
+                    <stat.icon className="w-10 h-10 text-gray-400 mx-auto" />
+                  </div>
+                  <h3 className="text-5xl font-bold text-gray-900 mb-2">
                     {stat.value}
-                  </motion.h3>
-                  <p className="text-gray-600">{stat.label}</p>
+                  </h3>
+                  <p className="text-gray-600 text-sm">{stat.label}</p>
                 </div>
               </motion.div>
             ))}
           </motion.div>
 
-          {/* Interactive comparison with glassmorphism */}
+          {/* The disparity in numbers */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mb-24"
+          >
+            <h3 className="text-2xl font-semibold text-gray-800 mb-8 text-center">The numbers tell the story</h3>
+          </motion.div>
+          
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -381,13 +443,12 @@ export default function AboutPage() {
                         transition={{ delay: i * 0.1 }}
                       >
                         <div className="flex items-center">
-                          <motion.span 
-                            className="text-red-500 mr-3 text-xl"
+                          <motion.div
                             animate={{ rotate: [0, -10, 0] }}
                             transition={{ duration: 2, repeat: Infinity, repeatDelay: 1 }}
                           >
-                            ✗
-                          </motion.span>
+                            <XCircle className="w-5 h-5 text-red-500 mr-3" />
+                          </motion.div>
                           <span className="text-gray-700">{item.text}</span>
                         </div>
                         <span className="text-xs text-gray-500">{item.stat}</span>
@@ -413,13 +474,12 @@ export default function AboutPage() {
                         transition={{ delay: i * 0.1 }}
                       >
                         <div className="flex items-center">
-                          <motion.span 
-                            className="text-green-500 mr-3 text-xl"
+                          <motion.div
                             animate={{ scale: [1, 1.2, 1] }}
                             transition={{ duration: 2, repeat: Infinity, repeatDelay: 1 }}
                           >
-                            ✓
-                          </motion.span>
+                            <CheckCircle className="w-5 h-5 text-green-500 mr-3" />
+                          </motion.div>
                           <span className="text-gray-700 font-medium">{item.text}</span>
                         </div>
                         <span className="text-xs text-purple-600 font-medium">{item.stat}</span>
@@ -433,78 +493,79 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Impact Counter with glassmorphism */}
-      <section id="impact-counter" className="relative py-24 overflow-hidden">
-        {/* Animated gradient background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-600 via-blue-600 to-pink-600">
-          <div className="absolute inset-0 bg-black/20" />
+      {/* The Solution - For Students and Consultants */}
+      <section className="py-32 px-6 bg-gray-50">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-16">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+            >
+              <h3 className="text-3xl font-bold text-gray-900 mb-6">For students</h3>
+              <div className="space-y-4">
+                <p className="text-lg text-gray-700 leading-relaxed">
+                  Access the same quality of guidance that got us into top schools—at a fraction of the cost. Connect with recent grads who understand your challenges and can help your authentic voice shine through.
+                </p>
+                <p className="text-lg text-gray-600">
+                  Because your potential shouldn't be limited by your parent's bank account.
+                </p>
+              </div>
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+            >
+              <h3 className="text-3xl font-bold text-gray-900 mb-6">For consultants</h3>
+              <div className="space-y-4">
+                <p className="text-lg text-gray-700 leading-relaxed">
+                  College students deserve better than <span className="font-semibold">$16.50-$23.50/hour</span> work-study jobs with rigid schedules. On Proofr, consultants earn an average of <span className="font-semibold text-green-600">$75-$90/hour</span> on their own terms.
+                </p>
+                <p className="text-lg text-gray-600">
+                  Control your schedule. Help students like you once were. Earn what you're actually worth.
+                </p>
+              </div>
+            </motion.div>
+          </div>
         </div>
-        
-        {/* Floating shapes */}
-        <motion.div
-          className="absolute top-10 left-10 w-32 h-32 bg-white/10 rounded-full blur-2xl"
-          animate={{ 
-            x: [0, 50, 0],
-            y: [0, -50, 0]
-          }}
-          transition={{ duration: 10, repeat: Infinity }}
-        />
-        <motion.div
-          className="absolute bottom-10 right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl"
-          animate={{ 
-            x: [0, -50, 0],
-            y: [0, 50, 0]
-          }}
-          transition={{ duration: 15, repeat: Infinity }}
-        />
-        
-        <div className="relative max-w-6xl mx-auto px-6">
-          <motion.h2 
-            className="text-4xl md:text-5xl font-bold text-center mb-16 text-white"
-            initial={{ opacity: 0, y: -20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            Real Impact, Real People
-          </motion.h2>
+      </section>
+
+      {/* Impact Counter */}
+      <section id="impact-counter" className="py-24 bg-gradient-to-r from-purple-600 to-blue-600 text-white">
+        <div className="max-w-6xl mx-auto px-6">
+          <h2 className="text-4xl md:text-5xl font-bold text-center mb-16">Real Impact, Real People</h2>
           <div className="grid md:grid-cols-3 gap-8">
-            {[
-              { value: impactCount.storiesTold, label: 'Stories Told', icon: '📝', color: 'from-purple-400 to-purple-600' },
-              { value: `$${impactCount.moneySaved}M`, label: 'Money Saved', icon: '💰', color: 'from-green-400 to-green-600' },
-              { value: impactCount.dreamsFunded, label: 'Dreams Funded', icon: '🌟', color: 'from-blue-400 to-blue-600' }
-            ].map((stat, index) => (
-              <motion.div
-                key={index}
-                className="relative group"
-                initial={{ scale: 0.8, opacity: 0 }}
-                whileInView={{ scale: 1, opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.2 }}
-                whileHover={{ y: -10 }}
-              >
-                {/* Glass card */}
-                <div className="relative backdrop-blur-xl bg-white/10 rounded-3xl p-8 border border-white/20 hover:border-white/40 transition-all text-center">
-                  {/* Icon background */}
-                  <motion.div
-                    className={`absolute top-4 right-4 w-16 h-16 bg-gradient-to-br ${stat.color} rounded-2xl opacity-20`}
-                    animate={{ rotate: [0, 360] }}
-                    transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                  />
-                  
-                  <motion.div 
-                    className="text-4xl mb-4"
-                    animate={{ scale: [1, 1.2, 1] }}
-                    transition={{ duration: 2, repeat: Infinity, repeatDelay: 1 }}
-                  >
-                    {stat.icon}
-                  </motion.div>
-                  <h3 className="text-5xl font-bold mb-2 text-white">
-                    {typeof stat.value === 'number' ? stat.value.toLocaleString() : stat.value}
-                  </h3>
-                  <p className="text-lg text-white/80">{stat.label}</p>
-                </div>
-              </motion.div>
-            ))}
+            <motion.div 
+              className="text-center"
+              initial={{ scale: 0.8, opacity: 0 }}
+              whileInView={{ scale: 1, opacity: 1 }}
+              viewport={{ once: true }}
+            >
+              <h3 className="text-6xl font-bold mb-4">{impactCount.storiesTold.toLocaleString()}</h3>
+              <p className="text-xl">Stories Told</p>
+            </motion.div>
+            <motion.div 
+              className="text-center"
+              initial={{ scale: 0.8, opacity: 0 }}
+              whileInView={{ scale: 1, opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+            >
+              <h3 className="text-6xl font-bold mb-4">${impactCount.moneySaved}M</h3>
+              <p className="text-xl">Money Saved</p>
+            </motion.div>
+            <motion.div 
+              className="text-center"
+              initial={{ scale: 0.8, opacity: 0 }}
+              whileInView={{ scale: 1, opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.4 }}
+            >
+              <h3 className="text-6xl font-bold mb-4">{impactCount.dreamsFunded.toLocaleString()}</h3>
+              <p className="text-xl">Dreams Funded</p>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -518,7 +579,7 @@ export default function AboutPage() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">Your Story, Our Mission</h2>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-purple-700 to-blue-700 bg-clip-text text-transparent">Your Story, Our Mission</h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-12">
               Type your dream school and watch the magic happen
             </p>
@@ -563,9 +624,7 @@ export default function AboutPage() {
                   
                   {/* Search icon */}
                   <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
-                    <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
+                    <Search className="w-6 h-6 text-gray-600" />
                   </div>
                 </div>
                 
@@ -625,9 +684,9 @@ export default function AboutPage() {
                 transition={{ delay: 0.3 }}
               >
                 {[
-                  { name: 'Harvard', count: 47, color: 'from-red-400 to-red-600', emoji: '🏛️' },
-                  { name: 'Stanford', count: 38, color: 'from-green-400 to-green-600', emoji: '🌲' },
-                  { name: 'MIT', count: 52, color: 'from-blue-400 to-blue-600', emoji: '🤖' }
+                  { name: 'Harvard', count: 47, color: 'from-red-400 to-red-600', icon: School },
+                  { name: 'Stanford', count: 38, color: 'from-green-400 to-green-600', icon: TreePine },
+                  { name: 'MIT', count: 52, color: 'from-blue-400 to-blue-600', icon: Cpu }
                 ].map((school, index) => (
                   <motion.div
                     key={school.name}
@@ -666,7 +725,7 @@ export default function AboutPage() {
                           }}
                           transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
                         >
-                          {school.emoji}
+                          <school.icon className="w-6 h-6 text-gray-700" />
                         </motion.div>
                       </div>
                     </div>
@@ -706,14 +765,15 @@ export default function AboutPage() {
                     animate={{ opacity: 1, height: 'auto' }}
                     exit={{ opacity: 0, height: 0 }}
                   >
-                    <p className="text-center text-sm text-gray-600">
-                      🌍 Available in 100+ languages
-                    </p>
+                    <div className="flex items-center justify-center gap-2 text-sm text-gray-700">
+                      <Globe className="w-4 h-4" />
+                      <span className="font-medium">Available in 100+ languages</span>
+                    </div>
                     <div className="flex flex-wrap justify-center gap-2">
                       {['Spanish', 'Mandarin', 'Hindi', 'Arabic', 'Portuguese'].map((lang) => (
                         <motion.span
                           key={lang}
-                          className="px-3 py-1 bg-white/40 backdrop-blur-sm rounded-full text-xs text-gray-700 border border-white/20"
+                          className="px-3 py-1 bg-white/60 backdrop-blur-sm rounded-full text-xs text-gray-800 border border-white/30 font-medium"
                           initial={{ opacity: 0, scale: 0.8 }}
                           animate={{ opacity: 1, scale: 1 }}
                           whileHover={{ scale: 1.1 }}
@@ -725,6 +785,7 @@ export default function AboutPage() {
                   </motion.div>
                 )}
               </AnimatePresence>
+              </div>
             </div>
           </motion.div>
         </div>
@@ -739,10 +800,10 @@ export default function AboutPage() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">Your Story, Amplified</h2>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-blue-700 to-purple-700 bg-clip-text text-transparent">Your Story, Amplified</h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Whether English is your second language, you're first-gen, or just need someone who gets it - 
-              we match you with consultants who've walked your path.
+              Whether English is your second language, you&apos;re first-gen, or just need someone who gets it - 
+              we match you with consultants who&apos;ve walked your path.
             </p>
           </motion.div>
 
@@ -751,21 +812,21 @@ export default function AboutPage() {
               {
                 title: "ESL Support",
                 description: "Consultants who help articulate your story, no matter your native language",
-                icon: "🌍",
+                icon: Globe,
                 gradient: "from-blue-400 to-cyan-400",
                 stats: "127 languages"
               },
               {
                 title: "First-Gen Focus",
                 description: "Guides who understand the unique challenges of being first in your family",
-                icon: "🎓",
+                icon: GraduationCap,
                 gradient: "from-purple-400 to-pink-400",
                 stats: "2,341 first-gen"
               },
               {
                 title: "Peer Perspective",
                 description: "Recent grads who remember the stress and know what actually works",
-                icon: "💡",
+                icon: Lightbulb,
                 gradient: "from-yellow-400 to-orange-400",
                 stats: "Avg 2023 grad"
               }
@@ -796,11 +857,11 @@ export default function AboutPage() {
                       repeatDelay: 2
                     }}
                   >
-                    {feature.icon}
+                    <feature.icon className="w-12 h-12 text-purple-600" />
                   </motion.div>
                   <h3 className="text-xl font-bold mb-2 text-gray-800">{feature.title}</h3>
-                  <p className="text-sm font-medium text-purple-600 mb-3">{feature.stats}</p>
-                  <p className="text-gray-600">{feature.description}</p>
+                  <p className="text-sm font-semibold text-purple-600 mb-3">{feature.stats}</p>
+                  <p className="text-gray-700">{feature.description}</p>
                 </div>
               </motion.div>
             ))}
@@ -817,7 +878,7 @@ export default function AboutPage() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">The Proofr Promise</h2>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-purple-700 via-blue-700 to-pink-700 bg-clip-text text-transparent">The Proofr Promise</h2>
             <p className="text-xl text-gray-600">No student left behind. Our scholarship programs ensure everyone gets their shot.</p>
           </motion.div>
 
@@ -828,28 +889,28 @@ export default function AboutPage() {
                 description: "Full scholarships for exceptional students with financial need",
                 color: "from-purple-500 to-purple-600",
                 funded: "342 students",
-                icon: "🎆"
+                icon: Sparkles
               },
               {
                 name: "First Flight Fund",
                 description: "Supporting first-generation college applicants",
                 color: "from-blue-500 to-blue-600",
                 funded: "567 students",
-                icon: "🕊️"
+                icon: GraduationCap
               },
               {
                 name: "Bridge Builders",
                 description: "ESL and international student support",
                 color: "from-pink-500 to-pink-600",
                 funded: "893 students",
-                icon: "🌉"
+                icon: Languages
               },
               {
                 name: "Access Academy",
                 description: "Free workshops and resources for all",
                 color: "from-green-500 to-green-600",
                 funded: "2,341 students",
-                icon: "🏛️"
+                icon: BookOpen
               }
             ].map((program, index) => (
               <motion.div
@@ -867,16 +928,7 @@ export default function AboutPage() {
                 {/* Glass card */}
                 <div className="relative backdrop-blur-xl bg-white/80 rounded-3xl p-6 border border-white/20 hover:border-white/40 transition-all">
                   <div className="flex items-start justify-between mb-3">
-                    <motion.div 
-                      className="text-3xl"
-                      animate={{ 
-                        rotate: [0, -10, 10, 0],
-                        scale: [1, 1.1, 1]
-                      }}
-                      transition={{ duration: 3, repeat: Infinity, repeatDelay: 2 }}
-                    >
-                      {program.icon}
-                    </motion.div>
+                    <program.icon className="w-6 h-6 text-gray-600" />
                     <span className="text-xs font-semibold text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
                       {program.funded}
                     </span>
@@ -906,7 +958,7 @@ export default function AboutPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">Ready to Change Your Story?</h2>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-purple-700 to-pink-700 bg-clip-text text-transparent">Ready to Change Your Story?</h2>
             <p className="text-xl text-gray-600 mb-12">
               Join thousands of students and consultants building a more equitable future for college admissions.
             </p>

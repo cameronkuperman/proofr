@@ -27,6 +27,8 @@ import { useTheme, useThemedColors, usePrimaryColors } from '../../../contexts/T
 import { colors } from '../../../constants/colors'
 import { ThemeSwitcherCompact } from '../../../components/ThemeSwitcher'
 import type { StudentProfile, Booking, ApplicationMilestone, ProfileStats } from '../types/profile.types'
+import { SettingsModal } from './SettingsModal'
+import { DocumentsModal } from './DocumentsModal'
 
 // Progress calculation helper
 const calculateApplicationProgress = (profile: StudentProfile): number => {
@@ -76,6 +78,10 @@ export function ProfileScreen() {
     documentsUploaded: 0,
     collegesTargeted: 0,
   })
+  
+  // Modal states
+  const [settingsVisible, setSettingsVisible] = useState(false)
+  const [documentsVisible, setDocumentsVisible] = useState(false)
   
   const applicationProgress = profile ? calculateApplicationProgress(profile) : 0
   
@@ -281,7 +287,7 @@ export function ProfileScreen() {
               <View style={{ flexDirection: 'row', gap: 12 }}>
                 <ThemeSwitcherCompact />
                 <TouchableOpacity
-                  onPress={() => navigation.navigate('settings')}
+                  onPress={() => setSettingsVisible(true)}
                   style={{
                     width: 40,
                     height: 40,
@@ -326,7 +332,7 @@ export function ProfileScreen() {
               </View>
               
               <TouchableOpacity
-                onPress={() => navigation.navigate('editProfile')}
+                onPress={() => Alert.alert('Edit Profile', 'Profile editing coming soon!')}
                 style={{
                   paddingHorizontal: 16,
                   paddingVertical: 8,
@@ -426,7 +432,7 @@ export function ProfileScreen() {
                   </Text>
                   <TouchableOpacity
                     style={{ marginTop: 8 }}
-                    onPress={() => navigation.navigate('addCredits')}
+                    onPress={() => Alert.alert('Add Credits', 'Credit purchase flow would open here')}
                   >
                     <Text style={{ fontSize: 12, color: primaryColors.primary, fontWeight: '600' }}>
                       Add more →
@@ -481,7 +487,7 @@ export function ProfileScreen() {
                   </Text>
                   <TouchableOpacity
                     style={{ marginTop: 8 }}
-                    onPress={() => navigation.navigate('schools')}
+                    onPress={() => Alert.alert('Target Schools', `Managing ${stats.collegesTargeted} schools`)}
                   >
                     <Text style={{ fontSize: 12, color: colors.teal[600], fontWeight: '600' }}>
                       Manage →
@@ -498,7 +504,7 @@ export function ProfileScreen() {
               <Text style={{ fontSize: 20, fontWeight: '600', color: themedColors.text.primary }}>
                 Upcoming Milestones
               </Text>
-              <TouchableOpacity onPress={() => navigation.navigate('timeline')}>
+              <TouchableOpacity onPress={() => Alert.alert('Timeline', 'Timeline view coming soon!')}>
                 <Text style={{ fontSize: 14, color: primaryColors.primary, fontWeight: '600' }}>
                   View All
                 </Text>
@@ -518,7 +524,7 @@ export function ProfileScreen() {
                   flexDirection: 'row',
                   alignItems: 'center',
                 }}
-                onPress={() => navigation.navigate('milestoneDetail', { id: milestone.id })}
+                onPress={() => Alert.alert(milestone.title, milestone.description || '')}
               >
                 <View
                   style={{
@@ -582,7 +588,7 @@ export function ProfileScreen() {
                 <Text style={{ fontSize: 20, fontWeight: '600', color: themedColors.text.primary }}>
                   Recent Sessions
                 </Text>
-                <TouchableOpacity onPress={() => navigation.navigate('bookings')}>
+                <TouchableOpacity onPress={() => Alert.alert('All Sessions', 'View all booking history')}>
                   <Text style={{ fontSize: 14, color: primaryColors.primary, fontWeight: '600' }}>
                     View All
                   </Text>
@@ -602,7 +608,7 @@ export function ProfileScreen() {
                     flexDirection: 'row',
                     alignItems: 'center',
                   }}
-                  onPress={() => navigation.navigate('bookingDetail', { id: booking.id })}
+                  onPress={() => Alert.alert('Session Details', `${booking.service_type} with ${booking.consultant?.name}`)}
                 >
                   <Image
                     source={{
@@ -690,7 +696,7 @@ export function ProfileScreen() {
                     shadowRadius: 8,
                   }),
                 }}
-                onPress={() => navigation.navigate('browse')}
+                onPress={() => Alert.alert('Browse Consultants', 'Opens consultant browser')}
               >
                 <Feather name="search" size={24} color="#FFFFFF" />
                 <Text style={{ color: '#FFFFFF', fontWeight: '600', marginTop: 8 }}>
@@ -709,7 +715,7 @@ export function ProfileScreen() {
                   borderWidth: 1,
                   borderColor: themedColors.border.default,
                 }}
-                onPress={() => navigation.navigate('documents')}
+                onPress={() => setDocumentsVisible(true)}
               >
                 <Feather name="file-text" size={24} color={primaryColors.primary} />
                 <Text style={{ color: themedColors.text.primary, fontWeight: '600', marginTop: 8 }}>
@@ -728,7 +734,7 @@ export function ProfileScreen() {
                   borderWidth: 1,
                   borderColor: themedColors.border.default,
                 }}
-                onPress={() => navigation.navigate('messages')}
+                onPress={() => Alert.alert('Messages', 'Opens messaging interface')}
               >
                 <Feather name="message-circle" size={24} color={primaryColors.primary} />
                 <Text style={{ color: themedColors.text.primary, fontWeight: '600', marginTop: 8 }}>
@@ -758,6 +764,16 @@ export function ProfileScreen() {
           </View>
         </ScrollView>
       </SafeAreaView>
+      
+      {/* Modals */}
+      <SettingsModal
+        visible={settingsVisible}
+        onClose={() => setSettingsVisible(false)}
+      />
+      <DocumentsModal
+        visible={documentsVisible}
+        onClose={() => setDocumentsVisible(false)}
+      />
     </View>
   )
 }
