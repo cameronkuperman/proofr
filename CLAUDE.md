@@ -60,6 +60,15 @@ Proofr is a marketplace connecting students with college consultants from elite 
 - Creating duplicate functionality
 - Over-engineering simple features
 - ERROR:  42P01: missing FROM-clause entry for table "old" AVOID THIS!!
+- **Incorrect import paths** - Always double-check relative paths (count the ../ carefully!)
+  - From `packages/app/features/[feature]/hooks/` to `lib/`: use `../../../../../lib/`
+  - From `packages/app/features/[feature]/components/` to `lib/`: use `../../../../../lib/`
+  - From `packages/app/features/[feature]/screens/` to `lib/`: use `../../../../../lib/`
+  - Use VS Code's auto-import when possible to avoid manual path errors
+  - CRITICAL: Never use 6 levels (../../../../../../) from features - it's always 5 levels
+- **Supabase import errors** - "Cannot read property 'supabase' of undefined" means wrong import path
+  - This happens when using too many ../ levels in the import
+  - Always verify the import resolves to `/lib/supabase.ts`
 
 
 
@@ -178,7 +187,37 @@ proofr/
    - Clean up any console.logs
    - Ask if user wants to commit
 
-## Remember
+## Database Schema Updates
+
+## Important: When Schema Changes
+When the user confirms they've updated the Supabase schema:
+1. Check for new migration files in `supabase/migrations/`
+2. Update your understanding of the current schema
+3. Look for any new tables, columns, or relationships
+4. Consider RLS policies that may affect functionality
+
+## Current Schema Tables
+- **users**: Base auth table (id, email, user_type, etc.)
+- **students**: Student profiles with preferences and credits
+- **consultants**: Consultant profiles with verification and stats
+- **services**: Consultant service offerings with pricing tiers
+- **bookings**: Transaction records between students and consultants
+- **user_interactions**: Tracks views, searches, and engagement
+- **consultant_waitlist**: Manages waitlists for popular consultants
+- **group_session_participants**: Tracks group session attendees
+- **discount_codes**: Promotional codes (not populated in mock data)
+- **discount_usage**: Tracks discount code usage (not populated)
+- **verification_queue**: Consultant verification requests (not populated)
+
+## Mock Data Available
+The database includes comprehensive mock data representing several weeks of operation:
+- 15 consultants from top universities
+- 50 students with varied engagement levels
+- Realistic booking patterns and interactions
+- Group sessions and waitlist entries
+- Accurate credit calculations (2% cashback)
+
+# Remember
 
 - **Proofr is a premium marketplace** - every interaction should feel polished
 - **Consultants control their business** - they set prices, availability, services

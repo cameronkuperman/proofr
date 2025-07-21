@@ -14,7 +14,7 @@ interface SearchFiltersProps {
 
 export default function SearchFilters({ filters, setFilters, consultants }: SearchFiltersProps) {
   // Extract unique schools and services
-  const schools = [...new Set(consultants.map(c => c.school).filter(Boolean))].sort()
+  const schools = [...new Set(consultants.map(c => c.current_college).filter(Boolean))].sort()
   const services = [...new Set(
     consultants.flatMap(c => c.services?.map((s: any) => s.service_type) || [])
   )].sort()

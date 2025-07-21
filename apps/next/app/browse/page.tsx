@@ -166,122 +166,39 @@ useEffect(() => {
     }
   })
 
-  // Responsive styles
-  const isMobile = typeof window !== 'undefined' && window.innerWidth < 800
-
   return (
-    <div style={{ 
-      minHeight: '100vh', 
-      background: 'linear-gradient(180deg, #fafbfc 0%, #f1f5f9 100%)',
-      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
-    }}>
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-black">
       <NavigationBar />
       
       {/* Hero section */}
-      <div style={{
-        background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)',
-        color: 'white',
-        padding: isMobile ? '100px 20px 60px 20px' : '120px 0 80px 0',
-        textAlign: 'center',
-        position: 'relative',
-        overflow: 'hidden'
-      }}>
+      <div className="bg-gradient-to-r from-gray-900 to-gray-800 dark:from-black dark:to-gray-900 text-white pt-24 pb-16 px-6 lg:pt-32 lg:pb-20 text-center relative overflow-hidden">
         {/* Background pattern */}
-        <div style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'radial-gradient(circle at 30% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 50%), radial-gradient(circle at 70% 80%, rgba(6, 182, 212, 0.1) 0%, transparent 50%)',
-          zIndex: 1
-        }} />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.1)_0%,transparent_50%),radial-gradient(circle_at_70%_80%,rgba(6,182,212,0.1)_0%,transparent_50%)] z-[1]" />
         
-        <div style={{ maxWidth: 1200, margin: '0 auto', position: 'relative', zIndex: 2 }}>
-          <h1 style={{
-            fontSize: isMobile ? '2.5rem' : '4rem',
-            fontWeight: 800,
-            margin: '0 0 24px 0',
-            letterSpacing: '-0.04em',
-            background: 'linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text'
-          }}>
+        <div className="max-w-6xl mx-auto relative z-[2]">
+          <h1 className="text-4xl lg:text-6xl font-extrabold mb-6 tracking-tight bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
             Find Your Perfect Consultant
           </h1>
           
-          <p style={{
-            fontSize: isMobile ? '1.1rem' : '1.3rem',
-            color: '#cbd5e1',
-            margin: '0 0 40px 0',
-            maxWidth: 600,
-            marginLeft: 'auto',
-            marginRight: 'auto',
-            lineHeight: 1.6,
-            fontWeight: 400
-          }}>
+          <p className="text-lg lg:text-xl text-gray-300 dark:text-gray-400 mb-10 max-w-2xl mx-auto leading-relaxed font-normal">
             Connect with verified consultants from top universities to accelerate your academic and career journey.
           </p>
 
           {/* Enhanced Search Bar */}
-          <div style={{
-            background: 'rgba(255, 255, 255, 0.95)',
-            backdropFilter: 'blur(20px)',
-            borderRadius: 24,
-            padding: 8,
-            border: '1px solid rgba(255, 255, 255, 0.2)',
-            boxShadow: '0 20px 40px rgba(0, 0, 0, 0.1)',
-            maxWidth: 600,
-            margin: '0 auto',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 12
-          }}>
+          <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl rounded-3xl p-2 border border-white/20 dark:border-gray-700 shadow-2xl max-w-2xl mx-auto flex items-center gap-3">
             <input
               type="text"
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               placeholder="Search consultants, services, or universities..."
-              style={{
-                flex: 1,
-                fontSize: 16,
-                padding: '18px 24px',
-                border: 'none',
-                borderRadius: 20,
-                background: 'transparent',
-                outline: 'none',
-                color: '#0f172a',
-                fontWeight: 500
-              }}
+              className="flex-1 text-base px-6 py-4 border-none rounded-2xl bg-transparent outline-none text-gray-900 dark:text-white font-medium placeholder-gray-500 dark:placeholder-gray-400"
             />
             <button 
               onClick={() => {
                 // Trigger search or focus - could add analytics here
                 console.log('Search triggered for:', searchQuery)
               }}
-              style={{
-                background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
-                color: 'white',
-                border: 'none',
-                borderRadius: 20,
-                padding: '18px 32px',
-                fontWeight: 700,
-                fontSize: 15,
-                cursor: 'pointer',
-                transition: 'all 0.3s ease',
-                textTransform: 'uppercase',
-                letterSpacing: '0.5px',
-                boxShadow: '0 4px 15px rgba(59, 130, 246, 0.3)',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'scale(1.05)'
-                e.currentTarget.style.boxShadow = '0 8px 25px rgba(59, 130, 246, 0.4)'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'scale(1)'
-                e.currentTarget.style.boxShadow = '0 4px 15px rgba(59, 130, 246, 0.3)'
-              }}
+              className="bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-500 dark:to-blue-600 text-white border-none rounded-2xl px-8 py-4 font-bold text-sm cursor-pointer transition-all uppercase tracking-wide shadow-lg hover:shadow-xl hover:scale-105"
             >
               🔍 Search
             </button>
@@ -290,74 +207,36 @@ useEffect(() => {
       </div>
 
       {/* Filters and Controls */}
-      <div style={{
-        background: 'rgba(255, 255, 255, 0.8)',
-        backdropFilter: 'blur(20px)',
-        borderBottom: '1px solid rgba(226, 232, 240, 0.5)',
-        padding: isMobile ? '20px' : '24px 0',
-        position: 'sticky',
-        top: 64,
-        zIndex: 10,
-        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)'
-      }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 20px' }}>
+      <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-700 py-6 sticky top-16 z-10 shadow-lg">
+        <div className="max-w-6xl mx-auto px-5">
           {/* Verified Toggle */}
-          <div style={{ marginBottom: 20, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <label style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: 12, 
-              fontSize: 16, 
-              color: '#334155', 
-              fontWeight: 600,
-              cursor: 'pointer'
-            }}>
+          <div className="mb-5 flex items-center justify-between">
+            <label className="flex items-center gap-3 text-base text-gray-700 dark:text-gray-300 font-semibold cursor-pointer">
               <input
                 type="checkbox"
                 checked={showVerified}
                 onChange={() => setShowVerified(v => !v)}
-                style={{ 
-                  accentColor: '#3b82f6', 
-                  width: 20, 
-                  height: 20,
-                  cursor: 'pointer'
-                }}
+                className="w-5 h-5 cursor-pointer accent-blue-600"
               />
               Show only verified consultants
             </label>
             
-            <div style={{ fontSize: 16, color: '#64748b', fontWeight: 500 }}>
-              <strong style={{ color: '#0f172a' }}>{sortedConsultants.length}</strong> consultants found
+            <div className="text-base text-gray-600 dark:text-gray-400 font-medium">
+              <strong className="text-gray-900 dark:text-white">{sortedConsultants.length}</strong> consultants found
             </div>
           </div>
 
           {/* Filter Row */}
-          <div style={{ 
-            display: 'flex', 
-            flexWrap: 'wrap', 
-            gap: 16, 
-            alignItems: 'center',
-            justifyContent: 'space-between'
-          }}>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, alignItems: 'center' }}>
+          <div className="flex flex-wrap gap-4 items-center justify-between">
+            <div className="flex flex-wrap gap-4 items-center">
               {/* University Filter */}
               <select
                 value={selectedUniversity}
                 onChange={e => setSelectedUniversity(e.target.value)}
-                style={{ 
-                  padding: '12px 18px', 
-                  borderRadius: 12, 
-                  border: '1px solid #e2e8f0', 
-                  fontSize: 15,
-                  fontWeight: 500,
-                  background: 'white',
-                  color: '#374151',
-                  cursor: 'pointer',
-                  outline: 'none'
-                }}
+                className="px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 text-sm font-medium bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 cursor-pointer outline-none focus:ring-2 focus:ring-blue-500"
               >
                 {UNIVERSITY_FILTERS.map(opt => (
-                  <option key={opt.value} value={opt.value} style={{ color: '#374151', background: 'white' }}>
+                  <option key={opt.value} value={opt.value} className="text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700">
                     {opt.label}
                   </option>
                 ))}
@@ -367,21 +246,11 @@ useEffect(() => {
               <select
                 value={selectedService}
                 onChange={e => setSelectedService(e.target.value)}
-                style={{ 
-                  padding: '12px 18px', 
-                  borderRadius: 12, 
-                  border: '1px solid #e2e8f0', 
-                  fontSize: 15,
-                  fontWeight: 500,
-                  background: 'white',
-                  color: '#374151',
-                  cursor: 'pointer',
-                  outline: 'none'
-                }}
+                className="px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 text-sm font-medium bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 cursor-pointer outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option value="" style={{ color: '#374151', background: 'white' }}>All Services</option>
+                <option value="" className="text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700">All Services</option>
                 {SERVICE_TYPES.map(type => (
-                  <option key={type} value={type} style={{ color: '#374151', background: 'white' }}>
+                  <option key={type} value={type} className="text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700">
                     {type}
                   </option>
                 ))}
@@ -391,23 +260,13 @@ useEffect(() => {
               <select
                 value={JSON.stringify(selectedPrice)}
                 onChange={e => setSelectedPrice(JSON.parse(e.target.value))}
-                style={{ 
-                  padding: '12px 18px', 
-                  borderRadius: 12, 
-                  border: '1px solid #e2e8f0', 
-                  fontSize: 15,
-                  fontWeight: 500,
-                  background: 'white',
-                  color: '#374151',
-                  cursor: 'pointer',
-                  outline: 'none'
-                }}
+                className="px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 text-sm font-medium bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 cursor-pointer outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option value={JSON.stringify([0, 10000])} style={{ color: '#374151', background: 'white' }}>
+                <option value={JSON.stringify([0, 10000])} className="text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700">
                   All Prices
                 </option>
                 {PRICE_FILTERS.map(opt => (
-                  <option key={opt.label} value={JSON.stringify(opt.value)} style={{ color: '#374151', background: 'white' }}>
+                  <option key={opt.label} value={JSON.stringify(opt.value)} className="text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700">
                     {opt.label}
                   </option>
                 ))}
@@ -417,20 +276,10 @@ useEffect(() => {
               <select
                 value={selectedAvailability}
                 onChange={e => setSelectedAvailability(e.target.value)}
-                style={{ 
-                  padding: '12px 18px', 
-                  borderRadius: 12, 
-                  border: '1px solid #e2e8f0', 
-                  fontSize: 15,
-                  fontWeight: 500,
-                  background: 'white',
-                  color: '#374151',
-                  cursor: 'pointer',
-                  outline: 'none'
-                }}
+                className="px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 text-sm font-medium bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 cursor-pointer outline-none focus:ring-2 focus:ring-blue-500"
               >
                 {AVAILABILITY_FILTERS.map(opt => (
-                  <option key={opt.value} value={opt.value} style={{ color: '#374151', background: 'white' }}>
+                  <option key={opt.value} value={opt.value} className="text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700">
                     {opt.label}
                   </option>
                 ))}
@@ -438,80 +287,35 @@ useEffect(() => {
             </div>
 
             {/* Sort By */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <span style={{ fontSize: 15, color: '#64748b', fontWeight: 500 }}>Sort by:</span>
+            <div className="flex items-center gap-3">
+              <span className="text-sm text-gray-600 dark:text-gray-400 font-medium">Sort by:</span>
               <select
                 value={sortBy}
                 onChange={e => setSortBy(e.target.value)}
-                style={{ 
-                  padding: '12px 18px', 
-                  borderRadius: 12, 
-                  border: '1px solid #e2e8f0', 
-                  fontSize: 15,
-                  fontWeight: 500,
-                  background: 'white',
-                  color: '#374151',
-                  cursor: 'pointer',
-                  outline: 'none'
-                }}
+                className="px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 text-sm font-medium bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 cursor-pointer outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option value="rating" style={{ color: '#374151', background: 'white' }}>Highest Rating</option>
-                <option value="reviews" style={{ color: '#374151', background: 'white' }}>Most Reviews</option>
-                <option value="price-low" style={{ color: '#374151', background: 'white' }}>Price: Low to High</option>
-                <option value="price-high" style={{ color: '#374151', background: 'white' }}>Price: High to Low</option>
+                <option value="rating" className="text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700">Highest Rating</option>
+                <option value="reviews" className="text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700">Most Reviews</option>
+                <option value="price-low" className="text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700">Price: Low to High</option>
+                <option value="price-high" className="text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700">Price: High to Low</option>
               </select>
             </div>
           </div>
 
           {/* Suggested Tags */}
-          <div style={{ 
-            marginTop: 20,
-            display: 'flex', 
-            flexWrap: 'wrap', 
-            gap: 10,
-            alignItems: 'center'
-          }}>
-            <span style={{ fontSize: 14, color: '#64748b', fontWeight: 500, marginRight: 8 }}>
+          <div className="mt-5 flex flex-wrap gap-2 items-center">
+            <span className="text-sm text-gray-600 dark:text-gray-400 font-medium mr-2">
               Popular searches:
             </span>
             {SUGGESTED_TAGS.slice(0, 8).map(tag => (
               <button
                 key={tag}
                 onClick={() => setSearchQuery(tag)}
-                style={{
-                  background: searchQuery === tag 
-                    ? 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)'
-                    : 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
-                  color: searchQuery === tag ? 'white' : '#475569',
-                  border: searchQuery === tag ? '1px solid #3b82f6' : '1px solid #e2e8f0',
-                  borderRadius: 20,
-                  padding: '8px 16px',
-                  fontSize: 13,
-                  cursor: 'pointer',
-                  fontWeight: 600,
-                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                  textTransform: 'capitalize',
-                  boxShadow: searchQuery === tag 
-                    ? '0 4px 15px rgba(59, 130, 246, 0.25)' 
-                    : '0 2px 8px rgba(0, 0, 0, 0.05)',
-                  transform: searchQuery === tag ? 'translateY(-1px)' : 'translateY(0)',
-                }}
-                onMouseEnter={(e) => {
-                  if (searchQuery !== tag) {
-                    e.currentTarget.style.background = 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)'
-                    e.currentTarget.style.color = 'white'
-                    e.currentTarget.style.transform = 'translateY(-2px)'
-                    e.currentTarget.style.boxShadow = '0 8px 25px rgba(59, 130, 246, 0.3)'
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (searchQuery !== tag) {
-                    e.currentTarget.style.background = 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)'
-                    e.currentTarget.style.color = '#475569'
-                    e.currentTarget.style.transform = 'translateY(0)'
-                    e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.05)'
-                  }
-                }}
+                className={`rounded-full px-4 py-2 text-xs cursor-pointer font-semibold transition-all capitalize ${
+                  searchQuery === tag 
+                    ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white border border-blue-600 shadow-lg hover:shadow-xl -translate-y-0.5' 
+                    : 'bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-600 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-600 shadow hover:from-blue-600 hover:to-blue-700 hover:text-white hover:-translate-y-0.5 hover:shadow-lg'
+                }`}
               >
                 {tag}
               </button>
@@ -520,20 +324,7 @@ useEffect(() => {
         </div>
       </div>
       {/* Consultants Grid */}
-      <div style={{
-        maxWidth: 1400,
-        margin: '40px auto',
-        padding: '0 20px',
-        display: 'grid',
-        gridTemplateColumns: isMobile 
-          ? '1fr' 
-          : typeof window !== 'undefined' && window.innerWidth < 1024
-          ? 'repeat(2, 1fr)'
-          : typeof window !== 'undefined' && window.innerWidth < 1280
-          ? 'repeat(3, 1fr)'
-          : 'repeat(4, 1fr)',
-        gap: isMobile ? 20 : 24,
-      }}>
+      <div className="max-w-7xl mx-auto my-10 px-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {sortedConsultants.map(consultant => (
           <ConsultantCard
             key={consultant.id}
@@ -545,39 +336,16 @@ useEffect(() => {
 
       {/* Empty state */}
       {sortedConsultants.length === 0 && (
-        <div style={{
-          maxWidth: 600,
-          margin: '80px auto',
-          textAlign: 'center',
-          padding: '60px 20px',
-          background: 'white',
-          borderRadius: 24,
-          border: '1px solid #e2e8f0',
-          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.06)'
-        }}>
-          <div style={{
-            fontSize: 64,
-            marginBottom: 24,
-            opacity: 0.5
-          }}>🔍</div>
-          <h3 style={{
-            fontSize: 24,
-            fontWeight: 700,
-            color: '#0f172a',
-            margin: '0 0 16px 0'
-          }}>
+        <div className="max-w-2xl mx-auto my-20 text-center p-16 bg-white dark:bg-gray-800 rounded-3xl border border-gray-200 dark:border-gray-700 shadow-lg">
+          <div className="text-6xl mb-6 opacity-50">🔍</div>
+          <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
             No consultants found
           </h3>
-          <p style={{
-            color: '#64748b',
-            fontSize: 16,
-            lineHeight: 1.6,
-            margin: 0
-          }}>
+          <p className="text-gray-600 dark:text-gray-400 text-base leading-relaxed">
             Try adjusting your filters or search terms to find the perfect consultant for your needs.
           </p>
         </div>
       )}
     </div>
   )
-} 
+}

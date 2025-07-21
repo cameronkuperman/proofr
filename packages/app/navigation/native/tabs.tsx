@@ -2,35 +2,45 @@ import React from 'react'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { Ionicons } from '@expo/vector-icons'
 import { View, Text } from 'react-native'
+import { useThemedColors } from '../../contexts/ThemeContext'
 
 // Import screens
 import { HomeScreen } from '../../features/home/screens/HomeScreen'
-import { ProfileScreen } from '../../features/profile/screens/ProfileScreen'
+import { ProfileScreen } from '../../features/profile/screens/ProfileScreenWrapper.native'
 import { MessagesScreen } from '../../features/messages/screens/MessagesScreen.native'
+import { RequestsScreen } from '../../features/requests/screens'
+import { GuidesScreen } from '../../features/guides/screens/GuidesScreen'
+import { BrowseScreen } from '../../features/browse/screens/BrowseScreen.native'
 
 const Tab = createBottomTabNavigator()
 
 // Placeholder screen component
-const ComingSoonScreen = ({ title }: { title: string }) => (
-  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#FFF8F0' }}>
-    <Text style={{ color: '#1a1f36', fontSize: 24, fontWeight: '700' }}>{title}</Text>
-    <Text style={{ color: '#62646A', fontSize: 16, marginTop: 8 }}>Coming Soon</Text>
-  </View>
-)
+const ComingSoonScreen = ({ title }: { title: string }) => {
+  const colors = useThemedColors()
+  
+  return (
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background }}>
+      <Text style={{ color: colors.text, fontSize: 24, fontWeight: '700' }}>{title}</Text>
+      <Text style={{ color: colors.textSecondary, fontSize: 16, marginTop: 8 }}>Coming Soon</Text>
+    </View>
+  )
+}
 
 export function TabNavigator() {
+  const colors = useThemedColors()
+  
   return (
     <Tab.Navigator
       screenOptions={{
         tabBarStyle: {
-          backgroundColor: '#FFFFFF',
-          borderTopColor: '#E0E0E0',
+          backgroundColor: colors.surface,
+          borderTopColor: colors.border,
           height: 90,
           paddingBottom: 34,
           paddingTop: 10,
         },
-        tabBarActiveTintColor: '#1DBF73',
-        tabBarInactiveTintColor: '#62646A',
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.textSecondary,
         headerShown: false,
       }}
     >
@@ -54,7 +64,7 @@ export function TabNavigator() {
       />
       <Tab.Screen
         name="Browse"
-        component={() => <ComingSoonScreen title="Browse Consultants" />}
+        component={BrowseScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="search" size={size} color={color} />
@@ -63,7 +73,7 @@ export function TabNavigator() {
       />
       <Tab.Screen
         name="Requests"
-        component={() => <ComingSoonScreen title="My Requests" />}
+        component={RequestsScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="calendar" size={size} color={color} />

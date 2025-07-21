@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "supabase": {
+      "command": "yarn",
+      "args": [
+        "dlx",
+        "@supabase/mcp-server-supabase@latest",
+        "--read-only",
+        "--project-ref=nufvqhbokuqbbriktiys"
+      ],
+      "env": {
+        "SUPABASE_ACCESS_TOKEN": "sbp_67bba5a51483b896d5a302f022b4ec7a991e8fe9"
+      }
+    }
+  }
+}

@@ -16,6 +16,7 @@ export default function StudentDashboard() {
   const [unreadMessages, setUnreadMessages] = useState(0)
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
+  const [sortBy, setSortBy] = useState('best-match')
   const [filters, setFilters] = useState({
     school: '',
     service: '',
@@ -45,40 +46,64 @@ export default function StudentDashboard() {
 
       setProfile(studentProfile)
 
-      // Load consultants with their services
-      const { data: consultantData } = await supabase
+      // Load ALL consultants first to debug
+      const { data: allConsultants, error: allError } = await supabase
         .from('consultants')
+        .select('*')
+      
+      console.log('Total consultants in DB:', allConsultants?.length || 0)
+      console.log('Sample consultant:', allConsultants?.[0])
+
+      // Use the active_consultants view like the browse page does
+      const { data: consultantData, error: consultantError } = await supabase
+        .from('active_consultants')
         .select(`
           *,
-          users!inner(email, profile_image_url),
           services(*)
         `)
-        .eq('is_available', true)
-        .eq('vacation_mode', false)
+        .order('rating', { ascending: false })
 
+      if (consultantError) {
+        console.error('Error loading consultants:', consultantError)
+      }
+
+      console.log('Loaded consultants with services:', consultantData?.length || 0)
+      console.log('First consultant with services:', consultantData?.[0])
       setConsultants(consultantData || [])
 
-      // Load saved consultants
-      const { data: saved } = await supabase
+      // Load saved consultants - handle if table doesn't exist
+      const { data: saved, error: savedError } = await supabase
         .from('saved_consultants')
         .select('consultant_id')
         .eq('student_id', user.id)
 
-      setSavedConsultants(saved?.map(s => s.consultant_id) || [])
+      if (savedError) {
+        console.log('Saved consultants table might not exist:', savedError)
+        setSavedConsultants([])
+      } else {
+        setSavedConsultants(saved?.map(s => s.consultant_id) || [])
+      }
 
-      // Load active bookings
-      const { data: bookings } = await supabase
+      // Load active bookings - join consultants directly
+      const { data: bookings, error: bookingsError } = await supabase
         .from('bookings')
         .select(`
           *,
-          consultants(name, users(profile_image_url)),
+          consultants!inner(
+            id,
+            name,
+            profile_image_url
+          ),
           services(title)
         `)
         .eq('student_id', user.id)
-        .in('status', ['pending', 'accepted', 'in_progress'])
+        .in('status', ['pending', 'confirmed', 'in_progress'])
         .order('created_at', { ascending: false })
         .limit(3)
 
+      if (bookingsError) {
+        console.log('Error loading bookings:', bookingsError)
+      }
       setActiveBookings(bookings || [])
 
       // Load unread message count
@@ -98,23 +123,31 @@ export default function StudentDashboard() {
   }
 
   const toggleSaveConsultant = async (consultantId: string) => {
-    if (savedConsultants.includes(consultantId)) {
-      await supabase
-        .from('saved_consultants')
-        .delete()
-        .eq('student_id', profile.id)
-        .eq('consultant_id', consultantId)
-      
-      setSavedConsultants(prev => prev.filter(id => id !== consultantId))
-    } else {
-      await supabase
-        .from('saved_consultants')
-        .insert({
-          student_id: profile.id,
-          consultant_id: consultantId
-        })
-      
-      setSavedConsultants(prev => [...prev, consultantId])
+    try {
+      if (savedConsultants.includes(consultantId)) {
+        const { error } = await supabase
+          .from('saved_consultants')
+          .delete()
+          .eq('student_id', profile.id)
+          .eq('consultant_id', consultantId)
+        
+        if (!error) {
+          setSavedConsultants(prev => prev.filter(id => id !== consultantId))
+        }
+      } else {
+        const { error } = await supabase
+          .from('saved_consultants')
+          .insert({
+            student_id: profile.id,
+            consultant_id: consultantId
+          })
+        
+        if (!error) {
+          setSavedConsultants(prev => [...prev, consultantId])
+        }
+      }
+    } catch (error) {
+      console.error('Error toggling saved consultant:', error)
     }
   }
 
@@ -126,7 +159,7 @@ export default function StudentDashboard() {
     }
 
     // School filter
-    if (filters.school && consultant.school !== filters.school) {
+    if (filters.school && consultant.current_college !== filters.school) {
       return false
     }
 
@@ -147,6 +180,30 @@ export default function StudentDashboard() {
     }
 
     return true
+  })
+
+  // Sort consultants based on selected option
+  const sortedConsultants = [...filteredConsultants].sort((a, b) => {
+    switch (sortBy) {
+      case 'price-low':
+        const aMinPrice = Math.min(...(a.services?.flatMap((s: any) => s.prices) || [Infinity]))
+        const bMinPrice = Math.min(...(b.services?.flatMap((s: any) => s.prices) || [Infinity]))
+        return aMinPrice - bMinPrice
+      case 'price-high':
+        const aMaxPrice = Math.max(...(a.services?.flatMap((s: any) => s.prices) || [0]))
+        const bMaxPrice = Math.max(...(b.services?.flatMap((s: any) => s.prices) || [0]))
+        return bMaxPrice - aMaxPrice
+      case 'most-reviews':
+        return (b.total_reviews || 0) - (a.total_reviews || 0)
+      case 'highest-rated':
+        return (b.rating || 0) - (a.rating || 0)
+      case 'best-match':
+      default:
+        // Sort by a combination of rating and reviews
+        const aScore = (a.rating || 0) * Math.log((a.total_reviews || 0) + 1)
+        const bScore = (b.rating || 0) * Math.log((b.total_reviews || 0) + 1)
+        return bScore - aScore
+    }
   })
 
   if (loading) {
@@ -239,11 +296,11 @@ export default function StudentDashboard() {
                 {activeBookings.map((booking) => (
                   <div key={booking.id} className="flex items-center space-x-2 text-sm">
                     <img 
-                      src={booking.consultants.users.profile_image_url || '/api/placeholder/32/32'} 
-                      alt={booking.consultants.name}
+                      src={booking.consultants?.profile_image_url || '/api/placeholder/32/32'} 
+                      alt={booking.consultants?.name}
                       className="h-6 w-6 rounded-full"
                     />
-                    <span className="text-gray-700">{booking.services.title}</span>
+                    <span className="text-gray-700">{booking.services?.title || 'Service'}</span>
                     <span className="text-gray-500">•</span>
                     <span className="text-cyan-600 font-medium">{booking.status}</span>
                   </div>
@@ -277,33 +334,37 @@ export default function StudentDashboard() {
             <div className="mb-6 flex items-center justify-between">
               <h2 className="text-2xl font-semibold text-gray-900">
                 {filters.school || filters.service || searchQuery 
-                  ? `${filteredConsultants.length} consultants found`
+                  ? `${sortedConsultants.length} consultants found`
                   : 'All Consultants'
                 }
               </h2>
-              <select className="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500">
-                <option>Best Match</option>
-                <option>Price: Low to High</option>
-                <option>Price: High to Low</option>
-                <option>Most Reviews</option>
-                <option>Highest Rated</option>
+              <select 
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500"
+              >
+                <option value="best-match">Best Match</option>
+                <option value="price-low">Price: Low to High</option>
+                <option value="price-high">Price: High to Low</option>
+                <option value="most-reviews">Most Reviews</option>
+                <option value="highest-rated">Highest Rated</option>
               </select>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredConsultants.map((consultant) => (
+              {sortedConsultants.map((consultant) => (
                 <ConsultantCard
                   key={consultant.id}
                   consultant={consultant}
                   isSaved={savedConsultants.includes(consultant.id)}
                   onToggleSave={() => toggleSaveConsultant(consultant.id)}
                   onMessage={() => router.push(`/student-dashboard/messages?consultant=${consultant.id}`)}
-                  onViewProfile={() => router.push(`/consultant/${consultant.id}`)}
+                  onViewProfile={() => router.push(`/consultants/${consultant.id}`)}
                 />
               ))}
             </div>
 
-            {filteredConsultants.length === 0 && (
+            {sortedConsultants.length === 0 && (
               <div className="text-center py-12">
                 <p className="text-gray-500">No consultants found matching your criteria.</p>
                 <button 

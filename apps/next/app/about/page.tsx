@@ -22,7 +22,8 @@ import {
   ChevronDown,
   School,
   TreePine,
-  Cpu
+  Cpu,
+  FlaskConical
 } from 'lucide-react'
 
 export default function AboutPage() {
@@ -321,14 +322,15 @@ export default function AboutPage() {
         </motion.div>
       </section>
 
-      {/* The Problem We Saw */}
+      {/* The Problem We Saw - Bimodal Reality First */}
       <section className="py-32 px-6 bg-white">
         <div className="max-w-6xl mx-auto">
+          {/* The bimodal reality - moved to top */}
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            className="max-w-3xl mx-auto mb-16"
+            className="max-w-3xl mx-auto mb-24"
           >
             <h2 className="text-4xl font-bold text-gray-900 mb-10 leading-tight">The bimodal reality</h2>
             <div className="space-y-8">
@@ -340,11 +342,26 @@ export default function AboutPage() {
               </p>
             </div>
           </motion.div>
+        </div>
+      </section>
+
+      {/* The Numbers */}
+      <section className="py-24 px-6 bg-gray-50">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mb-16"
+          >
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 text-center mb-16">The numbers don't lie</h2>
+          </motion.div>
+
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            className="grid md:grid-cols-3 gap-8 mb-16"
+            className="grid md:grid-cols-3 gap-8"
           >
             {[
               { value: '$50,000', label: 'Average cost of traditional college consulting', icon: DollarSign },
@@ -375,17 +392,46 @@ export default function AboutPage() {
               </motion.div>
             ))}
           </motion.div>
+        </div>
+      </section>
 
-          {/* The disparity in numbers */}
+      {/* The Story Section - Why We Built This */}
+      <section className="py-32 px-6 bg-white">
+        <div className="max-w-3xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="mb-24"
+            className="space-y-10"
           >
-            <h3 className="text-2xl font-semibold text-gray-800 mb-8 text-center">The numbers tell the story</h3>
+            <h2 className="text-5xl font-bold text-gray-900 leading-tight">Why we built Proofr</h2>
+            
+            <div className="space-y-8">
+              <p className="text-xl text-gray-800 leading-[1.8] font-normal">
+                I watched my classmates write themselves into colleges without the proper stats. I saw families spend <span className="font-semibold text-gray-900 bg-yellow-50 px-1 py-0.5 rounded">$10,000 to $15,000</span> on consulting. And I saw a disturbing pattern emerge.
+              </p>
+              
+              <p className="text-lg text-gray-700 leading-[1.75] font-light">
+                When I needed help with my essays, I didn't turn to expensive consultants. I asked friends—<span className="font-medium text-gray-900">Christian at Cornell, Phong at Duke</span>. They helped me understand cultural fit, suggested word changes, caught errors. The substance was mine, but their perspective was invaluable.
+              </p>
+              
+              <p className="text-lg text-gray-700 leading-[1.75] font-light">
+                That's when it hit me: <span className="font-medium text-gray-900 italic">"Why should this kind of help cost a fortune?"</span>
+              </p>
+              
+              <div className="pt-6 border-t border-gray-200">
+                <p className="text-lg text-gray-600 leading-[1.75] font-light italic">
+                  Everyone deserves access to the guidance that helped us succeed. That's why we built Proofr.
+                </p>
+              </div>
+            </div>
           </motion.div>
-          
+        </div>
+      </section>
+
+      {/* The Old Way vs Our Way */}
+      <section className="py-24 px-6 bg-gray-50">
+        <div className="max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -465,42 +511,8 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* The Story Section - Why We Built This */}
-      <section className="py-32 px-6 bg-gradient-to-b from-white to-gray-50">
-        <div className="max-w-3xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="space-y-10"
-          >
-            <h2 className="text-5xl font-bold text-gray-900 leading-tight">Why we built Proofr</h2>
-            
-            <div className="space-y-8">
-              <p className="text-xl text-gray-800 leading-[1.8] font-normal">
-                I watched my classmates write themselves into colleges without the proper stats. I saw families spend <span className="font-semibold text-gray-900 bg-yellow-50 px-1 py-0.5 rounded">$10,000 to $15,000</span> on consulting. And I saw a disturbing pattern emerge.
-              </p>
-              
-              <p className="text-lg text-gray-700 leading-[1.75] font-light">
-                When I needed help with my essays, I didn't turn to expensive consultants. I asked friends—<span className="font-medium text-gray-900">Christian at Cornell, Phong at Duke</span>. They helped me understand cultural fit, suggested word changes, caught errors. The substance was mine, but their perspective was invaluable.
-              </p>
-              
-              <p className="text-lg text-gray-700 leading-[1.75] font-light">
-                That's when it hit me: <span className="font-medium text-gray-900 italic">"Why should this kind of help cost a fortune?"</span>
-              </p>
-              
-              <div className="pt-6 border-t border-gray-200">
-                <p className="text-lg text-gray-600 leading-[1.75] font-light italic">
-                  Everyone deserves access to the guidance that helped us succeed. That's why we built Proofr.
-                </p>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
       {/* The Solution - For Students and Consultants */}
-      <section className="py-32 px-6 bg-gray-50">
+      <section className="py-32 px-6 bg-white">
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-2 gap-16">
             <motion.div
@@ -538,46 +550,8 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Impact Counter */}
-      <section id="impact-counter" className="py-24 bg-gradient-to-r from-purple-600 to-blue-600 text-white">
-        <div className="max-w-6xl mx-auto px-6">
-          <h2 className="text-4xl md:text-5xl font-bold text-center mb-16">Real Impact, Real People</h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            <motion.div 
-              className="text-center"
-              initial={{ scale: 0.8, opacity: 0 }}
-              whileInView={{ scale: 1, opacity: 1 }}
-              viewport={{ once: true }}
-            >
-              <h3 className="text-6xl font-bold mb-4">{impactCount.storiesTold.toLocaleString()}</h3>
-              <p className="text-xl">Stories Told</p>
-            </motion.div>
-            <motion.div 
-              className="text-center"
-              initial={{ scale: 0.8, opacity: 0 }}
-              whileInView={{ scale: 1, opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2 }}
-            >
-              <h3 className="text-6xl font-bold mb-4">${impactCount.moneySaved}M</h3>
-              <p className="text-xl">Money Saved</p>
-            </motion.div>
-            <motion.div 
-              className="text-center"
-              initial={{ scale: 0.8, opacity: 0 }}
-              whileInView={{ scale: 1, opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.4 }}
-            >
-              <h3 className="text-6xl font-bold mb-4">{impactCount.dreamsFunded.toLocaleString()}</h3>
-              <p className="text-xl">Dreams Funded</p>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
       {/* Your Story, Our Mission - Interactive Section */}
-      <section className="py-24 px-6 bg-gradient-to-b from-white via-purple-50/30 to-white">
+      <section className="py-24 px-6 bg-gradient-to-b from-gray-50 via-purple-50/30 to-white">
         <div className="max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0 }}
@@ -797,6 +771,44 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* Impact Counter */}
+      <section id="impact-counter" className="py-24 bg-gradient-to-r from-purple-600 to-blue-600 text-white">
+        <div className="max-w-6xl mx-auto px-6">
+          <h2 className="text-4xl md:text-5xl font-bold text-center mb-16">Real Impact, Real People</h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            <motion.div 
+              className="text-center"
+              initial={{ scale: 0.8, opacity: 0 }}
+              whileInView={{ scale: 1, opacity: 1 }}
+              viewport={{ once: true }}
+            >
+              <h3 className="text-6xl font-bold mb-4">{impactCount.storiesTold.toLocaleString()}</h3>
+              <p className="text-xl">Stories Told</p>
+            </motion.div>
+            <motion.div 
+              className="text-center"
+              initial={{ scale: 0.8, opacity: 0 }}
+              whileInView={{ scale: 1, opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+            >
+              <h3 className="text-6xl font-bold mb-4">${impactCount.moneySaved}M</h3>
+              <p className="text-xl">Money Saved</p>
+            </motion.div>
+            <motion.div 
+              className="text-center"
+              initial={{ scale: 0.8, opacity: 0 }}
+              whileInView={{ scale: 1, opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.4 }}
+            >
+              <h3 className="text-6xl font-bold mb-4">{impactCount.dreamsFunded.toLocaleString()}</h3>
+              <p className="text-xl">Dreams Funded</p>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
       {/* Your Story, Amplified */}
       <section className="py-24 px-6">
         <div className="max-w-6xl mx-auto">
@@ -884,72 +896,95 @@ export default function AboutPage() {
             className="text-center mb-16"
           >
             <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-purple-700 via-blue-700 to-pink-700 bg-clip-text text-transparent">The Proofr Promise</h2>
-            <p className="text-xl text-gray-600">No student left behind. Our scholarship programs ensure everyone gets their shot.</p>
+            <p className="text-xl text-gray-600 mb-4">No student left behind. Our scholarship programs ensure everyone gets their shot.</p>
+            <motion.p 
+              className="text-lg text-gray-700 font-medium max-w-3xl mx-auto"
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+            >
+              <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent font-bold">
+                Our 2025-26 Pledge:
+              </span>{' '}
+              Every dollar of profit Proofr makes this admissions cycle will fund these programs. 
+              When you succeed, science succeeds. When you grow, communities grow.
+            </motion.p>
           </motion.div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
               {
-                name: "Dream Makers Initiative",
-                description: "Full scholarships for exceptional students with financial need",
+                name: "Pinnacle Scholars",
+                description: "Merit-based excellence for exceptional students",
                 color: "from-purple-500 to-purple-600",
-                funded: "342 students",
-                icon: Sparkles
+                funded: "847 students",
+                icon: GraduationCap,
+                href: "/promise/pinnacle-scholars"
               },
               {
-                name: "First Flight Fund",
-                description: "Supporting first-generation college applicants",
+                name: "Research Vanguard",
+                description: "Defending scientific progress with research grants",
                 color: "from-blue-500 to-blue-600",
-                funded: "567 students",
-                icon: GraduationCap
+                funded: "2,847 students",
+                icon: FlaskConical,
+                href: "/promise/research-vanguard"
               },
               {
-                name: "Bridge Builders",
-                description: "ESL and international student support",
-                color: "from-pink-500 to-pink-600",
-                funded: "893 students",
-                icon: Languages
+                name: "Community Champions",
+                description: "Supporting local leaders creating global change",
+                color: "from-orange-500 to-orange-600",
+                funded: "1,234 students",
+                icon: Users,
+                href: "/promise/community-champions"
               },
               {
                 name: "Access Academy",
-                description: "Free workshops and resources for all",
+                description: "Free resources and guides for all students",
                 color: "from-green-500 to-green-600",
-                funded: "2,341 students",
-                icon: BookOpen
+                funded: "10,847 students",
+                icon: BookOpen,
+                href: "/promise/access-academy"
               }
             ].map((program, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="relative group"
-                whileHover={{ y: -5, rotate: 1 }}
-              >
-                {/* Gradient glow */}
-                <div className={`absolute inset-0 bg-gradient-to-br ${program.color} rounded-3xl blur-xl opacity-20 group-hover:opacity-30 transition-opacity`} />
-                
-                {/* Glass card */}
-                <div className="relative backdrop-blur-xl bg-white/80 rounded-3xl p-6 border border-white/20 hover:border-white/40 transition-all">
-                  <div className="flex items-start justify-between mb-3">
-                    <program.icon className="w-6 h-6 text-gray-600" />
-                    <span className="text-xs font-semibold text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-                      {program.funded}
-                    </span>
-                  </div>
-                  <h3 className={`text-lg font-bold mb-2 bg-gradient-to-r ${program.color} bg-clip-text text-transparent`}>
-                    {program.name}
-                  </h3>
-                  <p className="text-sm text-gray-600">{program.description}</p>
+              <Link href={program.href} key={index}>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
+                  className="relative group h-full cursor-pointer"
+                  whileHover={{ y: -5, rotate: 1 }}
+                >
+                  {/* Gradient glow */}
+                  <div className={`absolute inset-0 bg-gradient-to-br ${program.color} rounded-3xl blur-xl opacity-20 group-hover:opacity-30 transition-opacity`} />
                   
-                  {/* Hover effect */}
-                  <motion.div
-                    className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r opacity-0 group-hover:opacity-100 transition-opacity rounded-b-3xl"
-                    style={{ backgroundImage: `linear-gradient(to right, ${program.color.split(' ')[1]}, ${program.color.split(' ')[3]})` }}
-                  />
-                </div>
-              </motion.div>
+                  {/* Glass card */}
+                  <div className="relative backdrop-blur-xl bg-white/80 rounded-3xl p-6 border border-white/20 hover:border-white/40 transition-all h-full flex flex-col">
+                    <div className="flex items-start justify-between mb-3">
+                      <program.icon className="w-6 h-6 text-gray-600" />
+                      <span className="text-xs font-semibold text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                        {program.funded}
+                      </span>
+                    </div>
+                    <h3 className={`text-lg font-bold mb-2 bg-gradient-to-r ${program.color} bg-clip-text text-transparent`}>
+                      {program.name}
+                    </h3>
+                    <p className="text-sm text-gray-600 flex-grow">{program.description}</p>
+                    
+                    {/* Learn more text */}
+                    <p className="text-xs text-gray-500 mt-3 group-hover:text-gray-700 transition-colors">
+                      Learn more →
+                    </p>
+                    
+                    {/* Hover effect */}
+                    <motion.div
+                      className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r opacity-0 group-hover:opacity-100 transition-opacity rounded-b-3xl"
+                      style={{ backgroundImage: `linear-gradient(to right, ${program.color.split(' ')[1]}, ${program.color.split(' ')[3]})` }}
+                    />
+                  </div>
+                </motion.div>
+              </Link>
             ))}
           </div>
         </div>

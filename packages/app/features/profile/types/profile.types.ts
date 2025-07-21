@@ -23,6 +23,11 @@ export interface StudentProfile {
   // From users table join
   email?: string
   profile_image_url?: string
+  // Guide contributions
+  guides_published: number
+  guide_views_total: number
+  guide_helpful_total: number
+  is_guide_contributor: boolean
 }
 
 export interface Booking {

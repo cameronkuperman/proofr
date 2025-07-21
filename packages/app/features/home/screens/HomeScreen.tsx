@@ -18,6 +18,9 @@ import { VerificationPopup } from '../../verification/components/VerificationPop
 import { SwipeableCard } from '../components/SwipeableCard'
 import { useTheme, useThemedColors, usePrimaryColors } from '../../../contexts/ThemeContext'
 import { colors } from '../../../constants/colors'
+import { supabase } from '../../../../../lib/supabase'
+import { StudentGuide } from '../../guides/types'
+import { useNavigation } from '@react-navigation/native'
 
 // AsyncStorage
 let AsyncStorage: any
@@ -224,6 +227,7 @@ export function HomeScreen() {
   const { isDark } = useTheme()
   const themedColors = useThemedColors()
   const primaryColors = usePrimaryColors()
+  const navigation = useNavigation<any>()
   
   const [showQuickMatch, setShowQuickMatch] = useState(false)
   const [currentMatchIndex, setCurrentMatchIndex] = useState(0)
@@ -231,10 +235,12 @@ export function HomeScreen() {
   const [showVerificationPopup, setShowVerificationPopup] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [showMorePrompt, setShowMorePrompt] = useState(false)
+  const [guides, setGuides] = useState<StudentGuide[]>([])
 
   useEffect(() => {
     console.log('[HomeScreen] Component mounted - showQuickMatch:', showQuickMatch)
     checkUserRoleAndVerification()
+    fetchGuides()
   }, [])
   
   useEffect(() => {
@@ -259,6 +265,24 @@ export function HomeScreen() {
       }
     } catch (error) {
       console.error('Error checking verification status:', error)
+    }
+  }
+
+  const fetchGuides = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('student_guides')
+        .select('*')
+        .eq('status', 'published')
+        .order('view_count', { ascending: false })
+        .limit(6)
+
+      if (error) throw error
+      if (data) {
+        setGuides(data)
+      }
+    } catch (error) {
+      console.error('Error fetching guides:', error)
     }
   }
 
@@ -767,7 +791,7 @@ export function HomeScreen() {
               contentContainerStyle={{ gap: 12 }}
             >
               {[
-                { title: 'Essay Review Special', subtitle: '30% off this week', color: colors.primary, icon: 'edit' },
+                { title: 'Essay Review Special', subtitle: '30% off this week', color: colors.primary, icon: 'create-outline' },
                 { title: 'Mock Interviews', subtitle: 'Prep for success', color: colors.purple, icon: 'mic' },
                 { title: 'SAT Bootcamp', subtitle: 'Boost your score', color: colors.teal, icon: 'trending-up' },
               ].map((item, i) => (
@@ -1145,7 +1169,7 @@ export function HomeScreen() {
             </View>
           </View>
 
-          {/* Resources */}
+          {/* Resources & Guides */}
           <View style={{ marginTop: 32, paddingHorizontal: 20, marginBottom: 100 }}>
             <Text style={{
               fontSize: 22,
@@ -1155,55 +1179,107 @@ export function HomeScreen() {
             }}>
               Resources & Guides
             </Text>
-            {[
-              { title: 'Complete Essay Guide', icon: 'book', color: colors.primary },
-              { title: 'Interview Prep Checklist', icon: 'list', color: colors.purple },
-              { title: 'Timeline Builder', icon: 'calendar', color: colors.teal },
-              { title: 'Financial Aid 101', icon: 'cash', color: colors.warning },
-            ].map((resource, i) => (
-              <TouchableOpacity
-                key={i}
-                style={{
-                  backgroundColor: themedColors.surface.raised,
-                  borderRadius: 12,
-                  padding: 16,
-                  marginBottom: 12,
-                  borderWidth: 1,
-                  borderColor: themedColors.border.default,
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                }}
-              >
+            
+            {/* Small Resource Cards */}
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ gap: 12, marginBottom: 20 }}
+            >
+              {[
+                { title: 'Essay Guide', icon: 'book', color: colors.primary },
+                { title: 'Interview Prep', icon: 'mic', color: colors.purple },
+                { title: 'Timeline', icon: 'calendar', color: colors.teal },
+                { title: 'Financial Aid', icon: 'cash', color: colors.warning },
+              ].map((resource, i) => (
+                <TouchableOpacity
+                  key={i}
+                  onPress={() => navigation.navigate('Resources', { selectedResource: resource.title })}
+                  style={{
+                    backgroundColor: themedColors.surface.raised,
+                    borderRadius: 12,
+                    padding: 16,
+                    borderWidth: 1,
+                    borderColor: themedColors.border.default,
+                    width: 140,
+                    alignItems: 'center',
+                  }}
+                >
+                  <View style={{
+                    width: 48,
+                    height: 48,
+                    borderRadius: 24,
+                    backgroundColor: isDark ? resource.color[800] : resource.color[100],
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    marginBottom: 8,
+                  }}>
+                    <Ionicons name={resource.icon as any} size={24} color={resource.color[600]} />
+                  </View>
+                  <Text style={{
+                    fontSize: 14,
+                    fontWeight: '600',
+                    color: themedColors.text.primary,
+                    textAlign: 'center',
+                  }}>
+                    {resource.title}
+                  </Text>
+                  <Text style={{
+                    fontSize: 12,
+                    color: themedColors.text.secondary,
+                    marginTop: 2,
+                  }}>
+                    Free guide
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+
+            {/* See More Guides Link */}
+            <TouchableOpacity
+              onPress={() => navigation.navigate('AllGuides')}
+              style={{
+                backgroundColor: isDark ? colors.primary[900] : colors.primary[50],
+                borderRadius: 12,
+                padding: 16,
+                borderWidth: 1,
+                borderColor: isDark ? colors.primary[700] : colors.primary[200],
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+            >
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <View style={{
-                  width: 44,
-                  height: 44,
-                  borderRadius: 22,
-                  backgroundColor: isDark ? resource.color[800] : resource.color[100],
+                  width: 40,
+                  height: 40,
+                  borderRadius: 20,
+                  backgroundColor: primaryColors.primary,
                   justifyContent: 'center',
                   alignItems: 'center',
                   marginRight: 12,
                 }}>
-                  <Ionicons name={resource.icon as any} size={20} color={resource.color[600]} />
+                  <Ionicons name="book-outline" size={20} color="#FFF" />
                 </View>
-                <View style={{ flex: 1 }}>
+                <View>
                   <Text style={{
                     fontSize: 16,
                     fontWeight: '600',
                     color: themedColors.text.primary,
                   }}>
-                    {resource.title}
+                    Explore Student Guides
                   </Text>
                   <Text style={{
                     fontSize: 14,
                     color: themedColors.text.secondary,
                     marginTop: 2,
                   }}>
-                    Free guide for all students
+                    Tips and advice from other students
                   </Text>
                 </View>
-                <Ionicons name="chevron-forward" size={20} color={themedColors.text.secondary} />
-              </TouchableOpacity>
-            ))}
+              </View>
+              <Ionicons name="arrow-forward-circle" size={28} color={primaryColors.primary} />
+            </TouchableOpacity>
           </View>
         </ScrollView>
 

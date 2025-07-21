@@ -8,10 +8,26 @@ import {
   RefreshControl,
   ActivityIndicator,
   Alert,
+  Switch,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useNavigation } from '@react-navigation/native'
 import { Feather } from '@expo/vector-icons'
+import { useThemedColors, useTheme } from '../../../contexts/ThemeContext'
+
+// University colors remain constant across themes
+const UNIVERSITY_colors = {
+  harvard: '#A51C30',
+  yale: '#00356B',
+  princeton: '#FF6900',
+  stanford: '#8C1515',
+  mit: '#A31F34',
+}
+
+import type { StudentProfile, Booking, ApplicationMilestone, ProfileStats } from '../types/profile.types'
+import { SettingsModal } from './SettingsModal'
+import { DocumentsModal } from './DocumentsModal'
+
 // AsyncStorage for data persistence
 let AsyncStorage: any
 try {
@@ -20,51 +36,74 @@ try {
   AsyncStorage = {
     getItem: async () => null,
     setItem: async () => {},
-    removeItem: async () => {},
   }
 }
-import { useTheme, useThemedColors, usePrimaryColors } from '../../../contexts/ThemeContext'
-import { colors } from '../../../constants/colors'
-import { ThemeSwitcherCompact } from '../../../components/ThemeSwitcher'
-import type { StudentProfile, Booking, ApplicationMilestone, ProfileStats } from '../types/profile.types'
-import { SettingsModal } from './SettingsModal'
-import { DocumentsModal } from './DocumentsModal'
 
-// Progress calculation helper
-const calculateApplicationProgress = (profile: StudentProfile): number => {
+// Mock data for now
+const mockProfile: StudentProfile = {
+  id: '1',
+  user_id: '1',
+  name: 'Alex Johnson',
+  current_school: 'Lincoln High School',
+  grade_level: 12,
+  target_schools: ['Harvard', 'MIT', 'Stanford'],
+  interests: ['Computer Science', 'Robotics', 'AI'],
+  sat_score: 1520,
+  act_score: 34,
+  gpa: 4.2,
+  extracurriculars: ['Robotics Club President', 'Math Olympiad', 'Volunteer Tutor'],
+  awards: ['National Merit Scholar', 'Intel Science Fair Winner'],
+  credit_balance: 250,
+  preferred_communication: 'video',
+  time_zone: 'America/New_York',
+  parent_email: 'parent@example.com',
+  parent_phone: '+1234567890',
+  essay_topics: ['Personal growth through robotics', 'Community impact project'],
+  application_deadlines: {
+    'Harvard': '2024-01-01',
+    'MIT': '2024-01-15',
+    'Stanford': '2024-01-02',
+  },
+  notes: '',
+  guides_published: 5,
+  guide_views_total: 1250,
+  guide_helpful_total: 89,
+  created_at: '2024-01-01',
+  updated_at: '2024-01-15',
+}
+
+function calculateApplicationProgress(profile: StudentProfile): number {
+  if (!profile) return 0
+  
   let progress = 0
-  const weights = {
-    profileComplete: 20,
-    schoolsSelected: 20,
-    essayStarted: 20,
-    consultantBooked: 20,
-    applicationSubmitted: 20,
-  }
+  const totalSteps = 10
   
-  // Profile completion
-  if (profile.bio && profile.current_school && profile.interests.length > 0) {
-    progress += weights.profileComplete
-  }
-  
-  // Schools selected
-  if (profile.preferred_colleges.length >= 3) {
-    progress += weights.schoolsSelected
-  }
-  
-  // This would need actual data from bookings/documents
-  // For now, just placeholder logic
-  if (profile.lifetime_credits_earned > 0) {
-    progress += weights.consultantBooked
-  }
+  if (profile.gpa) progress += 1
+  if (profile.sat_score || profile.act_score) progress += 1
+  if (profile.target_schools && profile.target_schools.length > 0) progress += 1
+  if (profile.extracurriculars && profile.extracurriculars.length > 0) progress += 1
+  if (profile.awards && profile.awards.length > 0) progress += 1
+  if (profile.essay_topics && profile.essay_topics.length > 0) progress += 1
+  if (profile.current_school) progress += 1
+  if (profile.interests && profile.interests.length > 0) progress += 1
+  if (profile.application_deadlines && Object.keys(profile.application_deadlines).length > 0) progress += 1
+  if (profile.preferred_communication) progress += 1
   
   return Math.min(progress, 100)
 }
 
 export function ProfileScreen() {
-  const navigation = useNavigation<any>()
-  const { isDark } = useTheme()
-  const themedColors = useThemedColors()
-  const primaryColors = usePrimaryColors()
+  const colors = useThemedColors()
+  const { isDark, setTheme } = useTheme()
+  const toggleTheme = () => setTheme(isDark ? 'light' : 'dark')
+  
+  // Get navigation safely
+  let navigation: any = null
+  try {
+    navigation = useNavigation<any>()
+  } catch (error) {
+    // Navigation not available yet
+  }
   
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
@@ -89,451 +128,406 @@ export function ProfileScreen() {
   const milestones: ApplicationMilestone[] = [
     {
       id: '1',
-      title: 'Complete Common App Essay',
-      description: 'First draft due',
-      due_date: '2024-10-15',
-      completed: false,
-      type: 'deadline',
-      icon: 'edit-3',
+      title: 'Complete Common App',
+      description: 'Fill out all sections of the Common Application',
+      deadline: '2024-12-01',
+      completed: true,
+      icon: 'check-circle',
+      type: 'application',
     },
     {
       id: '2',
-      title: 'Harvard Interview Prep',
-      description: 'With Sarah Chen',
-      due_date: '2024-09-20',
+      title: 'Submit SAT Scores',
+      description: 'Send official SAT scores to all target schools',
+      deadline: '2024-12-15',
       completed: true,
-      type: 'task',
-      icon: 'mic',
-      college: 'Harvard',
+      icon: 'send',
+      type: 'test',
     },
     {
       id: '3',
-      title: 'Submit Early Applications',
-      description: 'Yale, Princeton, Stanford',
-      due_date: '2024-11-01',
+      title: 'Teacher Recommendations',
+      description: 'Request letters from 2 teachers',
+      deadline: '2024-11-30',
       completed: false,
-      type: 'deadline',
-      icon: 'send',
+      icon: 'users',
+      type: 'recommendation',
+    },
+    {
+      id: '4',
+      title: 'Harvard Supplemental Essays',
+      description: 'Complete all Harvard-specific essays',
+      deadline: '2024-12-20',
+      completed: false,
+      icon: 'edit-3',
+      type: 'essay',
+      college: 'Harvard',
     },
   ]
-  
+
+  // Sample bookings
+  const mockBookings: Booking[] = [
+    {
+      id: '1',
+      student_id: '1',
+      consultant_id: '2',
+      service_type: 'essay_review',
+      scheduled_at: '2024-01-20T15:00:00Z',
+      duration_minutes: 60,
+      status: 'completed',
+      price: 120,
+      cashback_earned: 2.4,
+      meeting_link: '',
+      notes: 'Great session on Common App essay',
+      rating: 5,
+      review: 'Very helpful feedback',
+      consultant: {
+        id: '2',
+        name: 'Sarah Chen',
+        university: 'Harvard',
+        avatar: 'https://randomuser.me/api/portraits/women/2.jpg',
+      },
+      created_at: '2024-01-15',
+    },
+    {
+      id: '2',
+      student_id: '1',
+      consultant_id: '3',
+      service_type: 'interview_prep',
+      scheduled_at: '2024-01-25T14:00:00Z',
+      duration_minutes: 45,
+      status: 'confirmed',
+      price: 80,
+      cashback_earned: 1.6,
+      meeting_link: 'https://zoom.us/j/123456789',
+      consultant: {
+        id: '3',
+        name: 'Michael Park',
+        university: 'MIT',
+        avatar: 'https://randomuser.me/api/portraits/men/3.jpg',
+      },
+      created_at: '2024-01-18',
+    },
+  ]
+
+  useEffect(() => {
+    loadProfile()
+  }, [])
+
   const loadProfile = async () => {
     try {
-      // Load profile from AsyncStorage
-      const storedProfile = await AsyncStorage.getItem('userProfile')
-      const storedName = await AsyncStorage.getItem('userName')
-      const storedEmail = await AsyncStorage.getItem('userEmail')
-      
-      // Mock student profile data
-      const mockProfile: StudentProfile = {
-        id: '1',
-        name: storedName || 'Alex Johnson',
-        email: storedEmail || 'alex.johnson@email.com',
-        bio: 'Aspiring computer scientist passionate about AI and social impact',
-        current_school: 'Thomas Jefferson High School',
-        school_type: 'high-school',
-        grade_level: 'senior',
-        target_application_year: 2025,
-        preferred_colleges: ['MIT', 'Stanford', 'Harvard', 'Yale', 'Princeton'],
-        interests: ['Computer Science', 'AI/ML', 'Robotics', 'Social Impact'],
-        pain_points: ['essays', 'interviews', 'activities'],
-        budget_range: { min: 50, max: 200 },
-        credit_balance: 250,
-        lifetime_credits_earned: 1200,
-        onboarding_completed: true,
-        onboarding_step: 5,
-        created_at: '2024-01-01',
-        updated_at: '2024-01-15',
-        profile_image_url: 'https://randomuser.me/api/portraits/men/32.jpg',
-      }
-      
+      setLoading(true)
+      // In real app, fetch from Supabase
       setProfile(mockProfile)
-      
-      // Mock bookings data
-      const mockBookings: Booking[] = [
-        {
-          id: '1',
-          student_id: '1',
-          consultant_id: '101',
-          service_type: 'essay_review',
-          status: 'completed',
-          scheduled_at: '2024-01-10T15:00:00Z',
-          duration_minutes: 60,
-          price: 150,
-          notes: 'Common App essay review',
-          created_at: '2024-01-05',
-          consultant: {
-            id: '101',
-            name: 'Sarah Chen',
-            profile_image_url: 'https://randomuser.me/api/portraits/women/1.jpg',
-            current_college: 'Harvard',
-            rating: 4.9,
-          },
-        },
-        {
-          id: '2',
-          student_id: '1',
-          consultant_id: '102',
-          service_type: 'interview_prep',
-          status: 'confirmed',
-          scheduled_at: '2024-01-25T14:00:00Z',
-          duration_minutes: 45,
-          price: 120,
-          notes: 'MIT interview preparation',
-          created_at: '2024-01-12',
-          consultant: {
-            id: '102',
-            name: 'Michael Zhang',
-            profile_image_url: 'https://randomuser.me/api/portraits/men/2.jpg',
-            current_college: 'MIT',
-            rating: 4.8,
-          },
-        },
-      ]
-      
       setBookings(mockBookings)
-      
-      // Calculate stats
-      const upcoming = mockBookings.filter(b => 
-        b.status === 'confirmed' && new Date(b.scheduled_at) > new Date()
-      ).length
-      
-      const totalSpent = mockBookings
-        .filter(b => b.status === 'completed')
-        .reduce((sum, b) => sum + b.price, 0)
-      
       setStats({
-        totalSessions: mockBookings.filter(b => b.status === 'completed').length,
-        upcomingSessions: upcoming,
-        totalSpent,
+        totalSessions: 12,
+        upcomingSessions: 2,
+        totalSpent: 1450,
         averageRating: 4.8,
-        documentsUploaded: 12,
-        collegesTargeted: mockProfile.preferred_colleges.length,
+        documentsUploaded: 15,
+        collegesTargeted: mockProfile.target_schools?.length || 0,
       })
     } catch (error) {
       console.error('Error loading profile:', error)
     } finally {
       setLoading(false)
-      setRefreshing(false)
     }
   }
-  
-  useEffect(() => {
-    loadProfile()
-  }, [])
-  
-  const handleLogout = () => {
-    Alert.alert(
-      'Logout',
-      'Are you sure you want to logout?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Logout',
-          style: 'destructive',
-          onPress: async () => {
-            // Clear AsyncStorage
-            await AsyncStorage.clear()
-            navigation.reset({
-              index: 0,
-              routes: [{ name: 'onboarding' }],
-            })
-          },
-        },
-      ],
-    )
+
+  const handleRefresh = async () => {
+    setRefreshing(true)
+    await loadProfile()
+    setRefreshing(false)
   }
-  
+
   if (loading) {
     return (
-      <View style={{ flex: 1, backgroundColor: themedColors.background.default, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" color={primaryColors.primary} />
+      <View style={{ flex: 1, backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color={colors.primary} />
       </View>
     )
   }
-  
+
   return (
-    <View style={{ flex: 1, backgroundColor: themedColors.background.default }}>
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
       <SafeAreaView style={{ flex: 1 }} edges={['top']}>
         <ScrollView
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={() => {
-                setRefreshing(true)
-                loadProfile()
-              }}
-              tintColor={primaryColors.primary}
-            />
-          }
           showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={colors.primary} />
+          }
         >
-          {/* Header */}
+          {/* Header Section */}
           <View
             style={{
               paddingHorizontal: 20,
               paddingTop: 12,
               paddingBottom: 24,
-              backgroundColor: themedColors.surface.raised,
+              backgroundColor: colors.surfaceRaised,
               borderBottomWidth: 1,
-              borderBottomColor: themedColors.border.default,
+              borderBottomColor: colors.border,
             }}
           >
             {/* Top Bar */}
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-              <Text style={{ fontSize: 28, fontWeight: '700', color: themedColors.text.primary }}>
+              <Text style={{ fontSize: 28, fontWeight: '700', color: colors.text }}>
                 Profile
               </Text>
+              
               <View style={{ flexDirection: 'row', gap: 12 }}>
-                <ThemeSwitcherCompact />
                 <TouchableOpacity
                   onPress={() => setSettingsVisible(true)}
                   style={{
                     width: 40,
                     height: 40,
                     borderRadius: 20,
-                    backgroundColor: themedColors.surface.raised,
+                    backgroundColor: colors.surfaceRaised,
                     justifyContent: 'center',
                     alignItems: 'center',
                     borderWidth: 1,
-                    borderColor: themedColors.border.default,
+                    borderColor: colors.border,
                   }}
                 >
-                  <Feather name="settings" size={20} color={themedColors.text.secondary} />
+                  <Feather name="settings" size={20} color={colors.textSecondary} />
                 </TouchableOpacity>
               </View>
             </View>
-            
+
             {/* Profile Info */}
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Image
-                source={{
-                  uri: profile?.profile_image_url || `https://ui-avatars.com/api/?name=${profile?.name || 'Student'}&background=047857&color=fff`,
-                }}
-                style={{
-                  width: 80,
-                  height: 80,
-                  borderRadius: 40,
-                  borderWidth: 3,
-                  borderColor: primaryColors.primary,
-                }}
+                source={{ uri: `https://ui-avatars.com/api/?name=${profile?.name || 'Student'}&background=10B981&color=fff&size=200` }}
+                style={{ width: 80, height: 80, borderRadius: 40, backgroundColor: colors.gray200 }}
               />
               
               <View style={{ flex: 1, marginLeft: 16 }}>
-                <Text style={{ fontSize: 24, fontWeight: '700', color: themedColors.text.primary }}>
+                <Text style={{ fontSize: 24, fontWeight: '700', color: colors.text }}>
                   {profile?.name || 'Student'}
                 </Text>
-                <Text style={{ fontSize: 16, color: themedColors.text.secondary, marginTop: 4 }}>
+                <Text style={{ fontSize: 16, color: colors.textSecondary, marginTop: 4 }}>
                   {profile?.current_school || 'Add your school'}
                 </Text>
-                <Text style={{ fontSize: 14, color: primaryColors.primary, marginTop: 2, fontWeight: '600' }}>
-                  Class of {profile?.target_application_year || '2025'}
-                </Text>
               </View>
-              
-              <TouchableOpacity
-                onPress={() => Alert.alert('Edit Profile', 'Profile editing coming soon!')}
-                style={{
-                  paddingHorizontal: 16,
-                  paddingVertical: 8,
-                  borderRadius: 20,
-                  backgroundColor: isDark ? colors.primary[800] : colors.primary[50],
-                  borderWidth: 1,
-                  borderColor: primaryColors.primary,
-                }}
-              >
-                <Text style={{ color: primaryColors.primary, fontWeight: '600', fontSize: 14 }}>
-                  Edit
-                </Text>
-              </TouchableOpacity>
             </View>
           </View>
-          
+
           {/* Application Progress */}
           <View style={{ paddingHorizontal: 20, paddingTop: 24 }}>
             <View
               style={{
-                backgroundColor: themedColors.surface.raised,
+                backgroundColor: colors.surfaceRaised,
                 borderRadius: 16,
                 padding: 20,
                 borderWidth: 1,
-                borderColor: themedColors.border.default,
-                ...(isDark && {
-                  shadowColor: colors.primary[500],
-                  shadowOffset: { width: 0, height: 2 },
-                  shadowOpacity: 0.1,
-                  shadowRadius: 8,
-                }),
+                borderColor: colors.border,
               }}
             >
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                <Text style={{ fontSize: 18, fontWeight: '600', color: themedColors.text.primary }}>
+                <Text style={{ fontSize: 18, fontWeight: '600', color: colors.text }}>
                   Application Journey
                 </Text>
-                <Text style={{ fontSize: 24, fontWeight: '700', color: primaryColors.primary }}>
+                <Text style={{ fontSize: 24, fontWeight: '700', color: colors.primary }}>
                   {applicationProgress}%
                 </Text>
               </View>
               
-              {/* Progress Bar */}
-              <View
-                style={{
-                  height: 8,
-                  backgroundColor: isDark ? colors.gray[800] : colors.gray[200],
-                  borderRadius: 4,
-                  overflow: 'hidden',
-                }}
-              >
+              <View style={{ height: 8, backgroundColor: colors.gray200, borderRadius: 4, overflow: 'hidden' }}>
                 <View
                   style={{
                     height: '100%',
                     width: `${applicationProgress}%`,
-                    backgroundColor: primaryColors.primary,
+                    backgroundColor: colors.primary,
                     borderRadius: 4,
-                    ...(isDark && {
-                      shadowColor: colors.primary[500],
-                      shadowOffset: { width: 0, height: 0 },
-                      shadowOpacity: 0.5,
-                      shadowRadius: 4,
-                    }),
                   }}
                 />
               </View>
               
-              <Text style={{ fontSize: 14, color: themedColors.text.secondary, marginTop: 8 }}>
+              <Text style={{ fontSize: 14, color: colors.textSecondary, marginTop: 8 }}>
                 Keep going! You're making great progress.
               </Text>
             </View>
           </View>
-          
-          {/* Quick Stats */}
-          <View style={{ paddingHorizontal: 20, paddingTop: 20 }}>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginHorizontal: -20 }}>
-              <View style={{ flexDirection: 'row', gap: 12, paddingHorizontal: 20 }}>
-                {/* Credits */}
-                <View
-                  style={{
-                    backgroundColor: isDark ? colors.primary[900] : colors.primary[50],
-                    borderRadius: 16,
-                    padding: 16,
-                    minWidth: 140,
-                    borderWidth: 1,
-                    borderColor: isDark ? colors.primary[700] : colors.primary[200],
-                  }}
-                >
-                  <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
-                    <Feather name="dollar-sign" size={20} color={primaryColors.primary} />
-                    <Text style={{ fontSize: 12, color: primaryColors.primary, marginLeft: 4, fontWeight: '600' }}>
-                      Credits
-                    </Text>
-                  </View>
-                  <Text style={{ fontSize: 24, fontWeight: '700', color: themedColors.text.primary }}>
-                    ${profile?.credit_balance || 0}
-                  </Text>
-                  <TouchableOpacity
-                    style={{ marginTop: 8 }}
-                    onPress={() => Alert.alert('Add Credits', 'Credit purchase flow would open here')}
+
+          {/* Stats Grid */}
+          <View style={{ paddingHorizontal: 20, paddingTop: 24 }}>
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
+              {/* Credits */}
+              <View
+                style={{
+                  flex: 1,
+                  minWidth: '45%',
+                  backgroundColor: colors.primary + '10',
+                  borderRadius: 12,
+                  padding: 16,
+                  borderWidth: 1,
+                  borderColor: colors.primary + '20',
+                }}
+              >
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+                  <View
+                    style={{
+                      width: 32,
+                      height: 32,
+                      borderRadius: 16,
+                      backgroundColor: colors.primary,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}
                   >
-                    <Text style={{ fontSize: 12, color: primaryColors.primary, fontWeight: '600' }}>
-                      Add more →
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-                
-                {/* Sessions */}
-                <View
-                  style={{
-                    backgroundColor: isDark ? colors.purple[900] : colors.purple[50],
-                    borderRadius: 16,
-                    padding: 16,
-                    minWidth: 140,
-                    borderWidth: 1,
-                    borderColor: isDark ? colors.purple[700] : colors.purple[200],
-                  }}
-                >
-                  <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
-                    <Feather name="calendar" size={20} color={colors.purple[600]} />
-                    <Text style={{ fontSize: 12, color: colors.purple[600], marginLeft: 4, fontWeight: '600' }}>
-                      Sessions
-                    </Text>
+                    <Feather name="dollar-sign" size={16} color="#fff" />
                   </View>
-                  <Text style={{ fontSize: 24, fontWeight: '700', color: themedColors.text.primary }}>
-                    {stats.totalSessions}
-                  </Text>
-                  <Text style={{ fontSize: 12, color: themedColors.text.secondary, marginTop: 4 }}>
-                    {stats.upcomingSessions} upcoming
+                  <Text style={{ fontSize: 12, color: colors.primary, marginLeft: 8, fontWeight: '600' }}>
+                    Credits
                   </Text>
                 </View>
-                
-                {/* Colleges */}
-                <View
-                  style={{
-                    backgroundColor: isDark ? colors.teal[900] : colors.teal[50],
-                    borderRadius: 16,
-                    padding: 16,
-                    minWidth: 140,
-                    borderWidth: 1,
-                    borderColor: isDark ? colors.teal[700] : colors.teal[200],
-                  }}
-                >
-                  <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
-                    <Feather name="flag" size={20} color={colors.teal[600]} />
-                    <Text style={{ fontSize: 12, color: colors.teal[600], marginLeft: 4, fontWeight: '600' }}>
-                      Target Schools
-                    </Text>
-                  </View>
-                  <Text style={{ fontSize: 24, fontWeight: '700', color: themedColors.text.primary }}>
-                    {stats.collegesTargeted}
-                  </Text>
-                  <TouchableOpacity
-                    style={{ marginTop: 8 }}
-                    onPress={() => Alert.alert('Target Schools', `Managing ${stats.collegesTargeted} schools`)}
-                  >
-                    <Text style={{ fontSize: 12, color: colors.teal[600], fontWeight: '600' }}>
-                      Manage →
-                    </Text>
-                  </TouchableOpacity>
-                </View>
+                <Text style={{ fontSize: 24, fontWeight: '700', color: colors.text }}>
+                  ${profile?.credit_balance || 0}
+                </Text>
               </View>
-            </ScrollView>
+
+              {/* Sessions */}
+              <View
+                style={{
+                  flex: 1,
+                  minWidth: '45%',
+                  backgroundColor: colors.purple[50],
+                  borderRadius: 12,
+                  padding: 16,
+                  borderWidth: 1,
+                  borderColor: colors.purple[100],
+                }}
+              >
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+                  <View
+                    style={{
+                      width: 32,
+                      height: 32,
+                      borderRadius: 16,
+                      backgroundColor: colors.purple[600],
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <Feather name="calendar" size={16} color="#fff" />
+                  </View>
+                  <Text style={{ fontSize: 12, color: colors.purple[600], marginLeft: 8, fontWeight: '600' }}>
+                    Sessions
+                  </Text>
+                </View>
+                <Text style={{ fontSize: 24, fontWeight: '700', color: colors.text }}>
+                  {stats.totalSessions}
+                </Text>
+                <Text style={{ fontSize: 12, color: colors.textSecondary, marginTop: 4 }}>
+                  {stats.upcomingSessions} upcoming
+                </Text>
+              </View>
+
+              {/* Colleges */}
+              <View
+                style={{
+                  flex: 1,
+                  minWidth: '45%',
+                  backgroundColor: colors.teal[50],
+                  borderRadius: 12,
+                  padding: 16,
+                  borderWidth: 1,
+                  borderColor: colors.teal[100],
+                }}
+              >
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+                  <View
+                    style={{
+                      width: 32,
+                      height: 32,
+                      borderRadius: 16,
+                      backgroundColor: colors.teal[600],
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <Feather name="flag" size={16} color="#fff" />
+                  </View>
+                  <Text style={{ fontSize: 12, color: colors.teal[600], marginLeft: 8, fontWeight: '600' }}>
+                    Colleges
+                  </Text>
+                </View>
+                <Text style={{ fontSize: 24, fontWeight: '700', color: colors.text }}>
+                  {stats.collegesTargeted}
+                </Text>
+                <Text style={{ fontSize: 12, color: colors.teal[600], fontWeight: '600' }}>
+                  Schools Ready
+                </Text>
+              </View>
+
+              {/* Guides */}
+              <View
+                style={{
+                  flex: 1,
+                  minWidth: '45%',
+                  backgroundColor: colors.orange[50],
+                  borderRadius: 12,
+                  padding: 16,
+                  borderWidth: 1,
+                  borderColor: colors.orange[100],
+                }}
+              >
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+                  <View
+                    style={{
+                      width: 32,
+                      height: 32,
+                      borderRadius: 16,
+                      backgroundColor: colors.orange[600],
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <Feather name="book-open" size={16} color="#fff" />
+                  </View>
+                  <Text style={{ fontSize: 12, color: colors.orange[600], marginLeft: 8, fontWeight: '600' }}>
+                    Guides
+                  </Text>
+                </View>
+                <Text style={{ fontSize: 24, fontWeight: '700', color: colors.text }}>
+                  {profile?.guides_published || 0}
+                </Text>
+                <Text style={{ fontSize: 12, color: colors.orange[600], fontWeight: '600' }}>
+                  Published
+                </Text>
+              </View>
+            </View>
           </View>
-          
-          {/* Upcoming Milestones */}
+
+          {/* Milestones */}
           <View style={{ paddingHorizontal: 20, paddingTop: 24 }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-              <Text style={{ fontSize: 20, fontWeight: '600', color: themedColors.text.primary }}>
+              <Text style={{ fontSize: 20, fontWeight: '600', color: colors.text }}>
                 Upcoming Milestones
               </Text>
-              <TouchableOpacity onPress={() => Alert.alert('Timeline', 'Timeline view coming soon!')}>
-                <Text style={{ fontSize: 14, color: primaryColors.primary, fontWeight: '600' }}>
-                  View All
-                </Text>
-              </TouchableOpacity>
             </View>
-            
-            {milestones.slice(0, 3).map((milestone, index) => (
+
+            {milestones.map((milestone) => (
               <TouchableOpacity
                 key={milestone.id}
                 style={{
-                  backgroundColor: themedColors.surface.raised,
+                  backgroundColor: colors.surfaceRaised,
                   borderRadius: 12,
                   padding: 16,
                   marginBottom: 12,
                   borderWidth: 1,
-                  borderColor: themedColors.border.default,
+                  borderColor: colors.border,
                   flexDirection: 'row',
                   alignItems: 'center',
                 }}
-                onPress={() => Alert.alert(milestone.title, milestone.description || '')}
+                onPress={() => Alert.alert(milestone.title, milestone.description)}
               >
                 <View
                   style={{
-                    width: 44,
-                    height: 44,
-                    borderRadius: 22,
-                    backgroundColor: milestone.completed
-                      ? isDark ? colors.primary[800] : colors.primary[100]
-                      : isDark ? colors.gray[800] : colors.gray[100],
+                    width: 40,
+                    height: 40,
+                    borderRadius: 20,
+                    backgroundColor: milestone.completed ? colors.primary + '20' : colors.gray[100],
                     justifyContent: 'center',
                     alignItems: 'center',
                     marginRight: 12,
@@ -542,95 +536,88 @@ export function ProfileScreen() {
                   <Feather
                     name={milestone.completed ? 'check' : (milestone.icon as any || 'circle')}
                     size={20}
-                    color={milestone.completed ? primaryColors.primary : themedColors.text.secondary}
+                    color={milestone.completed ? colors.primary : colors.textSecondary}
                   />
                 </View>
                 
                 <View style={{ flex: 1 }}>
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                    <Text style={{ fontSize: 16, fontWeight: '600', color: themedColors.text.primary }}>
+                    <Text style={{ fontSize: 16, fontWeight: '600', color: colors.text }}>
                       {milestone.title}
                     </Text>
                     {milestone.college && (
                       <View
                         style={{
-                          backgroundColor: colors.university[milestone.college.toLowerCase()] || colors.gray[600],
                           paddingHorizontal: 8,
                           paddingVertical: 2,
-                          borderRadius: 10,
+                          backgroundColor: UNIVERSITY_COLORS[milestone.college.toLowerCase()] || colors.gray600,
+                          borderRadius: 4,
                         }}
                       >
-                        <Text style={{ fontSize: 11, color: '#FFFFFF', fontWeight: '600' }}>
+                        <Text style={{ fontSize: 10, color: '#fff', fontWeight: '600' }}>
                           {milestone.college}
                         </Text>
                       </View>
                     )}
                   </View>
-                  <Text style={{ fontSize: 14, color: themedColors.text.secondary, marginTop: 2 }}>
+                  <Text style={{ fontSize: 14, color: colors.textSecondary, marginTop: 2 }}>
                     {milestone.description}
                   </Text>
-                  {milestone.due_date && (
-                    <Text style={{ fontSize: 12, color: colors.warning.main, marginTop: 4, fontWeight: '500' }}>
-                      Due {new Date(milestone.due_date).toLocaleDateString()}
+                  {!milestone.completed && milestone.deadline && (
+                    <Text style={{ fontSize: 12, color: colors.warning, marginTop: 4, fontWeight: '500' }}>
+                      Due: {new Date(milestone.deadline).toLocaleDateString()}
                     </Text>
                   )}
                 </View>
                 
-                <Feather name="chevron-right" size={20} color={themedColors.text.secondary} />
+                <Feather name="chevron-right" size={20} color={colors.textSecondary} />
               </TouchableOpacity>
             ))}
           </View>
-          
+
           {/* Recent Sessions */}
           {bookings.length > 0 && (
             <View style={{ paddingHorizontal: 20, paddingTop: 24, paddingBottom: 40 }}>
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-                <Text style={{ fontSize: 20, fontWeight: '600', color: themedColors.text.primary }}>
+                <Text style={{ fontSize: 20, fontWeight: '600', color: colors.text }}>
                   Recent Sessions
                 </Text>
-                <TouchableOpacity onPress={() => Alert.alert('All Sessions', 'View all booking history')}>
-                  <Text style={{ fontSize: 14, color: primaryColors.primary, fontWeight: '600' }}>
-                    View All
-                  </Text>
-                </TouchableOpacity>
               </View>
-              
-              {bookings.slice(0, 3).map((booking) => (
+
+              {bookings.map((booking) => (
                 <TouchableOpacity
                   key={booking.id}
                   style={{
-                    backgroundColor: themedColors.surface.raised,
+                    backgroundColor: colors.surfaceRaised,
                     borderRadius: 12,
                     padding: 16,
                     marginBottom: 12,
                     borderWidth: 1,
-                    borderColor: themedColors.border.default,
+                    borderColor: colors.border,
                     flexDirection: 'row',
                     alignItems: 'center',
                   }}
-                  onPress={() => Alert.alert('Session Details', `${booking.service_type} with ${booking.consultant?.name}`)}
+                  onPress={() => Alert.alert('Session Details', booking.notes || 'No notes available')}
                 >
                   <Image
-                    source={{
-                      uri: booking.consultant?.profile_image_url || 
-                        `https://ui-avatars.com/api/?name=${booking.consultant?.name || 'Consultant'}&background=047857&color=fff`,
-                    }}
+                    source={{ uri: booking.consultant?.avatar }}
                     style={{
                       width: 48,
                       height: 48,
                       borderRadius: 24,
+                      backgroundColor: colors.gray200,
                       marginRight: 12,
                     }}
                   />
                   
                   <View style={{ flex: 1 }}>
-                    <Text style={{ fontSize: 16, fontWeight: '600', color: themedColors.text.primary }}>
+                    <Text style={{ fontSize: 16, fontWeight: '600', color: colors.text }}>
                       {booking.consultant?.name || 'Consultant'}
                     </Text>
-                    <Text style={{ fontSize: 14, color: themedColors.text.secondary }}>
+                    <Text style={{ fontSize: 14, color: colors.textSecondary }}>
                       {booking.service_type.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
                     </Text>
-                    <Text style={{ fontSize: 12, color: themedColors.text.tertiary, marginTop: 2 }}>
+                    <Text style={{ fontSize: 12, color: colors.textTertiary, marginTop: 2 }}>
                       {new Date(booking.scheduled_at).toLocaleDateString()}
                     </Text>
                   </View>
@@ -638,34 +625,34 @@ export function ProfileScreen() {
                   <View style={{ alignItems: 'flex-end' }}>
                     <View
                       style={{
-                        paddingHorizontal: 12,
+                        paddingHorizontal: 8,
                         paddingVertical: 4,
-                        borderRadius: 12,
-                        backgroundColor:
-                          booking.status === 'completed'
-                            ? isDark ? colors.primary[800] : colors.primary[100]
+                        backgroundColor: 
+                          booking.status === 'completed' 
+                            ? colors.primary + '20'
                             : booking.status === 'confirmed'
-                            ? isDark ? colors.info[800] : colors.info[100]
-                            : isDark ? colors.gray[800] : colors.gray[100],
+                            ? colors.info + '20'
+                            : colors.gray[100],
+                        borderRadius: 4,
                       }}
                     >
                       <Text
                         style={{
                           fontSize: 12,
                           fontWeight: '600',
-                          color:
+                          color: 
                             booking.status === 'completed'
-                              ? primaryColors.primary
+                              ? colors.primary
                               : booking.status === 'confirmed'
-                              ? colors.info.main
-                              : themedColors.text.secondary,
+                              ? colors.info
+                              : colors.textSecondary,
                           textTransform: 'capitalize',
                         }}
                       >
                         {booking.status}
                       </Text>
                     </View>
-                    <Text style={{ fontSize: 14, color: themedColors.text.secondary, marginTop: 4 }}>
+                    <Text style={{ fontSize: 14, color: colors.textSecondary, marginTop: 4 }}>
                       ${booking.price}
                     </Text>
                   </View>
@@ -673,10 +660,88 @@ export function ProfileScreen() {
               ))}
             </View>
           )}
-          
+
+          {/* Guide Impact */}
+          {profile && profile.guides_published > 0 && (
+            <View style={{ paddingHorizontal: 20, paddingTop: 24 }}>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                <Text style={{ fontSize: 20, fontWeight: '600', color: colors.text }}>
+                  Your Guide Impact
+                </Text>
+              </View>
+              
+              <View
+                style={{
+                  backgroundColor: colors.surfaceRaised,
+                  borderRadius: 16,
+                  padding: 20,
+                  borderWidth: 1,
+                  borderColor: colors.border,
+                }}
+              >
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
+                  <View
+                    style={{
+                      width: 48,
+                      height: 48,
+                      borderRadius: 24,
+                      backgroundColor: colors.orange[100],
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      marginRight: 12,
+                    }}
+                  >
+                    <Feather name="book-open" size={24} color={colors.orange[600]} />
+                  </View>
+                  <View>
+                    <Text style={{ fontSize: 18, fontWeight: '700', color: colors.text }}>
+                      {profile.guides_published} Guides Published
+                    </Text>
+                    <Text style={{ fontSize: 14, color: colors.textSecondary }}>
+                      Helping students succeed
+                    </Text>
+                  </View>
+                </View>
+                
+                <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
+                  <View style={{ alignItems: 'center' }}>
+                    <Text style={{ fontSize: 24, fontWeight: '700', color: colors.primary }}>
+                      {profile.guide_views_total.toLocaleString()}
+                    </Text>
+                    <Text style={{ fontSize: 12, color: colors.textSecondary, marginTop: 4 }}>
+                      Total Views
+                    </Text>
+                  </View>
+                  
+                  <View style={{ width: 1, backgroundColor: colors.border, marginHorizontal: 20 }} />
+                  
+                  <View style={{ alignItems: 'center' }}>
+                    <Text style={{ fontSize: 24, fontWeight: '700', color: colors.primary }}>
+                      {profile.guide_helpful_total}
+                    </Text>
+                    <Text style={{ fontSize: 12, color: colors.textSecondary, marginTop: 4 }}>
+                      Helpful Votes
+                    </Text>
+                  </View>
+                  
+                  <View style={{ width: 1, backgroundColor: colors.border, marginHorizontal: 20 }} />
+                  
+                  <View style={{ alignItems: 'center' }}>
+                    <Text style={{ fontSize: 24, fontWeight: '700', color: colors.primary }}>
+                      {Math.round(profile.guide_helpful_total / profile.guides_published)}
+                    </Text>
+                    <Text style={{ fontSize: 12, color: colors.textSecondary, marginTop: 4 }}>
+                      Avg. Rating
+                    </Text>
+                  </View>
+                </View>
+              </View>
+            </View>
+          )}
+
           {/* Quick Actions */}
-          <View style={{ paddingHorizontal: 20, paddingBottom: 40 }}>
-            <Text style={{ fontSize: 20, fontWeight: '600', color: themedColors.text.primary, marginBottom: 16 }}>
+          <View style={{ paddingHorizontal: 20, paddingBottom: 40, paddingTop: 24 }}>
+            <Text style={{ fontSize: 20, fontWeight: '600', color: colors.text, marginBottom: 16 }}>
               Quick Actions
             </Text>
             
@@ -685,40 +750,17 @@ export function ProfileScreen() {
                 style={{
                   flex: 1,
                   minWidth: '45%',
-                  backgroundColor: primaryColors.primary,
-                  borderRadius: 12,
-                  padding: 16,
-                  alignItems: 'center',
-                  ...(isDark && {
-                    shadowColor: colors.primary[500],
-                    shadowOffset: { width: 0, height: 4 },
-                    shadowOpacity: 0.3,
-                    shadowRadius: 8,
-                  }),
-                }}
-                onPress={() => Alert.alert('Browse Consultants', 'Opens consultant browser')}
-              >
-                <Feather name="search" size={24} color="#FFFFFF" />
-                <Text style={{ color: '#FFFFFF', fontWeight: '600', marginTop: 8 }}>
-                  Find Consultants
-                </Text>
-              </TouchableOpacity>
-              
-              <TouchableOpacity
-                style={{
-                  flex: 1,
-                  minWidth: '45%',
-                  backgroundColor: themedColors.surface.raised,
+                  backgroundColor: colors.surfaceRaised,
                   borderRadius: 12,
                   padding: 16,
                   alignItems: 'center',
                   borderWidth: 1,
-                  borderColor: themedColors.border.default,
+                  borderColor: colors.border,
                 }}
                 onPress={() => setDocumentsVisible(true)}
               >
-                <Feather name="file-text" size={24} color={primaryColors.primary} />
-                <Text style={{ color: themedColors.text.primary, fontWeight: '600', marginTop: 8 }}>
+                <Feather name="file-text" size={24} color={colors.primary} />
+                <Text style={{ color: colors.text, fontWeight: '600', marginTop: 8 }}>
                   My Documents
                 </Text>
               </TouchableOpacity>
@@ -727,17 +769,17 @@ export function ProfileScreen() {
                 style={{
                   flex: 1,
                   minWidth: '45%',
-                  backgroundColor: themedColors.surface.raised,
+                  backgroundColor: colors.surfaceRaised,
                   borderRadius: 12,
                   padding: 16,
                   alignItems: 'center',
                   borderWidth: 1,
-                  borderColor: themedColors.border.default,
+                  borderColor: colors.border,
                 }}
                 onPress={() => Alert.alert('Messages', 'Opens messaging interface')}
               >
-                <Feather name="message-circle" size={24} color={primaryColors.primary} />
-                <Text style={{ color: themedColors.text.primary, fontWeight: '600', marginTop: 8 }}>
+                <Feather name="message-circle" size={24} color={colors.primary} />
+                <Text style={{ color: colors.text, fontWeight: '600', marginTop: 8 }}>
                   Messages
                 </Text>
               </TouchableOpacity>
@@ -746,34 +788,64 @@ export function ProfileScreen() {
                 style={{
                   flex: 1,
                   minWidth: '45%',
-                  backgroundColor: themedColors.surface.raised,
+                  backgroundColor: colors.surfaceRaised,
                   borderRadius: 12,
                   padding: 16,
                   alignItems: 'center',
                   borderWidth: 1,
-                  borderColor: colors.accent[600],
+                  borderColor: colors.border,
                 }}
-                onPress={handleLogout}
+                onPress={() => navigation?.navigate('Payments')}
               >
-                <Feather name="log-out" size={24} color={colors.accent[600]} />
-                <Text style={{ color: colors.accent[600], fontWeight: '600', marginTop: 8 }}>
-                  Logout
+                <Feather name="credit-card" size={24} color={colors.primary} />
+                <Text style={{ color: colors.text, fontWeight: '600', marginTop: 8 }}>
+                  Payment History
+                </Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity
+                style={{
+                  flex: 1,
+                  minWidth: '45%',
+                  backgroundColor: colors.primary,
+                  borderRadius: 12,
+                  padding: 16,
+                  alignItems: 'center',
+                }}
+                onPress={() => Alert.alert('Browse Consultants', 'Opens consultant browser')}
+              >
+                <Feather name="search" size={24} color="#fff" />
+                <Text style={{ color: '#fff', fontWeight: '600', marginTop: 8 }}>
+                  Find Consultants
                 </Text>
               </TouchableOpacity>
             </View>
+            
+            {/* Sign Out Button */}
+            <TouchableOpacity
+              style={{
+                marginTop: 32,
+                backgroundColor: colors.surfaceRaised,
+                borderRadius: 12,
+                padding: 16,
+                alignItems: 'center',
+                borderWidth: 2,
+                borderColor: colors.accent,
+              }}
+              onPress={() => Alert.alert('Sign Out', 'Are you sure you want to sign out?')}
+            >
+              <Feather name="log-out" size={24} color={colors.accent} />
+              <Text style={{ color: colors.accent, fontWeight: '600', marginTop: 8 }}>
+                Sign Out
+              </Text>
+            </TouchableOpacity>
           </View>
         </ScrollView>
       </SafeAreaView>
-      
+
       {/* Modals */}
-      <SettingsModal
-        visible={settingsVisible}
-        onClose={() => setSettingsVisible(false)}
-      />
-      <DocumentsModal
-        visible={documentsVisible}
-        onClose={() => setDocumentsVisible(false)}
-      />
+      <SettingsModal visible={settingsVisible} onClose={() => setSettingsVisible(false)} />
+      <DocumentsModal visible={documentsVisible} onClose={() => setDocumentsVisible(false)} />
     </View>
   )
 }

@@ -1,343 +1,215 @@
-"use client"
+'use client'
 
 import { useState } from 'react'
-import MessagingModal from './MessagingModal'
-
-interface Consultant {
-  id: number
-  name: string
-  college: string
-  verified: boolean
-  major?: string
-  rating: number
-  review_count: number
-  about_me: string
-  working: boolean
-  services: Record<string, string[]>
-  years_experience: number
-  location: string
-}
+import { useRouter } from 'next/navigation'
 
 interface ConsultantCardProps {
-  consultant: Consultant
-  onClick?: () => void
-  currentUserId?: string
-  currentUserType?: 'student' | 'consultant'
+  consultant: {
+    id: string
+    name: string
+    current_college: string
+    bio: string
+    rating?: number
+    total_reviews?: number
+    total_bookings?: number
+    response_time_hours?: number
+    is_available?: boolean
+    verification_status?: string
+    profile_image_url?: string
+    services?: Array<{
+      id: string
+      service_type: string
+      title: string
+      prices: number[]
+    }>
+  }
 }
 
-export default function ConsultantCard({ 
-  consultant, 
-  onClick, 
-  currentUserId, 
-  currentUserType 
-}: ConsultantCardProps) {
-  const [isHovered, setIsHovered] = useState(false)
+export default function ConsultantCard({ consultant }: ConsultantCardProps) {
+  const router = useRouter()
   const [isFavorited, setIsFavorited] = useState(false)
-  const [showMessagingModal, setShowMessagingModal] = useState(false)
+  
+  // Get initials for avatar
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(word => word[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2)
+  }
+
+  // Get university color
+  const getUniversityColor = (college: string) => {
+    const colors: Record<string, string> = {
+      'Stanford University': '#8C1515',
+      'Harvard University': '#A51C30',
+      'MIT': '#A31F34',
+      'Yale University': '#00356B',
+      'Princeton University': '#FF6600',
+      'Columbia University': '#003DA5',
+      'Cornell University': '#B31B1B',
+      'Brown University': '#4E3629',
+      'University of Pennsylvania': '#990000',
+      'Northwestern University': '#4E2A84',
+      'Dartmouth College': '#00693E',
+      'Duke University': '#00356B',
+      'Vanderbilt University': '#866D4B',
+      'Rice University': '#002D72',
+      'Emory University': '#012169'
+    }
+    return colors[college] || '#6B7280'
+  }
+
+  // Calculate min price
+  const minPrice = consultant.services?.length 
+    ? Math.min(...consultant.services.flatMap(s => s.prices))
+    : 0
+
+  // Format response time
+  const formatResponseTime = (hours?: number) => {
+    if (!hours) return 'Usually responds quickly'
+    if (hours < 1) return 'Responds in < 1 hour'
+    if (hours < 24) return `Responds in ${Math.round(hours)}h`
+    return `Responds in ${Math.round(hours / 24)}d`
+  }
 
   return (
-    <div
-      style={{
-        background: 'white',
-        borderRadius: 8,
-        border: '1px solid #e4e7ec',
-        boxShadow: isHovered 
-          ? '0 8px 25px rgba(0, 0, 0, 0.12)' 
-          : '0 2px 8px rgba(0, 0, 0, 0.04)',
-        overflow: 'hidden',
-        position: 'relative',
-        cursor: 'pointer',
-        transition: 'all 0.3s ease',
-        transform: isHovered ? 'translateY(-4px)' : 'translateY(0)',
-        height: 360,
-        display: 'flex',
-        flexDirection: 'column'
-      }}
-      onClick={onClick}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      {/* Favorite button */}
-      <button
-        onClick={(e) => {
-          e.stopPropagation()
-          setIsFavorited(!isFavorited)
-        }}
-        style={{
-          position: 'absolute',
-          top: 12,
-          right: 12,
-          background: 'white',
-          border: '1px solid #e4e7ec',
-          borderRadius: '50%',
-          width: 32,
-          height: 32,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          cursor: 'pointer',
-          zIndex: 2,
-          transition: 'all 0.2s ease',
-          boxShadow: '0 2px 4px rgba(0, 0, 0, 0.08)',
-        }}
-      >
-        <span style={{ 
-          fontSize: 14, 
-          color: isFavorited ? '#ef4444' : '#9ca3af',
-          transition: 'color 0.2s ease'
-        }}>
-          {isFavorited ? '♥' : '♡'}
-        </span>
-      </button>
-
-      {/* Profile image */}
-      <div style={{ 
-        padding: '20px 20px 0 20px',
-        display: 'flex',
-        alignItems: 'center',
-        gap: 12
-      }}>
-        <div
-          style={{
-            width: 48,
-            height: 48,
-            borderRadius: '50%',
-            background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
-            border: '2px solid #f9fafb',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'white',
-            fontSize: 18,
-            fontWeight: 600
-          }}
-        >
-          {consultant.name.charAt(0)}
-        </div>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: 6, 
-            marginBottom: 2
-          }}>
-            <h3 style={{ 
-              fontSize: 16, 
-              fontWeight: 600, 
-              color: '#111827',
-              margin: 0,
-              lineHeight: 1.2,
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap'
-            }}>
-              {consultant.name}
-            </h3>
-            {consultant.verified && (
-              <div
-                style={{
-                  width: 16,
-                  height: 16,
-                  borderRadius: '50%',
-                  background: '#1d9bf0',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: 'white',
-                  fontSize: 9,
-                  fontWeight: 700,
-                  flexShrink: 0
-                }}
+    <div className="bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 group cursor-pointer"
+         onClick={() => router.push(`/consultants/${consultant.id}`)}>
+      {/* Header with Status and Actions */}
+      <div className="px-6 pt-5 pb-3">
+        <div className="flex items-start gap-4">
+          {/* Left: Avatar */}
+          <div className="relative flex-shrink-0">
+            {consultant.profile_image_url ? (
+              <img 
+                src={consultant.profile_image_url}
+                alt={consultant.name}
+                className="w-16 h-16 rounded-lg object-cover"
+              />
+            ) : (
+              <div 
+                className="w-16 h-16 rounded-lg flex items-center justify-center text-white text-lg font-bold"
+                style={{ backgroundColor: getUniversityColor(consultant.current_college) }}
               >
-                ✓
+                {getInitials(consultant.name)}
+              </div>
+            )}
+            {consultant.verification_status === 'approved' && (
+              <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-0.5">
+                <div className="bg-blue-500 rounded-full p-1">
+                  <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                </div>
               </div>
             )}
           </div>
-          
-          <p style={{ 
-            color: '#6b7280', 
-            fontSize: 13,
-            fontWeight: 500,
-            margin: 0,
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap'
-          }}>
-            {consultant.college}
-          </p>
-        </div>
-        
-        {/* Online status */}
-        <div
-          style={{
-            width: 12,
-            height: 12,
-            borderRadius: '50%',
-            background: consultant.working ? '#10b981' : '#d1d5db',
-            border: '2px solid white',
-            boxShadow: '0 0 0 1px rgba(0, 0, 0, 0.05)',
-            flexShrink: 0
-          }}
-        />
-      </div>
 
-      {/* Service description */}
-      <div style={{ 
-        padding: '0 20px',
-        marginTop: 12
-      }}>
-        <p style={{ 
-          color: '#374151', 
-          fontSize: 14,
-          lineHeight: 1.4,
-          margin: 0,
-          fontWeight: 400,
-          overflow: 'hidden',
-          display: '-webkit-box',
-          WebkitLineClamp: 2,
-          WebkitBoxOrient: 'vertical',
-          height: '2.8em'
-        }}>
-          {consultant.about_me}
+          {/* Middle: Info */}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-start justify-between mb-1">
+              <div>
+                <h3 className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors truncate">
+                  {consultant.name}
+                </h3>
+                <p className="text-sm text-gray-600">{consultant.current_college}</p>
+              </div>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setIsFavorited(!isFavorited)
+                }}
+                className="text-gray-400 hover:text-red-500 transition-colors ml-2"
+              >
+                <svg className="w-5 h-5" fill={isFavorited ? 'currentColor' : 'none'} stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Rating and Online Status */}
+            <div className="flex items-center gap-3 text-sm">
+              {consultant.rating && consultant.rating > 0 && (
+                <div className="flex items-center gap-1">
+                  <span className="text-yellow-500">★</span>
+                  <span className="font-medium">{consultant.rating.toFixed(1)}</span>
+                  <span className="text-gray-500">({consultant.total_reviews || 0})</span>
+                </div>
+              )}
+              {consultant.is_available && (
+                <div className="flex items-center gap-1">
+                  <div className="w-2 h-2 bg-green-500 rounded-full" />
+                  <span className="text-green-600 text-xs font-medium">Online</span>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Bio */}
+        <p className="text-sm text-gray-700 line-clamp-2 mt-3 mb-3">
+          {consultant.bio}
         </p>
-      </div>
 
-      {/* Service tags */}
-      <div style={{ 
-        padding: '0 20px',
-        marginTop: 12,
-        display: 'flex',
-        flexWrap: 'wrap',
-        gap: 6
-      }}>
-        {Object.keys(consultant.services).slice(0, 2).map((service) => (
-          <span 
-            key={service}
-            style={{
-              background: '#f3f4f6',
-              color: '#6b7280',
-              fontSize: 11,
-              fontWeight: 500,
-              borderRadius: 4,
-              padding: '4px 8px',
-              textTransform: 'capitalize',
-            }}
-          >
-            {service.replace('_', ' ')}
-          </span>
-        ))}
-        {Object.keys(consultant.services).length > 2 && (
-          <span style={{
-            color: '#9ca3af',
-            fontSize: 11,
-            fontWeight: 500,
-          }}>
-            +{Object.keys(consultant.services).length - 2} more
-          </span>
+        {/* Services Tags */}
+        {consultant.services && consultant.services.length > 0 && (
+          <div className="flex flex-wrap gap-1.5 mb-3">
+            {consultant.services.slice(0, 3).map((service, index) => (
+              <span 
+                key={service.id || index}
+                className="px-2 py-0.5 bg-gray-100 text-gray-700 rounded text-xs font-medium"
+              >
+                {service.title.split(' ').slice(0, 2).join(' ')}
+              </span>
+            ))}
+            {consultant.services.length > 3 && (
+              <span className="px-2 py-0.5 text-gray-500 text-xs">
+                +{consultant.services.length - 3}
+              </span>
+            )}
+          </div>
         )}
-      </div>
 
-      {/* Rating and reviews */}
-      <div style={{ 
-        padding: '0 20px',
-        marginTop: 12,
-        display: 'flex', 
-        alignItems: 'center', 
-        gap: 6
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <span style={{ color: '#fbbf24', fontSize: 14 }}>★</span>
-          <span style={{ 
-            fontWeight: 600, 
-            color: '#111827', 
-            fontSize: 14
-          }}>
-            {consultant.rating}
-          </span>
+        {/* Stats */}
+        <div className="flex items-center gap-4 text-xs text-gray-600">
+          <div className="flex items-center gap-1">
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>{formatResponseTime(consultant.response_time_hours)}</span>
+          </div>
+          {consultant.total_bookings && consultant.total_bookings > 0 && (
+            <div className="flex items-center gap-1">
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+              </svg>
+              <span>{consultant.total_bookings} students</span>
+            </div>
+          )}
         </div>
-        <span style={{ 
-          color: '#9ca3af', 
-          fontSize: 13,
-          fontWeight: 500
-        }}>
-          ({consultant.review_count} reviews)
-        </span>
       </div>
 
-      {/* Bottom section with price and CTA */}
-      <div style={{ 
-        padding: '16px 20px',
-        borderTop: '1px solid #f3f4f6',
-        marginTop: 'auto',
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'space-between'
-      }}>
-        <div>
-          <span style={{ 
-            color: '#111827', 
-            fontWeight: 700, 
-            fontSize: 18,
-            lineHeight: 1
-          }}>
-            Starting ${(() => {
-              const prices = Object.values(consultant.services).flat()
-                .map(item => {
-                  const match = item.match(/\$(\d+)/)
-                  return match ? parseInt(match[1]) : null
-                })
-                .filter(price => price !== null)
-              return prices.length > 0 ? Math.min(...prices) : 0
-            })()}
-            <span style={{ fontSize: 13, color: '#6b7280', fontWeight: 500 }}></span>
-          </span>
+      {/* Price and Actions */}
+      <div className="border-t bg-gray-50 px-6 py-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <span className="text-xs text-gray-600">Starting at</span>
+            <p className="text-xl font-bold text-gray-900">${minPrice}</p>
+          </div>
+          
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              router.push(`/consultants/${consultant.id}?book=true`)
+            }}
+            className="px-5 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors text-sm"
+          >
+            Book Now
+          </button>
         </div>
-        
-        <button
-          onClick={(e) => {
-            e.stopPropagation()
-            if (consultant.working && currentUserId && currentUserType) {
-              setShowMessagingModal(true)
-            }
-          }}
-          style={{
-            background: consultant.working ? '#1f2937' : '#d1d5db',
-            color: consultant.working ? 'white' : '#9ca3af',
-            border: 'none',
-            borderRadius: 4,
-            padding: '8px 16px',
-            fontWeight: 600,
-            fontSize: 13,
-            cursor: consultant.working ? 'pointer' : 'not-allowed',
-            transition: 'all 0.2s ease',
-          }}
-          disabled={!consultant.working}
-          onMouseEnter={(e) => {
-            if (consultant.working) {
-              e.currentTarget.style.background = '#111827'
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (consultant.working) {
-              e.currentTarget.style.background = '#1f2937'
-            }
-          }}
-        >
-          {consultant.working ? 'Contact' : 'Unavailable'}
-        </button>
       </div>
-
-      {/* Messaging Modal */}
-      {currentUserId && currentUserType && (
-        <MessagingModal
-          isOpen={showMessagingModal}
-          onClose={() => setShowMessagingModal(false)}
-          consultant={consultant}
-          currentUserId={currentUserId}
-          currentUserType={currentUserType}
-          mode="new_conversation"
-        />
-      )}
     </div>
   )
 }

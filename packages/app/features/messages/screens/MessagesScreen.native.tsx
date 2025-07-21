@@ -12,6 +12,7 @@ import {
 } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
+import { useThemedColors } from '../../../contexts/ThemeContext'
 
 interface Message {
   id: string
@@ -98,6 +99,7 @@ const mockMessages: Message[] = [
 
 export function MessagesScreen() {
   const navigation = useNavigation()
+  const colors = useThemedColors()
   const [messages, setMessages] = useState<Message[]>(mockMessages)
   const [searchQuery, setSearchQuery] = useState('')
   const [isEditMode, setIsEditMode] = useState(false)
@@ -178,8 +180,8 @@ export function MessagesScreen() {
         flexDirection: 'row',
         padding: 16,
         borderBottomWidth: 1,
-        borderBottomColor: '#F0F0F0',
-        backgroundColor: '#FFF8F0',
+        borderBottomColor: colors.border,
+        backgroundColor: colors.background,
       }}
     >
       {isEditMode && (
@@ -193,14 +195,14 @@ export function MessagesScreen() {
               height: 24,
               borderRadius: 12,
               borderWidth: 2,
-              borderColor: selectedMessages.includes(item.id) ? '#1DBF73' : '#D0D0D0',
-              backgroundColor: selectedMessages.includes(item.id) ? '#1DBF73' : 'transparent',
+              borderColor: selectedMessages.includes(item.id) ? colors.primary : colors.text.tertiary,
+              backgroundColor: selectedMessages.includes(item.id) ? colors.primary : 'transparent',
               alignItems: 'center',
               justifyContent: 'center',
             }}
           >
             {selectedMessages.includes(item.id) && (
-              <Ionicons name="checkmark" size={16} color="#FFFFFF" />
+              <Ionicons name="checkmark" size={16} color={colors.surface} />
             )}
           </View>
         </TouchableOpacity>
@@ -213,7 +215,7 @@ export function MessagesScreen() {
             width: 48,
             height: 48,
             borderRadius: 24,
-            backgroundColor: '#F0F0F0',
+            backgroundColor: colors.border,
           }}
         />
         {item.unreadCount > 0 && (
@@ -225,12 +227,12 @@ export function MessagesScreen() {
               width: 20,
               height: 20,
               borderRadius: 10,
-              backgroundColor: '#1DBF73',
+              backgroundColor: colors.primary,
               alignItems: 'center',
               justifyContent: 'center',
             }}
           >
-            <Text style={{ color: '#FFFFFF', fontSize: 12, fontWeight: '600' }}>
+            <Text style={{ color: colors.surface, fontSize: 12, fontWeight: '600' }}>
               {item.unreadCount}
             </Text>
           </View>
@@ -239,7 +241,7 @@ export function MessagesScreen() {
 
       <View style={{ flex: 1 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
-          <Text style={{ fontSize: 16, fontWeight: '600', color: '#1a1f36' }}>
+          <Text style={{ fontSize: 16, fontWeight: '600', color: colors.text.primary }}>
             {item.user.name}
           </Text>
           {item.user.isVerified && (
@@ -255,7 +257,7 @@ export function MessagesScreen() {
           numberOfLines={1}
           style={{
             fontSize: 14,
-            color: '#62646A',
+            color: colors.text.secondary,
             marginRight: 8,
           }}
         >
@@ -267,7 +269,7 @@ export function MessagesScreen() {
         {item.isStarred && (
           <Ionicons name="star" size={16} color="#FFB800" style={{ marginBottom: 4 }} />
         )}
-        <Text style={{ fontSize: 12, color: '#95979D' }}>
+        <Text style={{ fontSize: 12, color: colors.text.tertiary }}>
           {formatTimestamp(item.timestamp)}
         </Text>
       </View>
@@ -275,8 +277,8 @@ export function MessagesScreen() {
   )
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#FFF8F0' }}>
-      <View style={{ flex: 1, backgroundColor: '#FFF8F0' }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
+      <View style={{ flex: 1, backgroundColor: colors.background }}>
         {/* Header */}
         <View
           style={{
@@ -286,7 +288,7 @@ export function MessagesScreen() {
             paddingHorizontal: 16,
             paddingVertical: 12,
             borderBottomWidth: 1,
-            borderBottomColor: '#F0F0F0',
+            borderBottomColor: colors.border,
           }}
         >
           {isEditMode ? (
@@ -297,23 +299,23 @@ export function MessagesScreen() {
                   setSelectedMessages([])
                 }}
               >
-                <Text style={{ color: '#1DBF73', fontSize: 16 }}>Cancel</Text>
+                <Text style={{ color: colors.primary, fontSize: 16 }}>Cancel</Text>
               </TouchableOpacity>
-              <Text style={{ fontSize: 18, fontWeight: '600', color: '#1a1f36' }}>
+              <Text style={{ fontSize: 18, fontWeight: '600', color: colors.text.primary }}>
                 {selectedMessages.length} Selected
               </Text>
               <TouchableOpacity onPress={() => setIsEditMode(false)}>
-                <Ionicons name="ellipsis-horizontal" size={24} color="#62646A" />
+                <Ionicons name="ellipsis-horizontal" size={24} color={colors.text.secondary} />
               </TouchableOpacity>
             </>
           ) : (
             <>
               <TouchableOpacity onPress={() => setIsEditMode(true)}>
-                <Text style={{ color: '#1DBF73', fontSize: 16 }}>Edit</Text>
+                <Text style={{ color: colors.primary, fontSize: 16 }}>Edit</Text>
               </TouchableOpacity>
-              <Text style={{ fontSize: 24, fontWeight: '700', color: '#1a1f36' }}>Inbox</Text>
+              <Text style={{ fontSize: 24, fontWeight: '700', color: colors.text.primary }}>Inbox</Text>
               <TouchableOpacity>
-                <Ionicons name="ellipsis-horizontal" size={24} color="#62646A" />
+                <Ionicons name="ellipsis-horizontal" size={24} color={colors.text.secondary} />
               </TouchableOpacity>
             </>
           )}
@@ -325,23 +327,23 @@ export function MessagesScreen() {
             style={{
               flexDirection: 'row',
               alignItems: 'center',
-              backgroundColor: '#F0E8E0',
+              backgroundColor: colors.isDark ? colors.surface : '#F0E8E0',
               borderRadius: 8,
               paddingHorizontal: 12,
               paddingVertical: 10,
             }}
           >
-            <Ionicons name="search" size={20} color="#95979D" />
+            <Ionicons name="search" size={20} color={colors.text.tertiary} />
             <TextInput
               value={searchQuery}
               onChangeText={setSearchQuery}
               placeholder="Find Chat or User"
-              placeholderTextColor="#95979D"
+              placeholderTextColor={colors.text.tertiary}
               style={{
                 flex: 1,
                 marginLeft: 8,
                 fontSize: 16,
-                color: '#1a1f36',
+                color: colors.text.primary,
               }}
             />
           </View>
@@ -353,12 +355,12 @@ export function MessagesScreen() {
           renderItem={renderMessage}
           keyExtractor={(item) => item.id}
           refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#1DBF73" />
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />
           }
           contentContainerStyle={{ flexGrow: 1 }}
           ListEmptyComponent={
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-              <Text style={{ color: '#62646A', fontSize: 16 }}>No messages yet</Text>
+              <Text style={{ color: colors.text.secondary, fontSize: 16 }}>No messages yet</Text>
             </View>
           }
         />
@@ -371,18 +373,18 @@ export function MessagesScreen() {
               justifyContent: 'space-around',
               paddingVertical: 16,
               borderTopWidth: 1,
-              borderTopColor: '#F0F0F0',
-              backgroundColor: '#FFF8F0',
+              borderTopColor: colors.border,
+              backgroundColor: colors.background,
             }}
           >
             <TouchableOpacity onPress={handleArchive} style={{ alignItems: 'center' }}>
-              <Text style={{ color: '#1DBF73', fontSize: 16, fontWeight: '500' }}>Archive</Text>
+              <Text style={{ color: colors.primary, fontSize: 16, fontWeight: '500' }}>Archive</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={handleMarkAsRead} style={{ alignItems: 'center' }}>
-              <Text style={{ color: '#1DBF73', fontSize: 16, fontWeight: '500' }}>Read</Text>
+              <Text style={{ color: colors.primary, fontSize: 16, fontWeight: '500' }}>Read</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={handleDelete} style={{ alignItems: 'center' }}>
-              <Text style={{ color: '#FF5A5F', fontSize: 16, fontWeight: '500' }}>Delete</Text>
+              <Text style={{ color: colors.error || '#FF5A5F', fontSize: 16, fontWeight: '500' }}>Delete</Text>
             </TouchableOpacity>
           </View>
         )}
