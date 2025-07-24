@@ -18,7 +18,7 @@ export function ConsultantProfileScreen() {
 
   if (!consultantId) {
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: colors.background.default }}>
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
           <Text>No consultant ID provided</Text>
         </View>
@@ -27,7 +27,7 @@ export function ConsultantProfileScreen() {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background.default }}>
       <StatusBar barStyle={colors.isDark ? 'light-content' : 'dark-content'} />
       <ConsultantProfile consultantId={consultantId} />
     </SafeAreaView>

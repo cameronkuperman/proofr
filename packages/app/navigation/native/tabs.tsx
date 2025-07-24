@@ -19,9 +19,9 @@ const ComingSoonScreen = ({ title }: { title: string }) => {
   const colors = useThemedColors()
   
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background }}>
-      <Text style={{ color: colors.text, fontSize: 24, fontWeight: '700' }}>{title}</Text>
-      <Text style={{ color: colors.textSecondary, fontSize: 16, marginTop: 8 }}>Coming Soon</Text>
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background.default }}>
+      <Text style={{ color: colors.text.primary, fontSize: 24, fontWeight: '700' }}>{title}</Text>
+      <Text style={{ color: colors.text.secondary, fontSize: 16, marginTop: 8 }}>Coming Soon</Text>
     </View>
   )
 }
@@ -34,13 +34,13 @@ export function TabNavigator() {
       screenOptions={{
         tabBarStyle: {
           backgroundColor: colors.surface,
-          borderTopColor: colors.border,
+          borderTopColor: colors.border.default,
           height: 90,
           paddingBottom: 34,
           paddingTop: 10,
         },
         tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: colors.textSecondary,
+        tabBarInactiveTintColor: colors.text.secondary,
         headerShown: false,
       }}
     >

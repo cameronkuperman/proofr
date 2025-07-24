@@ -243,14 +243,14 @@ export function ProfileScreen() {
 
   if (loading) {
     return (
-      <View style={{ flex: 1, backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center' }}>
+      <View style={{ flex: 1, backgroundColor: colors.background.default, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator size="large" color={colors.primary} />
       </View>
     )
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.background }}>
+    <View style={{ flex: 1, backgroundColor: colors.background.default }}>
       <SafeAreaView style={{ flex: 1 }} edges={['top']}>
         <ScrollView
           showsVerticalScrollIndicator={false}
@@ -264,14 +264,14 @@ export function ProfileScreen() {
               paddingHorizontal: 20,
               paddingTop: 12,
               paddingBottom: 24,
-              backgroundColor: colors.surfaceRaised,
+              backgroundColor: colors.surface.raised,
               borderBottomWidth: 1,
-              borderBottomColor: colors.border,
+              borderBottomColor: colors.border.default,
             }}
           >
             {/* Top Bar */}
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-              <Text style={{ fontSize: 28, fontWeight: '700', color: colors.text }}>
+              <Text style={{ fontSize: 28, fontWeight: '700', color: colors.text.primary }}>
                 Profile
               </Text>
               
@@ -282,14 +282,14 @@ export function ProfileScreen() {
                     width: 40,
                     height: 40,
                     borderRadius: 20,
-                    backgroundColor: colors.surfaceRaised,
+                    backgroundColor: colors.surface.raised,
                     justifyContent: 'center',
                     alignItems: 'center',
                     borderWidth: 1,
-                    borderColor: colors.border,
+                    borderColor: colors.border.default,
                   }}
                 >
-                  <Feather name="settings" size={20} color={colors.textSecondary} />
+                  <Feather name="settings" size={20} color={colors.text.secondary} />
                 </TouchableOpacity>
               </View>
             </View>
@@ -298,14 +298,14 @@ export function ProfileScreen() {
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Image
                 source={{ uri: `https://ui-avatars.com/api/?name=${profile?.name || 'Student'}&background=10B981&color=fff&size=200` }}
-                style={{ width: 80, height: 80, borderRadius: 40, backgroundColor: colors.gray200 }}
+                style={{ width: 80, height: 80, borderRadius: 40, backgroundColor: colors.gray[200] }}
               />
               
               <View style={{ flex: 1, marginLeft: 16 }}>
-                <Text style={{ fontSize: 24, fontWeight: '700', color: colors.text }}>
+                <Text style={{ fontSize: 24, fontWeight: '700', color: colors.text.primary }}>
                   {profile?.name || 'Student'}
                 </Text>
-                <Text style={{ fontSize: 16, color: colors.textSecondary, marginTop: 4 }}>
+                <Text style={{ fontSize: 16, color: colors.text.secondary, marginTop: 4 }}>
                   {profile?.current_school || 'Add your school'}
                 </Text>
               </View>
@@ -316,15 +316,15 @@ export function ProfileScreen() {
           <View style={{ paddingHorizontal: 20, paddingTop: 24 }}>
             <View
               style={{
-                backgroundColor: colors.surfaceRaised,
+                backgroundColor: colors.surface.raised,
                 borderRadius: 16,
                 padding: 20,
                 borderWidth: 1,
-                borderColor: colors.border,
+                borderColor: colors.border.default,
               }}
             >
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                <Text style={{ fontSize: 18, fontWeight: '600', color: colors.text }}>
+                <Text style={{ fontSize: 18, fontWeight: '600', color: colors.text.primary }}>
                   Application Journey
                 </Text>
                 <Text style={{ fontSize: 24, fontWeight: '700', color: colors.primary }}>
@@ -332,7 +332,7 @@ export function ProfileScreen() {
                 </Text>
               </View>
               
-              <View style={{ height: 8, backgroundColor: colors.gray200, borderRadius: 4, overflow: 'hidden' }}>
+              <View style={{ height: 8, backgroundColor: colors.gray[200], borderRadius: 4, overflow: 'hidden' }}>
                 <View
                   style={{
                     height: '100%',
@@ -343,7 +343,7 @@ export function ProfileScreen() {
                 />
               </View>
               
-              <Text style={{ fontSize: 14, color: colors.textSecondary, marginTop: 8 }}>
+              <Text style={{ fontSize: 14, color: colors.text.secondary, marginTop: 8 }}>
                 Keep going! You're making great progress.
               </Text>
             </View>
@@ -381,7 +381,7 @@ export function ProfileScreen() {
                     Credits
                   </Text>
                 </View>
-                <Text style={{ fontSize: 24, fontWeight: '700', color: colors.text }}>
+                <Text style={{ fontSize: 24, fontWeight: '700', color: colors.text.primary }}>
                   ${profile?.credit_balance || 0}
                 </Text>
               </View>
@@ -415,10 +415,10 @@ export function ProfileScreen() {
                     Sessions
                   </Text>
                 </View>
-                <Text style={{ fontSize: 24, fontWeight: '700', color: colors.text }}>
+                <Text style={{ fontSize: 24, fontWeight: '700', color: colors.text.primary }}>
                   {stats.totalSessions}
                 </Text>
-                <Text style={{ fontSize: 12, color: colors.textSecondary, marginTop: 4 }}>
+                <Text style={{ fontSize: 12, color: colors.text.secondary, marginTop: 4 }}>
                   {stats.upcomingSessions} upcoming
                 </Text>
               </View>
@@ -452,7 +452,7 @@ export function ProfileScreen() {
                     Colleges
                   </Text>
                 </View>
-                <Text style={{ fontSize: 24, fontWeight: '700', color: colors.text }}>
+                <Text style={{ fontSize: 24, fontWeight: '700', color: colors.text.primary }}>
                   {stats.collegesTargeted}
                 </Text>
                 <Text style={{ fontSize: 12, color: colors.teal[600], fontWeight: '600' }}>
@@ -489,7 +489,7 @@ export function ProfileScreen() {
                     Guides
                   </Text>
                 </View>
-                <Text style={{ fontSize: 24, fontWeight: '700', color: colors.text }}>
+                <Text style={{ fontSize: 24, fontWeight: '700', color: colors.text.primary }}>
                   {profile?.guides_published || 0}
                 </Text>
                 <Text style={{ fontSize: 12, color: colors.orange[600], fontWeight: '600' }}>
@@ -502,7 +502,7 @@ export function ProfileScreen() {
           {/* Milestones */}
           <View style={{ paddingHorizontal: 20, paddingTop: 24 }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-              <Text style={{ fontSize: 20, fontWeight: '600', color: colors.text }}>
+              <Text style={{ fontSize: 20, fontWeight: '600', color: colors.text.primary }}>
                 Upcoming Milestones
               </Text>
             </View>
@@ -511,12 +511,12 @@ export function ProfileScreen() {
               <TouchableOpacity
                 key={milestone.id}
                 style={{
-                  backgroundColor: colors.surfaceRaised,
+                  backgroundColor: colors.surface.raised,
                   borderRadius: 12,
                   padding: 16,
                   marginBottom: 12,
                   borderWidth: 1,
-                  borderColor: colors.border,
+                  borderColor: colors.border.default,
                   flexDirection: 'row',
                   alignItems: 'center',
                 }}
@@ -536,13 +536,13 @@ export function ProfileScreen() {
                   <Feather
                     name={milestone.completed ? 'check' : (milestone.icon as any || 'circle')}
                     size={20}
-                    color={milestone.completed ? colors.primary : colors.textSecondary}
+                    color={milestone.completed ? colors.primary : colors.text.secondary}
                   />
                 </View>
                 
                 <View style={{ flex: 1 }}>
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                    <Text style={{ fontSize: 16, fontWeight: '600', color: colors.text }}>
+                    <Text style={{ fontSize: 16, fontWeight: '600', color: colors.text.primary }}>
                       {milestone.title}
                     </Text>
                     {milestone.college && (
@@ -550,7 +550,7 @@ export function ProfileScreen() {
                         style={{
                           paddingHorizontal: 8,
                           paddingVertical: 2,
-                          backgroundColor: UNIVERSITY_COLORS[milestone.college.toLowerCase()] || colors.gray600,
+                          backgroundColor: UNIVERSITY_colors[milestone.college.toLowerCase()] || colors.gray[600],
                           borderRadius: 4,
                         }}
                       >
@@ -560,7 +560,7 @@ export function ProfileScreen() {
                       </View>
                     )}
                   </View>
-                  <Text style={{ fontSize: 14, color: colors.textSecondary, marginTop: 2 }}>
+                  <Text style={{ fontSize: 14, color: colors.text.secondary, marginTop: 2 }}>
                     {milestone.description}
                   </Text>
                   {!milestone.completed && milestone.deadline && (
@@ -570,7 +570,7 @@ export function ProfileScreen() {
                   )}
                 </View>
                 
-                <Feather name="chevron-right" size={20} color={colors.textSecondary} />
+                <Feather name="chevron-right" size={20} color={colors.text.secondary} />
               </TouchableOpacity>
             ))}
           </View>
@@ -579,7 +579,7 @@ export function ProfileScreen() {
           {bookings.length > 0 && (
             <View style={{ paddingHorizontal: 20, paddingTop: 24, paddingBottom: 40 }}>
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-                <Text style={{ fontSize: 20, fontWeight: '600', color: colors.text }}>
+                <Text style={{ fontSize: 20, fontWeight: '600', color: colors.text.primary }}>
                   Recent Sessions
                 </Text>
               </View>
@@ -605,19 +605,19 @@ export function ProfileScreen() {
                       width: 48,
                       height: 48,
                       borderRadius: 24,
-                      backgroundColor: colors.gray200,
+                      backgroundColor: colors.gray[200],
                       marginRight: 12,
                     }}
                   />
                   
                   <View style={{ flex: 1 }}>
-                    <Text style={{ fontSize: 16, fontWeight: '600', color: colors.text }}>
+                    <Text style={{ fontSize: 16, fontWeight: '600', color: colors.text.primary }}>
                       {booking.consultant?.name || 'Consultant'}
                     </Text>
-                    <Text style={{ fontSize: 14, color: colors.textSecondary }}>
+                    <Text style={{ fontSize: 14, color: colors.text.secondary }}>
                       {booking.service_type.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
                     </Text>
-                    <Text style={{ fontSize: 12, color: colors.textTertiary, marginTop: 2 }}>
+                    <Text style={{ fontSize: 12, color: colors.text.tertiary, marginTop: 2 }}>
                       {new Date(booking.scheduled_at).toLocaleDateString()}
                     </Text>
                   </View>
@@ -645,14 +645,14 @@ export function ProfileScreen() {
                               ? colors.primary
                               : booking.status === 'confirmed'
                               ? colors.info
-                              : colors.textSecondary,
+                              : colors.text.secondary,
                           textTransform: 'capitalize',
                         }}
                       >
                         {booking.status}
                       </Text>
                     </View>
-                    <Text style={{ fontSize: 14, color: colors.textSecondary, marginTop: 4 }}>
+                    <Text style={{ fontSize: 14, color: colors.text.secondary, marginTop: 4 }}>
                       ${booking.price}
                     </Text>
                   </View>
@@ -665,18 +665,18 @@ export function ProfileScreen() {
           {profile && profile.guides_published > 0 && (
             <View style={{ paddingHorizontal: 20, paddingTop: 24 }}>
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-                <Text style={{ fontSize: 20, fontWeight: '600', color: colors.text }}>
+                <Text style={{ fontSize: 20, fontWeight: '600', color: colors.text.primary }}>
                   Your Guide Impact
                 </Text>
               </View>
               
               <View
                 style={{
-                  backgroundColor: colors.surfaceRaised,
+                  backgroundColor: colors.surface.raised,
                   borderRadius: 16,
                   padding: 20,
                   borderWidth: 1,
-                  borderColor: colors.border,
+                  borderColor: colors.border.default,
                 }}
               >
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
@@ -694,10 +694,10 @@ export function ProfileScreen() {
                     <Feather name="book-open" size={24} color={colors.orange[600]} />
                   </View>
                   <View>
-                    <Text style={{ fontSize: 18, fontWeight: '700', color: colors.text }}>
+                    <Text style={{ fontSize: 18, fontWeight: '700', color: colors.text.primary }}>
                       {profile.guides_published} Guides Published
                     </Text>
-                    <Text style={{ fontSize: 14, color: colors.textSecondary }}>
+                    <Text style={{ fontSize: 14, color: colors.text.secondary }}>
                       Helping students succeed
                     </Text>
                   </View>
@@ -708,29 +708,29 @@ export function ProfileScreen() {
                     <Text style={{ fontSize: 24, fontWeight: '700', color: colors.primary }}>
                       {profile.guide_views_total.toLocaleString()}
                     </Text>
-                    <Text style={{ fontSize: 12, color: colors.textSecondary, marginTop: 4 }}>
+                    <Text style={{ fontSize: 12, color: colors.text.secondary, marginTop: 4 }}>
                       Total Views
                     </Text>
                   </View>
                   
-                  <View style={{ width: 1, backgroundColor: colors.border, marginHorizontal: 20 }} />
+                  <View style={{ width: 1, backgroundColor: colors.border.default, marginHorizontal: 20 }} />
                   
                   <View style={{ alignItems: 'center' }}>
                     <Text style={{ fontSize: 24, fontWeight: '700', color: colors.primary }}>
                       {profile.guide_helpful_total}
                     </Text>
-                    <Text style={{ fontSize: 12, color: colors.textSecondary, marginTop: 4 }}>
+                    <Text style={{ fontSize: 12, color: colors.text.secondary, marginTop: 4 }}>
                       Helpful Votes
                     </Text>
                   </View>
                   
-                  <View style={{ width: 1, backgroundColor: colors.border, marginHorizontal: 20 }} />
+                  <View style={{ width: 1, backgroundColor: colors.border.default, marginHorizontal: 20 }} />
                   
                   <View style={{ alignItems: 'center' }}>
                     <Text style={{ fontSize: 24, fontWeight: '700', color: colors.primary }}>
                       {Math.round(profile.guide_helpful_total / profile.guides_published)}
                     </Text>
-                    <Text style={{ fontSize: 12, color: colors.textSecondary, marginTop: 4 }}>
+                    <Text style={{ fontSize: 12, color: colors.text.secondary, marginTop: 4 }}>
                       Avg. Rating
                     </Text>
                   </View>
@@ -741,7 +741,7 @@ export function ProfileScreen() {
 
           {/* Quick Actions */}
           <View style={{ paddingHorizontal: 20, paddingBottom: 40, paddingTop: 24 }}>
-            <Text style={{ fontSize: 20, fontWeight: '600', color: colors.text, marginBottom: 16 }}>
+            <Text style={{ fontSize: 20, fontWeight: '600', color: colors.text.primary, marginBottom: 16 }}>
               Quick Actions
             </Text>
             
@@ -750,17 +750,17 @@ export function ProfileScreen() {
                 style={{
                   flex: 1,
                   minWidth: '45%',
-                  backgroundColor: colors.surfaceRaised,
+                  backgroundColor: colors.surface.raised,
                   borderRadius: 12,
                   padding: 16,
                   alignItems: 'center',
                   borderWidth: 1,
-                  borderColor: colors.border,
+                  borderColor: colors.border.default,
                 }}
                 onPress={() => setDocumentsVisible(true)}
               >
                 <Feather name="file-text" size={24} color={colors.primary} />
-                <Text style={{ color: colors.text, fontWeight: '600', marginTop: 8 }}>
+                <Text style={{ color: colors.text.primary, fontWeight: '600', marginTop: 8 }}>
                   My Documents
                 </Text>
               </TouchableOpacity>
@@ -769,17 +769,17 @@ export function ProfileScreen() {
                 style={{
                   flex: 1,
                   minWidth: '45%',
-                  backgroundColor: colors.surfaceRaised,
+                  backgroundColor: colors.surface.raised,
                   borderRadius: 12,
                   padding: 16,
                   alignItems: 'center',
                   borderWidth: 1,
-                  borderColor: colors.border,
+                  borderColor: colors.border.default,
                 }}
                 onPress={() => Alert.alert('Messages', 'Opens messaging interface')}
               >
                 <Feather name="message-circle" size={24} color={colors.primary} />
-                <Text style={{ color: colors.text, fontWeight: '600', marginTop: 8 }}>
+                <Text style={{ color: colors.text.primary, fontWeight: '600', marginTop: 8 }}>
                   Messages
                 </Text>
               </TouchableOpacity>
@@ -788,17 +788,17 @@ export function ProfileScreen() {
                 style={{
                   flex: 1,
                   minWidth: '45%',
-                  backgroundColor: colors.surfaceRaised,
+                  backgroundColor: colors.surface.raised,
                   borderRadius: 12,
                   padding: 16,
                   alignItems: 'center',
                   borderWidth: 1,
-                  borderColor: colors.border,
+                  borderColor: colors.border.default,
                 }}
                 onPress={() => navigation?.navigate('Payments')}
               >
                 <Feather name="credit-card" size={24} color={colors.primary} />
-                <Text style={{ color: colors.text, fontWeight: '600', marginTop: 8 }}>
+                <Text style={{ color: colors.text.primary, fontWeight: '600', marginTop: 8 }}>
                   Payment History
                 </Text>
               </TouchableOpacity>
@@ -825,7 +825,7 @@ export function ProfileScreen() {
             <TouchableOpacity
               style={{
                 marginTop: 32,
-                backgroundColor: colors.surfaceRaised,
+                backgroundColor: colors.surface.raised,
                 borderRadius: 12,
                 padding: 16,
                 alignItems: 'center',

@@ -213,23 +213,23 @@ export const BrowseScreen = () => {
           borderWidth: 1,
           borderColor: colors.isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
         }}>
-          <Ionicons name="search" size={20} color={colors.textSecondary} />
+          <Ionicons name="search" size={20} color={colors.text.secondary} />
           <TextInput
             placeholder="Search by name, school, or service..."
-            placeholderTextColor={colors.textSecondary}
+            placeholderTextColor={colors.text.secondary}
             value={searchQuery}
             onChangeText={setSearchQuery}
             style={{
               flex: 1,
               marginLeft: 12,
               fontSize: 16,
-              color: colors.text,
+              color: colors.text.primary,
               fontFamily: Platform.OS === 'ios' ? 'System' : undefined,
             }}
           />
           {searchQuery.length > 0 && (
             <TouchableOpacity onPress={() => setSearchQuery('')}>
-              <Ionicons name="close-circle" size={20} color={colors.textSecondary} />
+              <Ionicons name="close-circle" size={20} color={colors.text.secondary} />
             </TouchableOpacity>
           )}
         </View>
@@ -270,7 +270,7 @@ export const BrowseScreen = () => {
               <Ionicons
                 name={filter.icon}
                 size={16}
-                color={isSelected ? '#FFFFFF' : colors.textSecondary}
+                color={isSelected ? '#FFFFFF' : colors.text.secondary}
                 style={{ marginRight: 6 }}
               />
               <Text
@@ -305,7 +305,7 @@ export const BrowseScreen = () => {
       {loading && (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
           <ActivityIndicator size="large" color={colors.primary} />
-          <Text style={{ marginTop: 16, color: colors.textSecondary }}>
+          <Text style={{ marginTop: 16, color: colors.text.secondary }}>
             Loading consultants...
           </Text>
         </View>
@@ -336,11 +336,11 @@ export const BrowseScreen = () => {
       
       {!loading && !error && displayConsultants.length === 0 && (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
-          <Ionicons name="search" size={48} color={colors.textSecondary} />
+          <Ionicons name="search" size={48} color={colors.text.secondary} />
           <Text style={{ marginTop: 16, color: colors.text, textAlign: 'center' }}>
             No consultants found matching your criteria
           </Text>
-          <Text style={{ marginTop: 8, color: colors.textSecondary, textAlign: 'center' }}>
+          <Text style={{ marginTop: 8, color: colors.text.secondary, textAlign: 'center' }}>
             Try adjusting your filters or search terms
           </Text>
         </View>
@@ -404,7 +404,7 @@ export const BrowseScreen = () => {
             <Text style={{
               fontSize: 20,
               fontWeight: '700',
-              color: colors.text,
+              color: colors.text.primary,
               textAlign: 'center',
               marginBottom: 24,
             }}>
@@ -442,14 +442,14 @@ export const BrowseScreen = () => {
                   <Text style={{
                     fontSize: 17,
                     fontWeight: '600',
-                    color: colors.text,
+                    color: colors.text.primary,
                     marginBottom: 4,
                   }}>
                     Browse Grid
                   </Text>
                   <Text style={{
                     fontSize: 14,
-                    color: colors.textSecondary,
+                    color: colors.text.secondary,
                   }}>
                     Classic view with filters and search
                   </Text>
@@ -492,14 +492,14 @@ export const BrowseScreen = () => {
                   <Text style={{
                     fontSize: 17,
                     fontWeight: '600',
-                    color: colors.text,
+                    color: colors.text.primary,
                     marginBottom: 4,
                   }}>
                     Story Mode
                   </Text>
                   <Text style={{
                     fontSize: 14,
-                    color: colors.textSecondary,
+                    color: colors.text.secondary,
                   }}>
                     Swipe through consultant stories
                   </Text>
@@ -541,14 +541,14 @@ export const BrowseScreen = () => {
                   <Text style={{
                     fontSize: 17,
                     fontWeight: '600',
-                    color: colors.text,
+                    color: colors.text.primary,
                     marginBottom: 4,
                   }}>
                     AI Match
                   </Text>
                   <Text style={{
                     fontSize: 14,
-                    color: colors.textSecondary,
+                    color: colors.text.secondary,
                   }}>
                     Get personalized consultant matches
                   </Text>
@@ -565,7 +565,7 @@ export const BrowseScreen = () => {
   )
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background.default }}>
       <StatusBar barStyle={colors.isDark ? 'light-content' : 'dark-content'} />
       
       {/* Header */}

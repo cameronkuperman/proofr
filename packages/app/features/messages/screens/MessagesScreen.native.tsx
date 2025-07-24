@@ -180,7 +180,7 @@ export function MessagesScreen() {
         flexDirection: 'row',
         padding: 16,
         borderBottomWidth: 1,
-        borderBottomColor: colors.border,
+        borderBottomColor: colors.border.default,
         backgroundColor: colors.background,
       }}
     >
@@ -215,7 +215,7 @@ export function MessagesScreen() {
             width: 48,
             height: 48,
             borderRadius: 24,
-            backgroundColor: colors.border,
+            backgroundColor: colors.border.default,
           }}
         />
         {item.unreadCount > 0 && (
@@ -288,7 +288,7 @@ export function MessagesScreen() {
             paddingHorizontal: 16,
             paddingVertical: 12,
             borderBottomWidth: 1,
-            borderBottomColor: colors.border,
+            borderBottomColor: colors.border.default,
           }}
         >
           {isEditMode ? (
@@ -373,7 +373,7 @@ export function MessagesScreen() {
               justifyContent: 'space-around',
               paddingVertical: 16,
               borderTopWidth: 1,
-              borderTopColor: colors.border,
+              borderTopColor: colors.border.default,
               backgroundColor: colors.background,
             }}
           >
