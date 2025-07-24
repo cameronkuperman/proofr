@@ -10,6 +10,7 @@ import {
 import { Feather } from '@expo/vector-icons'
 import { useThemedColors } from '../../../contexts/ThemeContext'
 import type { Booking } from '../types/bookings.types'
+import { getUniversityColor, isLightColor } from '../../../utils/colorUtils'
 
 interface ActiveBookingsProps {
   bookings: Booking[]
@@ -20,14 +21,7 @@ interface ActiveBookingsProps {
   navigation: any
 }
 
-// University colors remain constant across themes
-const UNIVERSITY_COLORS = {
-  harvard: '#A51C30',
-  yale: '#00356B',
-  princeton: '#FF6900',
-  stanford: '#8C1515',
-  mit: '#A31F34',
-}
+// Removed UNIVERSITY_COLORS - now using colorUtils
 
 export function ActiveBookings({
   bookings,
@@ -129,20 +123,24 @@ export function ActiveBookings({
             <Text style={{ fontSize: 16, fontWeight: '600', color: colors.text.primary }}>
               {booking.consultant?.name || 'Consultant'}
             </Text>
-            {booking.consultant?.university && (
-              <View
-                style={{
-                  paddingHorizontal: 8,
-                  paddingVertical: 2,
-                  backgroundColor: UNIVERSITY_COLORS[booking.consultant.university.toLowerCase()] || colors.gray[600],
-                  borderRadius: 4,
-                }}
-              >
-                <Text style={{ fontSize: 10, color: '#fff', fontWeight: '600' }}>
-                  {booking.consultant.university}
-                </Text>
-              </View>
-            )}
+            {booking.consultant?.university && (() => {
+              const bgColor = getUniversityColor(booking.consultant.university)
+              const textColor = isLightColor(bgColor) ? '#000' : '#fff'
+              return (
+                <View
+                  style={{
+                    paddingHorizontal: 8,
+                    paddingVertical: 2,
+                    backgroundColor: bgColor,
+                    borderRadius: 4,
+                  }}
+                >
+                  <Text style={{ fontSize: 10, color: textColor, fontWeight: '600' }}>
+                    {booking.consultant.university}
+                  </Text>
+                </View>
+              )
+            })()}
           </View>
           
           <Text style={{ fontSize: 14, color: colors.text.secondary, marginTop: 2 }}>
@@ -296,20 +294,24 @@ export function ActiveBookings({
             <Text style={{ fontSize: 14, color: colors.text.secondary }}>
               with {session.consultant?.name}
             </Text>
-            {session.consultant?.university && (
-              <View
-                style={{
-                  paddingHorizontal: 6,
-                  paddingVertical: 1,
-                  backgroundColor: UNIVERSITY_COLORS[session.consultant.university.toLowerCase()] || colors.gray[600],
-                  borderRadius: 3,
-                }}
-              >
-                <Text style={{ fontSize: 9, color: '#fff', fontWeight: '600' }}>
-                  {session.consultant.university}
-                </Text>
-              </View>
-            )}
+            {session.consultant?.university && (() => {
+              const bgColor = getUniversityColor(session.consultant.university)
+              const textColor = isLightColor(bgColor) ? '#000' : '#fff'
+              return (
+                <View
+                  style={{
+                    paddingHorizontal: 6,
+                    paddingVertical: 1,
+                    backgroundColor: bgColor,
+                    borderRadius: 3,
+                  }}
+                >
+                  <Text style={{ fontSize: 9, color: textColor, fontWeight: '600' }}>
+                    {session.consultant.university}
+                  </Text>
+                </View>
+              )
+            })()}
           </View>
           
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16, marginTop: 6 }}>

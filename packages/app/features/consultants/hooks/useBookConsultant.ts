@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { supabase } from '../../../../../lib/supabase'
-import type { BookingFormData, Service } from '../types/consultant.types'
+import type { Service } from '../types/consultant.types'
+import type { EnhancedBookingFormData } from '../types/form-builder.types'
 
 export function useBookConsultant() {
   const [loading, setLoading] = useState(false)
@@ -9,7 +10,7 @@ export function useBookConsultant() {
   const createBooking = async (
     consultantId: string, 
     service: Service, 
-    formData: BookingFormData
+    formData: EnhancedBookingFormData
   ) => {
     // Get current user
     const { data: { user } } = await supabase.auth.getUser()
@@ -53,20 +54,60 @@ export function useBookConsultant() {
         price_tier: service.price_descriptions[formData.price_tier_index],
         rush_multiplier: rushMultiplier,
         final_price: finalPrice,
-        prompt_text: formData.prompt_text,
         is_rush: formData.is_rush,
         promised_delivery_at: promisedDeliveryAt.toISOString(),
         status: 'pending',
         created_at: now.toISOString(),
-        updated_at: now.toISOString()
+        updated_at: now.toISOString(),
+        metadata: {}
       }
 
       // Add service-specific fields
       if (service.service_type === 'essay_review') {
         bookingData.essay_text = formData.essay_text
         bookingData.google_doc_link = formData.google_doc_link
-        // Store user-provided word count in metadata
-        bookingData.metadata = { word_count: formData.word_count }
+        bookingData.prompt_text = formData.essay_prompt || formData.special_instructions
+        
+        // Store enhanced essay data in metadata
+        bookingData.metadata = {
+          ...bookingData.metadata,
+          word_count: formData.word_count,
+          essay_category: formData.essay_category,
+          improvement_goals: formData.improvement_goals,
+          essay_prompt: formData.essay_prompt
+        }
+      } else if (service.service_type === 'interview_prep') {
+        bookingData.prompt_text = formData.preparation_focus || formData.special_instructions
+        
+        // Store interview data in metadata
+        bookingData.metadata = {
+          ...bookingData.metadata,
+          interview_type: formData.interview_type,
+          interview_school: formData.interview_school,
+          example_questions: formData.example_questions,
+          preparation_focus: formData.preparation_focus
+        }
+      } else if (service.service_type === 'sat_tutoring' || service.service_type === 'act_tutoring' || service.service_type === 'test_prep') {
+        bookingData.prompt_text = formData.special_instructions
+        
+        // Store tutoring data in metadata
+        bookingData.metadata = {
+          ...bookingData.metadata,
+          current_sat_score: formData.current_sat_score,
+          current_act_score: formData.current_act_score,
+          target_sat_score: formData.target_sat_score,
+          target_act_score: formData.target_act_score,
+          weak_areas: formData.weak_areas,
+          session_preferences: formData.special_instructions
+        }
+      } else {
+        // Generic service
+        bookingData.prompt_text = formData.special_instructions
+      }
+
+      // Add any custom fields
+      if (formData.custom_fields) {
+        bookingData.metadata.custom_fields = formData.custom_fields
       }
 
       if (service.delivery_type === 'scheduled') {

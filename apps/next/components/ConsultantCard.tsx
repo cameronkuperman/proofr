@@ -2,6 +2,10 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { BookingModalWeb } from '../../../packages/app/features/consultants/components/BookingModal.web'
+import ServiceSelectionModal from './ServiceSelectionModal'
+import type { ConsultantWithServices, Service } from '../../../packages/app/features/consultants/types/consultant.types'
+import { getUniversityColor, getContrastTextColor } from '../../../packages/app/utils/colorUtils'
 
 interface ConsultantCardProps {
   consultant: {
@@ -28,6 +32,9 @@ interface ConsultantCardProps {
 export default function ConsultantCard({ consultant }: ConsultantCardProps) {
   const router = useRouter()
   const [isFavorited, setIsFavorited] = useState(false)
+  const [showBookingModal, setShowBookingModal] = useState(false)
+  const [showServiceSelection, setShowServiceSelection] = useState(false)
+  const [selectedService, setSelectedService] = useState<Service | null>(null)
   
   // Get initials for avatar
   const getInitials = (name: string) => {
@@ -39,26 +46,11 @@ export default function ConsultantCard({ consultant }: ConsultantCardProps) {
       .slice(0, 2)
   }
 
-  // Get university color
-  const getUniversityColor = (college: string) => {
-    const colors: Record<string, string> = {
-      'Stanford University': '#8C1515',
-      'Harvard University': '#A51C30',
-      'MIT': '#A31F34',
-      'Yale University': '#00356B',
-      'Princeton University': '#FF6600',
-      'Columbia University': '#003DA5',
-      'Cornell University': '#B31B1B',
-      'Brown University': '#4E3629',
-      'University of Pennsylvania': '#990000',
-      'Northwestern University': '#4E2A84',
-      'Dartmouth College': '#00693E',
-      'Duke University': '#00356B',
-      'Vanderbilt University': '#866D4B',
-      'Rice University': '#002D72',
-      'Emory University': '#012169'
-    }
-    return colors[college] || '#6B7280'
+  // Get avatar text color based on background
+  const getAvatarStyle = (college: string) => {
+    const bgColor = getUniversityColor(college)
+    const textColorClass = getContrastTextColor(bgColor)
+    return { backgroundColor: bgColor, textColorClass }
   }
 
   // Calculate min price
@@ -75,8 +67,9 @@ export default function ConsultantCard({ consultant }: ConsultantCardProps) {
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 group cursor-pointer"
-         onClick={() => router.push(`/consultants/${consultant.id}`)}>
+    <>
+      <div className="bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 group cursor-pointer"
+           onClick={() => router.push(`/consultants/${consultant.id}`)}>
       {/* Header with Status and Actions */}
       <div className="px-6 pt-5 pb-3">
         <div className="flex items-start gap-4">
@@ -90,8 +83,8 @@ export default function ConsultantCard({ consultant }: ConsultantCardProps) {
               />
             ) : (
               <div 
-                className="w-16 h-16 rounded-lg flex items-center justify-center text-white text-lg font-bold"
-                style={{ backgroundColor: getUniversityColor(consultant.current_college) }}
+                className={`w-16 h-16 rounded-lg flex items-center justify-center text-lg font-bold ${getAvatarStyle(consultant.current_college).textColorClass}`}
+                style={{ backgroundColor: getAvatarStyle(consultant.current_college).backgroundColor }}
               >
                 {getInitials(consultant.name)}
               </div>
@@ -202,7 +195,18 @@ export default function ConsultantCard({ consultant }: ConsultantCardProps) {
           <button
             onClick={(e) => {
               e.stopPropagation()
-              router.push(`/consultants/${consultant.id}?book=true`)
+              if (consultant.services && consultant.services.length > 0) {
+                if (consultant.services.length === 1) {
+                  // Single service - go directly to booking
+                  setSelectedService(consultant.services[0] as Service)
+                  setShowBookingModal(true)
+                } else {
+                  // Multiple services - show selection modal
+                  setShowServiceSelection(true)
+                }
+              } else {
+                router.push(`/consultants/${consultant.id}`)
+              }
             }}
             className="px-5 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors text-sm"
           >
@@ -211,5 +215,39 @@ export default function ConsultantCard({ consultant }: ConsultantCardProps) {
         </div>
       </div>
     </div>
+
+      {/* Service Selection Modal */}
+      {showServiceSelection && consultant.services && (
+        <ServiceSelectionModal
+          services={consultant.services as Service[]}
+          visible={showServiceSelection}
+          consultantName={consultant.name}
+          onClose={() => setShowServiceSelection(false)}
+          onSelectService={(service) => {
+            setSelectedService(service)
+            setShowServiceSelection(false)
+            setShowBookingModal(true)
+          }}
+        />
+      )}
+
+      {/* Booking Modal */}
+      {showBookingModal && selectedService && (
+        <BookingModalWeb
+          consultant={consultant as ConsultantWithServices}
+          service={selectedService}
+          visible={showBookingModal}
+          onClose={() => {
+            setShowBookingModal(false)
+            setSelectedService(null)
+          }}
+          onSuccess={(bookingId) => {
+            setShowBookingModal(false)
+            setSelectedService(null)
+            router.push(`/bookings/${bookingId}`)
+          }}
+        />
+      )}
+    </>
   )
 }

@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
-import { View, Text, Modal, ScrollView, Pressable, TextInput, Platform } from 'react-native'
+import { View, Text, Modal, ScrollView, Pressable, TextInput, Platform, Alert } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import { useBookConsultant } from '../hooks/useBookConsultant'
-import type { ConsultantWithServices, Service, BookingFormData } from '../types/consultant.types'
+import type { ConsultantWithServices, Service } from '../types/consultant.types'
+import type { EnhancedBookingFormData } from '../types/form-builder.types'
+import { ESSAY_TEMPLATE_FIELDS, INTERVIEW_TEMPLATE_FIELDS, TUTORING_TEMPLATE_FIELDS } from '../types/form-builder.types'
 
 interface BookingModalProps {
   consultant: ConsultantWithServices
@@ -17,32 +19,63 @@ export function BookingModal({ consultant, service, visible, onClose, onSuccess 
   const [selectedTierIndex, setSelectedTierIndex] = useState(0)
   const [isRush, setIsRush] = useState(false)
   const [rushHours, setRushHours] = useState<number | undefined>()
-  const [formData, setFormData] = useState<Partial<BookingFormData>>({
-    prompt_text: '',
+  const [formData, setFormData] = useState<Partial<EnhancedBookingFormData>>({
+    special_instructions: '',
     word_count: undefined,
+    improvement_goals: [],
+    weak_areas: [],
   })
 
   const handleSubmit = async () => {
-    const bookingData: BookingFormData = {
+    // Validate required fields based on service type
+    if (service.service_type === 'essay_review') {
+      if (!formData.essay_category) {
+        Alert.alert('Missing Information', 'Please select an essay category')
+        return
+      }
+      if (!formData.essay_text && !formData.google_doc_link && !formData.uploaded_file) {
+        Alert.alert('Missing Essay', 'Please provide your essay via text, file upload, or Google Doc link')
+        return
+      }
+      if (!formData.word_count) {
+        Alert.alert('Missing Information', 'Please enter the word count')
+        return
+      }
+    }
+
+    const bookingData: EnhancedBookingFormData = {
       service_id: service.id,
       price_tier_index: selectedTierIndex,
       is_rush: isRush,
       rush_hours: rushHours,
-      prompt_text: formData.prompt_text || '',
+      submitted_at: new Date().toISOString(),
       ...formData
     }
 
-    const result = await createBooking(consultant.id, service, bookingData)
+    const result = await createBooking(consultant.id, service, bookingData as any)
     if (result) {
       onSuccess(result.id)
     }
   }
 
   const calculatePrice = () => {
-    const basePrice = service.prices[selectedTierIndex]
+    let basePrice = service.prices[selectedTierIndex]
+    
+    // Apply word count tier pricing for essays
+    if (service.service_type === 'essay_review' && formData.essay_category) {
+      const category = ESSAY_TEMPLATE_FIELDS.essayCategories?.options.find(
+        opt => opt.value === formData.essay_category
+      )
+      if (category?.priceModifier) {
+        basePrice = basePrice * category.priceModifier
+      }
+    }
+    
+    // Apply rush multiplier
     const rushMultiplier = isRush && rushHours && service.rush_turnarounds
       ? service.rush_turnarounds[rushHours] || 1
       : 1
+      
     return basePrice * rushMultiplier
   }
 
@@ -50,33 +83,61 @@ export function BookingModal({ consultant, service, visible, onClose, onSuccess 
     <>
       <View className="mb-6">
         <Text className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
-          📄 Submit Your Essay
+          📝 Essay Details
         </Text>
         
         <View className="space-y-4">
-          {/* Upload Options */}
-          <View className="flex-row justify-between">
-            <Pressable className="flex-1 bg-gray-100 dark:bg-gray-800 p-4 rounded-xl mr-2 items-center">
-              <Ionicons name="cloud-upload" size={24} color="#6B7280" />
-              <Text className="text-gray-700 dark:text-gray-300 mt-2">Upload File</Text>
-            </Pressable>
-            
-            <Pressable className="flex-1 bg-gray-100 dark:bg-gray-800 p-4 rounded-xl ml-2 items-center">
-              <Ionicons name="link" size={24} color="#6B7280" />
-              <Text className="text-gray-700 dark:text-gray-300 mt-2">Google Doc</Text>
-            </Pressable>
+          {/* Essay Category */}
+          <View>
+            <Text className="text-gray-700 dark:text-gray-300 mb-2 font-medium">
+              Essay Type <Text className="text-red-500">*</Text>
+            </Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mb-2">
+              <View className="flex-row">
+                {ESSAY_TEMPLATE_FIELDS.essayCategories?.options.map((category) => (
+                  <Pressable
+                    key={category.value}
+                    onPress={() => setFormData({ ...formData, essay_category: category.value })}
+                    className={`px-4 py-3 rounded-xl mr-2 border ${
+                      formData.essay_category === category.value
+                        ? 'bg-blue-600 border-blue-600'
+                        : 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700'
+                    }`}
+                  >
+                    <Text className={`font-medium ${
+                      formData.essay_category === category.value 
+                        ? 'text-white' 
+                        : 'text-gray-700 dark:text-gray-300'
+                    }`}>
+                      {category.label}
+                    </Text>
+                    {category.priceModifier && category.priceModifier !== 1 && (
+                      <Text className={`text-xs mt-1 ${
+                        formData.essay_category === category.value 
+                          ? 'text-blue-100' 
+                          : 'text-gray-500 dark:text-gray-400'
+                      }`}>
+                        {category.priceModifier > 1 ? '+' : ''}{((category.priceModifier - 1) * 100).toFixed(0)}% price
+                      </Text>
+                    )}
+                  </Pressable>
+                ))}
+              </View>
+            </ScrollView>
           </View>
 
-          {/* Or Text Input */}
+          {/* Essay Prompt */}
           <View>
-            <Text className="text-center text-gray-500 dark:text-gray-400 my-2">— OR —</Text>
+            <Text className="text-gray-700 dark:text-gray-300 mb-2 font-medium">
+              Essay Prompt/Question
+            </Text>
             <TextInput
               multiline
-              numberOfLines={6}
-              placeholder="Paste your essay text here..."
+              numberOfLines={3}
+              placeholder="What's the essay prompt or question you're answering?"
               placeholderTextColor="#9CA3AF"
-              value={formData.essay_text}
-              onChangeText={(text) => setFormData({ ...formData, essay_text: text })}
+              value={formData.essay_prompt}
+              onChangeText={(text) => setFormData({ ...formData, essay_prompt: text })}
               className="bg-gray-50 dark:bg-gray-800 p-4 rounded-xl text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700"
               style={{ textAlignVertical: 'top' }}
             />
@@ -85,10 +146,10 @@ export function BookingModal({ consultant, service, visible, onClose, onSuccess 
           {/* Word Count */}
           <View className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-xl">
             <Text className="text-blue-800 dark:text-blue-300 font-medium mb-2">
-              Essay Word Count
+              Word Count <Text className="text-red-500">*</Text>
             </Text>
             <TextInput
-              placeholder="Enter word count (e.g., 650)"
+              placeholder="Enter current word count"
               placeholderTextColor="#9CA3AF"
               keyboardType="numeric"
               value={formData.word_count?.toString()}
@@ -96,67 +157,361 @@ export function BookingModal({ consultant, service, visible, onClose, onSuccess 
               className="bg-white dark:bg-gray-800 p-3 rounded-lg text-gray-900 dark:text-white"
             />
             <Text className="text-blue-600 dark:text-blue-400 text-sm mt-2">
-              Please provide the word count for accurate feedback
+              Accurate word count helps us provide better feedback
             </Text>
           </View>
-        </View>
-      </View>
-    </>
-  )
 
-  const renderInterviewPrepForm = () => (
-    <>
-      <View className="mb-6">
-        <Text className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
-          🎯 Interview Details
-        </Text>
-        
-        <View className="space-y-4">
-          {/* Interview Type */}
+          {/* What to Improve */}
           <View>
-            <Text className="text-gray-700 dark:text-gray-300 mb-2">Interview Type</Text>
+            <Text className="text-gray-700 dark:text-gray-300 mb-2 font-medium">
+              What would you like help with?
+            </Text>
             <View className="flex-row flex-wrap">
-              {['Alumni Interview', 'Admissions Interview', 'Scholarship Interview'].map((type) => (
+              {ESSAY_TEMPLATE_FIELDS.improvementGoals?.options.map((goal) => (
                 <Pressable
-                  key={type}
-                  onPress={() => setFormData({ ...formData, interview_type: type })}
-                  className={`px-4 py-2 rounded-full mr-2 mb-2 ${
-                    formData.interview_type === type
-                      ? 'bg-blue-600'
-                      : 'bg-gray-100 dark:bg-gray-800'
+                  key={goal}
+                  onPress={() => {
+                    const goals = formData.improvement_goals || []
+                    if (goals.includes(goal)) {
+                      setFormData({ 
+                        ...formData, 
+                        improvement_goals: goals.filter(g => g !== goal) 
+                      })
+                    } else {
+                      setFormData({ 
+                        ...formData, 
+                        improvement_goals: [...goals, goal] 
+                      })
+                    }
+                  }}
+                  className={`px-3 py-2 rounded-full mr-2 mb-2 border ${
+                    formData.improvement_goals?.includes(goal)
+                      ? 'bg-blue-100 dark:bg-blue-900/30 border-blue-600'
+                      : 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700'
                   }`}
                 >
-                  <Text className={formData.interview_type === type ? 'text-white' : 'text-gray-700 dark:text-gray-300'}>
-                    {type}
+                  <Text className={`text-sm ${
+                    formData.improvement_goals?.includes(goal)
+                      ? 'text-blue-700 dark:text-blue-300 font-medium'
+                      : 'text-gray-600 dark:text-gray-400'
+                  }`}>
+                    {goal}
                   </Text>
                 </Pressable>
               ))}
             </View>
           </View>
 
-          {/* Target School */}
+          {/* Submit Essay Section */}
           <View>
-            <Text className="text-gray-700 dark:text-gray-300 mb-2">Target School</Text>
-            <TextInput
-              placeholder="Enter your target school"
-              placeholderTextColor="#9CA3AF"
-              value={formData.target_school}
-              onChangeText={(text) => setFormData({ ...formData, target_school: text })}
-              className="bg-gray-50 dark:bg-gray-800 p-3 rounded-xl text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700"
-            />
+            <Text className="text-gray-700 dark:text-gray-300 mb-3 font-medium">
+              Submit Your Essay <Text className="text-red-500">*</Text>
+            </Text>
+            
+            {/* Upload Options */}
+            <View className="flex-row justify-between mb-3">
+              <Pressable className="flex-1 bg-gray-100 dark:bg-gray-800 p-4 rounded-xl mr-2 items-center">
+                <Ionicons name="document-attach" size={24} color="#6B7280" />
+                <Text className="text-gray-700 dark:text-gray-300 mt-2">Upload File</Text>
+                <Text className="text-xs text-gray-500 mt-1">.doc, .docx, .pdf</Text>
+              </Pressable>
+              
+              <Pressable 
+                onPress={() => {
+                  Alert.prompt(
+                    'Google Doc Link',
+                    'Paste your Google Doc sharing link',
+                    (text) => setFormData({ ...formData, google_doc_link: text }),
+                    'plain-text',
+                    formData.google_doc_link || ''
+                  )
+                }}
+                className="flex-1 bg-gray-100 dark:bg-gray-800 p-4 rounded-xl ml-2 items-center"
+              >
+                <Ionicons name="link" size={24} color="#6B7280" />
+                <Text className="text-gray-700 dark:text-gray-300 mt-2">Google Doc</Text>
+                {formData.google_doc_link && (
+                  <Ionicons name="checkmark-circle" size={16} color="#10B981" style={{ position: 'absolute', top: 8, right: 8 }} />
+                )}
+              </Pressable>
+            </View>
+
+            {/* Or Text Input */}
+            <View>
+              <Text className="text-center text-gray-500 dark:text-gray-400 my-2">— OR —</Text>
+              <TextInput
+                multiline
+                numberOfLines={8}
+                placeholder="Paste your essay text here..."
+                placeholderTextColor="#9CA3AF"
+                value={formData.essay_text}
+                onChangeText={(text) => setFormData({ ...formData, essay_text: text })}
+                className="bg-gray-50 dark:bg-gray-800 p-4 rounded-xl text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700"
+                style={{ textAlignVertical: 'top', minHeight: 150 }}
+              />
+              {formData.essay_text && (
+                <Text className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                  {formData.essay_text.split(/\s+/).length} words
+                </Text>
+              )}
+            </View>
+          </View>
+        </View>
+      </View>
+    </>
+  )
+
+  const renderInterviewPrepForm = () => {
+    const [showExampleQuestions, setShowExampleQuestions] = useState(false)
+    
+    return (
+      <>
+        <View className="mb-6">
+          <Text className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
+            🎤 Interview Preparation
+          </Text>
+          
+          <View className="space-y-4">
+            {/* Interview Type */}
+            <View>
+              <Text className="text-gray-700 dark:text-gray-300 mb-2 font-medium">
+                Interview Type <Text className="text-red-500">*</Text>
+              </Text>
+              <View className="flex-row flex-wrap">
+                {INTERVIEW_TEMPLATE_FIELDS.interviewTypes?.options.map((type) => (
+                  <Pressable
+                    key={type.value}
+                    onPress={() => setFormData({ ...formData, interview_type: type.value })}
+                    className={`px-4 py-3 rounded-full mr-2 mb-2 border ${
+                      formData.interview_type === type.value
+                        ? 'bg-blue-600 border-blue-600'
+                        : 'bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700'
+                    }`}
+                  >
+                    <Text className={`font-medium ${
+                      formData.interview_type === type.value 
+                        ? 'text-white' 
+                        : 'text-gray-700 dark:text-gray-300'
+                    }`}>
+                      {type.label}
+                    </Text>
+                  </Pressable>
+                ))}
+              </View>
+            </View>
+
+            {/* Interviewer Info */}
+            <View>
+              <Text className="text-gray-700 dark:text-gray-300 mb-2 font-medium">
+                School/Organization <Text className="text-red-500">*</Text>
+              </Text>
+              <TextInput
+                placeholder="e.g., Harvard University, Gates Scholarship"
+                placeholderTextColor="#9CA3AF"
+                value={formData.interview_school}
+                onChangeText={(text) => setFormData({ ...formData, interview_school: text })}
+                className="bg-gray-50 dark:bg-gray-800 p-3 rounded-xl text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700"
+              />
+            </View>
+
+            {/* Focus Areas */}
+            <View>
+              <Text className="text-gray-700 dark:text-gray-300 mb-2 font-medium">
+                What would you like to practice?
+              </Text>
+              <TextInput
+                multiline
+                numberOfLines={4}
+                placeholder="Tell me about your background, areas you want to improve, specific concerns..."
+                placeholderTextColor="#9CA3AF"
+                value={formData.preparation_focus}
+                onChangeText={(text) => setFormData({ ...formData, preparation_focus: text })}
+                className="bg-gray-50 dark:bg-gray-800 p-4 rounded-xl text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700"
+                style={{ textAlignVertical: 'top' }}
+              />
+            </View>
+
+            {/* Example Questions Toggle */}
+            <Pressable
+              onPress={() => setShowExampleQuestions(!showExampleQuestions)}
+              className="bg-gray-50 dark:bg-gray-800 p-4 rounded-xl flex-row items-center justify-between"
+            >
+              <Text className="text-gray-700 dark:text-gray-300 font-medium">
+                Add Example Questions (Optional)
+              </Text>
+              <Ionicons 
+                name={showExampleQuestions ? "chevron-up" : "chevron-down"} 
+                size={20} 
+                color="#6B7280" 
+              />
+            </Pressable>
+
+            {/* Example Questions Input */}
+            {showExampleQuestions && (
+              <View className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-xl">
+                <Text className="text-blue-800 dark:text-blue-300 font-medium mb-2">
+                  Questions you'd like to practice
+                </Text>
+                <TextInput
+                  multiline
+                  numberOfLines={5}
+                  placeholder="Enter questions you expect or want to practice, one per line..."
+                  placeholderTextColor="#9CA3AF"
+                  value={formData.example_questions?.join('\n')}
+                  onChangeText={(text) => setFormData({ 
+                    ...formData, 
+                    example_questions: text.split('\n').filter(q => q.trim()) 
+                  })}
+                  className="bg-white dark:bg-gray-800 p-3 rounded-lg text-gray-900 dark:text-white"
+                  style={{ textAlignVertical: 'top' }}
+                />
+                <Text className="text-blue-600 dark:text-blue-400 text-xs mt-2">
+                  This helps your consultant prepare better mock questions
+                </Text>
+              </View>
+            )}
+          </View>
+        </View>
+      </>
+    )
+  }
+
+  const renderTutoringForm = () => (
+    <>
+      <View className="mb-6">
+        <Text className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
+          📚 Test Prep Information
+        </Text>
+        
+        <View className="space-y-4">
+          {/* Current Scores */}
+          <View>
+            <Text className="text-gray-700 dark:text-gray-300 mb-2 font-medium">
+              Current Test Scores
+            </Text>
+            <View className="flex-row space-x-3">
+              <View className="flex-1">
+                <Text className="text-sm text-gray-600 dark:text-gray-400 mb-1">SAT Score</Text>
+                <TextInput
+                  placeholder="e.g., 1450"
+                  placeholderTextColor="#9CA3AF"
+                  keyboardType="numeric"
+                  value={formData.current_sat_score?.toString()}
+                  onChangeText={(text) => setFormData({ 
+                    ...formData, 
+                    current_sat_score: parseInt(text) || undefined 
+                  })}
+                  className="bg-gray-50 dark:bg-gray-800 p-3 rounded-xl text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700"
+                />
+              </View>
+              <View className="flex-1">
+                <Text className="text-sm text-gray-600 dark:text-gray-400 mb-1">ACT Score</Text>
+                <TextInput
+                  placeholder="e.g., 32"
+                  placeholderTextColor="#9CA3AF"
+                  keyboardType="numeric"
+                  value={formData.current_act_score?.toString()}
+                  onChangeText={(text) => setFormData({ 
+                    ...formData, 
+                    current_act_score: parseInt(text) || undefined 
+                  })}
+                  className="bg-gray-50 dark:bg-gray-800 p-3 rounded-xl text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700"
+                />
+              </View>
+            </View>
           </View>
 
-          {/* Preparation Notes */}
+          {/* Target Scores */}
           <View>
-            <Text className="text-gray-700 dark:text-gray-300 mb-2">What would you like to focus on?</Text>
+            <Text className="text-gray-700 dark:text-gray-300 mb-2 font-medium">
+              Target Scores <Text className="text-red-500">*</Text>
+            </Text>
+            <View className="flex-row space-x-3">
+              <View className="flex-1">
+                <Text className="text-sm text-gray-600 dark:text-gray-400 mb-1">SAT Goal</Text>
+                <TextInput
+                  placeholder="e.g., 1550"
+                  placeholderTextColor="#9CA3AF"
+                  keyboardType="numeric"
+                  value={formData.target_sat_score?.toString()}
+                  onChangeText={(text) => setFormData({ 
+                    ...formData, 
+                    target_sat_score: parseInt(text) || undefined 
+                  })}
+                  className="bg-gray-50 dark:bg-gray-800 p-3 rounded-xl text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700"
+                />
+              </View>
+              <View className="flex-1">
+                <Text className="text-sm text-gray-600 dark:text-gray-400 mb-1">ACT Goal</Text>
+                <TextInput
+                  placeholder="e.g., 35"
+                  placeholderTextColor="#9CA3AF"
+                  keyboardType="numeric"
+                  value={formData.target_act_score?.toString()}
+                  onChangeText={(text) => setFormData({ 
+                    ...formData, 
+                    target_act_score: parseInt(text) || undefined 
+                  })}
+                  className="bg-gray-50 dark:bg-gray-800 p-3 rounded-xl text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700"
+                />
+              </View>
+            </View>
+          </View>
+
+          {/* Weak Areas */}
+          <View>
+            <Text className="text-gray-700 dark:text-gray-300 mb-2 font-medium">
+              Areas to Focus On
+            </Text>
+            <View className="flex-row flex-wrap">
+              {TUTORING_TEMPLATE_FIELDS.weakAreas?.options.map((area) => (
+                <Pressable
+                  key={area}
+                  onPress={() => {
+                    const areas = formData.weak_areas || []
+                    if (areas.includes(area)) {
+                      setFormData({ 
+                        ...formData, 
+                        weak_areas: areas.filter(a => a !== area) 
+                      })
+                    } else {
+                      setFormData({ 
+                        ...formData, 
+                        weak_areas: [...areas, area] 
+                      })
+                    }
+                  }}
+                  className={`px-3 py-2 rounded-full mr-2 mb-2 border ${
+                    formData.weak_areas?.includes(area)
+                      ? 'bg-blue-100 dark:bg-blue-900/30 border-blue-600'
+                      : 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700'
+                  }`}
+                >
+                  <Text className={`text-sm ${
+                    formData.weak_areas?.includes(area)
+                      ? 'text-blue-700 dark:text-blue-300 font-medium'
+                      : 'text-gray-600 dark:text-gray-400'
+                  }`}>
+                    {area}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+          </View>
+
+          {/* Session Preferences */}
+          <View className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-xl">
+            <Text className="text-blue-800 dark:text-blue-300 font-medium mb-2">
+              Session Preferences
+            </Text>
             <TextInput
               multiline
-              numberOfLines={4}
-              placeholder="Tell me about your background, specific questions you're worried about, etc."
+              numberOfLines={3}
+              placeholder="Preferred times, frequency (e.g., 2x per week), any scheduling constraints..."
               placeholderTextColor="#9CA3AF"
-              value={formData.preparation_notes}
-              onChangeText={(text) => setFormData({ ...formData, preparation_notes: text })}
-              className="bg-gray-50 dark:bg-gray-800 p-4 rounded-xl text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700"
+              value={formData.special_instructions}
+              onChangeText={(text) => setFormData({ ...formData, special_instructions: text })}
+              className="bg-white dark:bg-gray-800 p-3 rounded-lg text-gray-900 dark:text-white"
               style={{ textAlignVertical: 'top' }}
             />
           </View>
@@ -178,8 +533,8 @@ export function BookingModal({ consultant, service, visible, onClose, onSuccess 
             numberOfLines={6}
             placeholder="What are your dream schools? What's your current situation? What are your main concerns about the application process?"
             placeholderTextColor="#9CA3AF"
-            value={formData.prompt_text}
-            onChangeText={(text) => setFormData({ ...formData, prompt_text: text })}
+            value={formData.special_instructions}
+            onChangeText={(text) => setFormData({ ...formData, special_instructions: text })}
             className="bg-gray-50 dark:bg-gray-800 p-4 rounded-xl text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700"
             style={{ textAlignVertical: 'top' }}
           />
@@ -326,24 +681,27 @@ export function BookingModal({ consultant, service, visible, onClose, onSuccess 
           {/* Service-specific forms */}
           {service.service_type === 'essay_review' && renderEssayReviewForm()}
           {service.service_type === 'interview_prep' && renderInterviewPrepForm()}
+          {(service.service_type === 'sat_tutoring' || service.service_type === 'act_tutoring' || service.service_type === 'test_prep') && renderTutoringForm()}
           {service.service_type === 'application_strategy' && renderStrategyForm()}
 
-          {/* General Instructions */}
-          <View className="mb-6">
-            <Text className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
-              💭 Special Instructions
-            </Text>
-            <TextInput
-              multiline
-              numberOfLines={4}
-              placeholder="Any specific areas to focus on? Additional context?"
-              placeholderTextColor="#9CA3AF"
-              value={formData.prompt_text}
-              onChangeText={(text) => setFormData({ ...formData, prompt_text: text })}
-              className="bg-gray-50 dark:bg-gray-800 p-4 rounded-xl text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700"
-              style={{ textAlignVertical: 'top' }}
-            />
-          </View>
+          {/* General Instructions - Only show if not already included in service form */}
+          {!['application_strategy', 'test_prep', 'sat_tutoring', 'act_tutoring'].includes(service.service_type) && (
+            <View className="mb-6">
+              <Text className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
+                💭 Additional Instructions
+              </Text>
+              <TextInput
+                multiline
+                numberOfLines={4}
+                placeholder="Any other specific requests or information we should know?"
+                placeholderTextColor="#9CA3AF"
+                value={formData.special_instructions}
+                onChangeText={(text) => setFormData({ ...formData, special_instructions: text })}
+                className="bg-gray-50 dark:bg-gray-800 p-4 rounded-xl text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700"
+                style={{ textAlignVertical: 'top' }}
+              />
+            </View>
+          )}
 
           {/* Error Message */}
           {error && (

@@ -1,6 +1,6 @@
 import React from 'react'
 import { supabase } from '../../../../../lib/supabase'
-import { ConsultantProfile } from '../../../../../packages/app/features/consultants/components/ConsultantProfile.web'
+import ConsultantPageClient from './ConsultantPageClient'
 import type { ConsultantWithServices } from '../../../../../packages/app/features/consultants/types/consultant.types'
 
 export default async function ConsultantProfilePage({ 
@@ -33,7 +33,7 @@ export default async function ConsultantProfilePage({
 
   const consultant = consultantData as ConsultantWithServices
 
-  return <ConsultantProfile consultant={consultant} />
+  return <ConsultantPageClient consultant={consultant} />
 }
 
 // Generate metadata for SEO

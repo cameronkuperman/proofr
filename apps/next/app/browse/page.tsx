@@ -185,7 +185,7 @@ useEffect(() => {
           </p>
 
           {/* Enhanced Search Bar */}
-          <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl rounded-3xl p-2 border border-white/20 dark:border-gray-700 shadow-2xl max-w-2xl mx-auto flex items-center gap-3">
+          <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl rounded-3xl p-2 border border-gray-200/20 dark:border-gray-700 shadow-2xl max-w-2xl mx-auto flex items-center gap-3">
             <input
               type="text"
               value={searchQuery}

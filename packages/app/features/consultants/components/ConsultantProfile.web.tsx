@@ -1,45 +1,46 @@
 'use client'
 
 import React, { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { BookingModalWeb } from './BookingModal.web'
 import type { ConsultantWithServices, Service } from '../types/consultant.types'
+import { getUniversityColor, getContrastTextColor } from '../../../utils/colorUtils'
 
 interface ConsultantProfileProps {
   consultant: ConsultantWithServices
+  initialBookingOpen?: boolean
 }
 
-export function ConsultantProfile({ consultant }: ConsultantProfileProps) {
+export function ConsultantProfile({ consultant, initialBookingOpen = false }: ConsultantProfileProps) {
+  const router = useRouter()
   const [selectedService, setSelectedService] = useState<Service | null>(null)
-  const [activeTab, setActiveTab] = useState<'about' | 'services' | 'reviews'>('about')
+  const [showBookingModal, setShowBookingModal] = useState(false)
+  const [activeTab, setActiveTab] = useState<'about' | 'services' | 'reviews'>('services')
+
+  // Auto-open booking modal if requested
+  React.useEffect(() => {
+    if (initialBookingOpen && consultant.services?.length > 0) {
+      // Select the first service automatically
+      setSelectedService(consultant.services[0])
+      setShowBookingModal(true)
+    }
+  }, [initialBookingOpen, consultant.services])
 
   // Get initials for avatar
   const getInitials = (name: string) => {
     return name.split(' ').map(word => word[0]).join('').toUpperCase().slice(0, 2)
   }
 
-  // Get university color
-  const getUniversityColor = (college: string) => {
-    const colors: Record<string, string> = {
-      'Stanford University': '#8C1515',
-      'Harvard University': '#A51C30',
-      'MIT': '#A31F34',
-      'Yale University': '#00356B',
-      'Princeton University': '#FF6600',
-      'Columbia University': '#003DA5',
-      'Cornell University': '#B31B1B',
-      'Brown University': '#4E3629',
-      'University of Pennsylvania': '#990000',
-      'Northwestern University': '#4E2A84',
-      'Dartmouth College': '#00693E',
-      'Duke University': '#00356B',
-      'Vanderbilt University': '#866D4B',
-      'Rice University': '#002D72',
-      'Emory University': '#012169'
-    }
-    return colors[college] || '#6B7280'
+  // Get avatar style with proper contrast
+  const getAvatarStyle = (college: string) => {
+    const bgColor = getUniversityColor(college)
+    const textColorClass = getContrastTextColor(bgColor)
+    return { backgroundColor: bgColor, textColorClass }
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <>
+      <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white border-b sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -77,8 +78,8 @@ export function ConsultantProfile({ consultant }: ConsultantProfileProps) {
                     />
                   ) : (
                     <div 
-                      className="w-32 h-32 rounded-xl flex items-center justify-center text-white text-3xl font-bold"
-                      style={{ backgroundColor: getUniversityColor(consultant.current_college) }}
+                      className={`w-32 h-32 rounded-xl flex items-center justify-center text-3xl font-bold ${getAvatarStyle(consultant.current_college).textColorClass}`}
+                      style={{ backgroundColor: getAvatarStyle(consultant.current_college).backgroundColor }}
                     >
                       {getInitials(consultant.name)}
                     </div>
@@ -203,7 +204,7 @@ export function ConsultantProfile({ consultant }: ConsultantProfileProps) {
                       <div key={service.id} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
-                            <h4 className="font-semibold text-lg">{service.title}</h4>
+                            <h4 className="font-semibold text-lg text-gray-900">{service.title}</h4>
                             <p className="text-gray-600 mt-1">{service.description}</p>
                             <div className="flex items-center gap-4 mt-3 text-sm text-gray-500">
                               <span>Delivery: {service.delivery_type}</span>
@@ -211,9 +212,12 @@ export function ConsultantProfile({ consultant }: ConsultantProfileProps) {
                             </div>
                           </div>
                           <div className="text-right ml-4">
-                            <p className="text-2xl font-bold">${Math.min(...service.prices)}</p>
+                            <p className="text-2xl font-bold text-gray-900">${Math.min(...service.prices)}</p>
                             <button 
-                              onClick={() => setSelectedService(service)}
+                              onClick={() => {
+                                setSelectedService(service)
+                                setShowBookingModal(true)
+                              }}
                               className="mt-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
                             >
                               Select
@@ -237,7 +241,7 @@ export function ConsultantProfile({ consultant }: ConsultantProfileProps) {
           {/* Right Column - Booking Card */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-xl shadow-sm p-6 sticky top-24">
-              <h3 className="text-xl font-semibold mb-4">Book a Service</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">Book a Service</h3>
               
               {consultant.services && consultant.services.length > 0 ? (
                 <div className="space-y-4">
@@ -253,16 +257,22 @@ export function ConsultantProfile({ consultant }: ConsultantProfileProps) {
                     {consultant.services.slice(0, 3).map((service) => (
                       <button
                         key={service.id}
-                        onClick={() => setSelectedService(service)}
+                        onClick={() => {
+                          setSelectedService(service)
+                          setShowBookingModal(true)
+                        }}
                         className="w-full text-left p-3 border rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all"
                       >
-                        <p className="font-medium text-sm">{service.title}</p>
+                        <p className="font-medium text-sm text-gray-900">{service.title}</p>
                         <p className="text-sm text-gray-600">${Math.min(...service.prices)}</p>
                       </button>
                     ))}
                   </div>
 
-                  <button className="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
+                  <button 
+                    onClick={() => setActiveTab('services')}
+                    className="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                  >
                     View All Services ({consultant.services.length})
                   </button>
 
@@ -279,6 +289,25 @@ export function ConsultantProfile({ consultant }: ConsultantProfileProps) {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+
+      {/* Booking Modal */}
+      {showBookingModal && selectedService && (
+        <BookingModalWeb
+          consultant={consultant}
+          service={selectedService}
+          visible={showBookingModal}
+          onClose={() => {
+            setShowBookingModal(false)
+            setSelectedService(null)
+          }}
+          onSuccess={(bookingId) => {
+            setShowBookingModal(false)
+            setSelectedService(null)
+            router.push(`/bookings/${bookingId}`)
+          }}
+        />
+      )}
+    </>
   )
 }

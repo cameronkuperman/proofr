@@ -2,6 +2,7 @@ import React from 'react'
 import { useRouter } from 'next/navigation'
 import { Calendar, Clock, Users, Video, MessageCircle, MapPin, AlertCircle } from 'lucide-react'
 import type { Booking } from '../types/bookings.types'
+import { UniversityBadge } from '../../../components/UniversityBadge'
 
 interface ActiveBookingsWebProps {
   bookings: Booking[]
@@ -11,14 +12,7 @@ interface ActiveBookingsWebProps {
   onLeaveSession: (bookingId: string) => Promise<{ success: boolean; error?: string }>
 }
 
-// University colors
-const UNIVERSITY_COLORS = {
-  harvard: '#A51C30',
-  yale: '#00356B',
-  princeton: '#FF6900',
-  stanford: '#8C1515',
-  mit: '#A31F34',
-}
+// Removed UNIVERSITY_COLORS - now using UniversityBadge component
 
 export function ActiveBookingsWeb({
   bookings,
@@ -91,12 +85,7 @@ export function ActiveBookingsWeb({
                 {booking.consultant?.name || 'Consultant'}
               </h3>
               {booking.consultant?.university && (
-                <span
-                  className="px-2 py-1 text-xs font-semibold text-white rounded"
-                  style={{ backgroundColor: UNIVERSITY_COLORS[booking.consultant.university.toLowerCase()] || '#6B7280' }}
-                >
-                  {booking.consultant.university}
-                </span>
+                <UniversityBadge university={booking.consultant.university} />
               )}
             </div>
             
@@ -196,12 +185,7 @@ export function ActiveBookingsWeb({
                 with {session.consultant?.name}
               </p>
               {session.consultant?.university && (
-                <span
-                  className="px-2 py-0.5 text-xs font-semibold text-white rounded"
-                  style={{ backgroundColor: UNIVERSITY_COLORS[session.consultant.university.toLowerCase()] || '#6B7280' }}
-                >
-                  {session.consultant.university}
-                </span>
+                <UniversityBadge university={session.consultant.university} />
               )}
             </div>
             

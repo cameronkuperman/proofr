@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Star, Calendar, Clock, DollarSign, FileText, RefreshCw, XCircle } from 'lucide-react'
 import type { Booking, QuickRatingData } from '../types/bookings.types'
+import { UniversityBadge } from '../../../components/UniversityBadge'
 
 interface BookingHistoryWebProps {
   bookings: Booking[]
@@ -9,14 +10,7 @@ interface BookingHistoryWebProps {
   onSubmitRating: (bookingId: string, rating: number, reviewText?: string) => Promise<{ success: boolean; error?: string }>
 }
 
-// University colors
-const UNIVERSITY_COLORS = {
-  harvard: '#A51C30',
-  yale: '#00356B',
-  princeton: '#FF6900',
-  stanford: '#8C1515',
-  mit: '#A31F34',
-}
+// Removed UNIVERSITY_COLORS - now using UniversityBadge component
 
 export function BookingHistoryWeb({
   bookings,
@@ -118,12 +112,7 @@ export function BookingHistoryWeb({
                   {booking.consultant?.name || 'Consultant'}
                 </h3>
                 {booking.consultant?.university && (
-                  <span
-                    className="px-2 py-1 text-xs font-semibold text-white rounded"
-                    style={{ backgroundColor: UNIVERSITY_COLORS[booking.consultant.university.toLowerCase()] || '#6B7280' }}
-                  >
-                    {booking.consultant.university}
-                  </span>
+                  <UniversityBadge university={booking.consultant.university} />
                 )}
               </div>
               
