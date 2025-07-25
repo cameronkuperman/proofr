@@ -14,6 +14,7 @@ import {
 import { Ionicons } from '@expo/vector-icons'
 import { MotiView, AnimatePresence } from 'moti'
 import { LinearGradient } from 'expo-linear-gradient'
+import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { VerificationPopup } from '../../verification/components/VerificationPopup'
 import { SwipeableCard } from '../components/SwipeableCard'
 import { useTheme, useThemedColors, usePrimaryColors } from '../../../contexts/ThemeContext'
@@ -1292,11 +1293,12 @@ export function HomeScreen() {
           onShow={() => console.log('[HomeScreen] Modal shown')}
           onRequestClose={() => console.log('[HomeScreen] Modal close requested')}
         >
-          <View style={{ 
-            flex: 1, 
-            backgroundColor: isDark ? 'rgba(0, 0, 0, 0.95)' : 'rgba(0, 0, 0, 0.9)',
-          }}>
-            <SafeAreaView style={{ flex: 1 }}>
+          <GestureHandlerRootView style={{ flex: 1 }}>
+            <View style={{ 
+              flex: 1, 
+              backgroundColor: isDark ? 'rgba(0, 0, 0, 0.95)' : 'rgba(0, 0, 0, 0.9)',
+            }}>
+              <SafeAreaView style={{ flex: 1 }}>
               {/* Header */}
               <View style={{
                 flexDirection: 'row',
@@ -1347,20 +1349,22 @@ export function HomeScreen() {
 
               {/* Swipeable Card */}
               {!showMorePrompt && currentMatch && (
-                <SwipeableCard
-                  key={`${currentMatch.id}-${currentMatchIndex}`}
-                  consultant={currentMatch.consultant}
-                  service={currentMatch.service}
-                  matchReason={currentMatch.matchReason}
-                  availability={currentMatch.availability}
-                  instantBooking={currentMatch.instantBooking}
-                  onSwipeLeft={() => handleSwipe('left')}
-                  onSwipeRight={() => handleSwipe('right')}
-                  onSwipeUp={() => handleSwipe('up')}
-                  onViewProfile={handleViewProfile}
-                  isFirst={true}
-                  cardIndex={0}
-                />
+                <View style={{ flex: 1 }}>
+                  <SwipeableCard
+                    key={currentMatch.id}
+                    consultant={currentMatch.consultant}
+                    service={currentMatch.service}
+                    matchReason={currentMatch.matchReason}
+                    availability={currentMatch.availability}
+                    instantBooking={currentMatch.instantBooking}
+                    onSwipeLeft={() => handleSwipe('left')}
+                    onSwipeRight={() => handleSwipe('right')}
+                    onSwipeUp={() => handleSwipe('up')}
+                    onViewProfile={handleViewProfile}
+                    isFirst={true}
+                    cardIndex={0}
+                  />
+                </View>
               )}
 
               {/* Want More Prompt */}
@@ -1441,8 +1445,9 @@ export function HomeScreen() {
                   </MotiView>
                 )}
               </AnimatePresence>
-            </SafeAreaView>
-          </View>
+              </SafeAreaView>
+            </View>
+          </GestureHandlerRootView>
         </Modal>
 
         {/* Verification Popup - Disabled for now */}

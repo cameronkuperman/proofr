@@ -67,7 +67,16 @@ export function BookingModalWeb({ consultant, service, visible, onClose, onSucce
 
     const result = await createBooking(consultant.id, service, bookingData as any)
     if (result) {
-      onSuccess(result.id)
+      // Show success message with option to go to messages
+      const goToMessages = confirm(
+        'Booking successful! 🎉\n\nWould you like to message your consultant now?'
+      )
+      
+      if (goToMessages) {
+        window.location.href = '/messages'
+      } else {
+        onSuccess(result.id)
+      }
     }
   }
 

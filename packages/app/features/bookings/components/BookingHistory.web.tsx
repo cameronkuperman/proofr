@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Star, Calendar, Clock, DollarSign, FileText, RefreshCw, XCircle } from 'lucide-react'
+import { Star, Calendar, Clock, DollarSign, FileText, RefreshCw, XCircle, MessageSquare } from 'lucide-react'
 import type { Booking, QuickRatingData } from '../types/bookings.types'
 import { UniversityBadge } from '../../../components/UniversityBadge'
+import { ReviewModalWeb } from './ReviewModal.web'
 
 interface BookingHistoryWebProps {
   bookings: Booking[]
@@ -18,80 +19,31 @@ export function BookingHistoryWeb({
   onSubmitRating,
 }: BookingHistoryWebProps) {
   const router = useRouter()
-  const [expandedReview, setExpandedReview] = useState<string | null>(null)
-  const [ratingData, setRatingData] = useState<{ [key: string]: QuickRatingData }>({})
-  const [submitting, setSubmitting] = useState<string | null>(null)
-
-  const handleRatingChange = (bookingId: string, rating: number) => {
-    setRatingData(prev => ({
-      ...prev,
-      [bookingId]: { ...prev[bookingId], booking_id: bookingId, rating }
-    }))
-  }
-
-  const handleReviewChange = (bookingId: string, reviewText: string) => {
-    setRatingData(prev => ({
-      ...prev,
-      [bookingId]: { ...prev[bookingId], booking_id: bookingId, review_text: reviewText }
-    }))
-  }
-
-  const handleSubmitRating = async (bookingId: string) => {
-    const data = ratingData[bookingId]
-    if (!data?.rating) return
-
-    setSubmitting(bookingId)
-    const result = await onSubmitRating(bookingId, data.rating, data.review_text)
-    
-    if (result.success) {
-      setRatingData(prev => {
-        const updated = { ...prev }
-        delete updated[bookingId]
-        return updated
-      })
-      setExpandedReview(null)
-    } else {
-      alert(result.error || 'Failed to submit rating')
-    }
-    
-    setSubmitting(null)
-  }
+  const [reviewModalBooking, setReviewModalBooking] = useState<Booking | null>(null)
 
   const unratedBookings = bookings.filter(b => b.status === 'completed' && !b.rating)
   const ratedBookings = bookings.filter(b => b.status === 'completed' && b.rating)
   const cancelledBookings = bookings.filter(b => ['cancelled', 'refunded'].includes(b.status))
 
-  const renderStarRating = (bookingId: string, currentRating?: number) => {
-    const rating = ratingData[bookingId]?.rating || currentRating || 0
-    
+  const renderStarRating = (rating: number) => {
     return (
       <div className="flex items-center space-x-1">
         {[1, 2, 3, 4, 5].map((star) => (
-          <button
+          <Star
             key={star}
-            onClick={() => !currentRating && handleRatingChange(bookingId, star)}
-            disabled={!!currentRating}
-            className={`${
-              currentRating ? 'cursor-default' : 'cursor-pointer hover:scale-110'
-            } transition-transform`}
-          >
-            <Star
-              className={`w-5 h-5 ${
-                star <= rating
-                  ? 'fill-yellow-400 text-yellow-400'
-                  : 'fill-gray-200 text-gray-200'
-              }`}
-            />
-          </button>
+            className={`w-5 h-5 ${
+              star <= rating
+                ? 'fill-yellow-400 text-yellow-400'
+                : 'fill-gray-200 text-gray-200'
+            }`}
+          />
         ))}
       </div>
     )
   }
 
   const renderBookingCard = (booking: Booking) => {
-    const isExpanded = expandedReview === booking.id
     const hasRating = !!booking.rating
-    const currentRatingData = ratingData[booking.id]
 
     return (
       <div
@@ -172,61 +124,37 @@ export function BookingHistoryWeb({
 
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                {renderStarRating(booking.id, booking.rating)}
-                {hasRating && booking.reviewed_at && (
-                  <span className="text-sm text-gray-500">
-                    Rated on {new Date(booking.reviewed_at).toLocaleDateString()}
-                  </span>
+                {hasRating ? (
+                  <>
+                    {renderStarRating(booking.rating)}
+                    {booking.reviewed_at && (
+                      <span className="text-sm text-gray-500">
+                        Rated on {new Date(booking.reviewed_at).toLocaleDateString()}
+                      </span>
+                    )}
+                  </>
+                ) : (
+                  <span className="text-sm text-gray-500">Not yet rated</span>
                 )}
               </div>
 
               {!hasRating && (
                 <div className="flex items-center space-x-2">
-                  {!isExpanded && currentRatingData?.rating && (
-                    <button
-                      onClick={() => setExpandedReview(booking.id)}
-                      className="text-sm text-indigo-600 hover:text-indigo-700"
-                    >
-                      Add review
-                    </button>
-                  )}
-                  {currentRatingData?.rating && (
-                    <button
-                      onClick={() => handleSubmitRating(booking.id)}
-                      disabled={submitting === booking.id}
-                      className="bg-indigo-600 text-white px-4 py-1.5 rounded-lg text-sm hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {submitting === booking.id ? 'Submitting...' : 'Submit Rating'}
-                    </button>
-                  )}
+                  <button
+                    onClick={() => setReviewModalBooking(booking)}
+                    className="flex items-center space-x-1 bg-indigo-600 text-white px-4 py-1.5 rounded-lg text-sm hover:bg-indigo-700"
+                  >
+                    <MessageSquare className="w-4 h-4" />
+                    <span>Write Review</span>
+                  </button>
                 </div>
               )}
             </div>
 
             {/* Review Text */}
-            {(isExpanded || booking.review_text) && (
+            {booking.review_text && (
               <div className="mt-3">
-                {isExpanded && !hasRating ? (
-                  <div>
-                    <textarea
-                      value={currentRatingData?.review_text || ''}
-                      onChange={(e) => handleReviewChange(booking.id, e.target.value)}
-                      placeholder="Share your experience (optional)..."
-                      className="w-full p-3 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                      rows={3}
-                    />
-                    <div className="flex justify-end mt-2">
-                      <button
-                        onClick={() => setExpandedReview(null)}
-                        className="text-sm text-gray-600 hover:text-gray-700 mr-3"
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </div>
-                ) : booking.review_text ? (
-                  <p className="text-sm text-gray-600 italic">"{booking.review_text}"</p>
-                ) : null}
+                <p className="text-sm text-gray-600 italic">"{booking.review_text}"</p>
               </div>
             )}
           </div>
@@ -300,6 +228,19 @@ export function BookingHistoryWeb({
           <h3 className="text-lg font-medium text-gray-900 mb-2">No booking history yet</h3>
           <p className="text-gray-600">Your completed sessions will appear here</p>
         </div>
+      )}
+
+      {/* Review Modal */}
+      {reviewModalBooking && (
+        <ReviewModalWeb
+          booking={reviewModalBooking}
+          visible={!!reviewModalBooking}
+          onClose={() => setReviewModalBooking(null)}
+          onSuccess={() => {
+            setReviewModalBooking(null)
+            // The booking will be automatically updated via the subscription in useBookings
+          }}
+        />
       )}
     </div>
   )

@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { BookingModalWeb } from './BookingModal.web'
+import { ConsultantReviewsWeb } from './ConsultantReviews.web'
 import type { ConsultantWithServices, Service } from '../types/consultant.types'
 import { getUniversityColor, getContrastTextColor } from '../../../utils/colorUtils'
 
@@ -230,9 +231,11 @@ export function ConsultantProfile({ consultant, initialBookingOpen = false }: Co
                 )}
 
                 {activeTab === 'reviews' && (
-                  <div className="text-center py-8 text-gray-500">
-                    Reviews coming soon...
-                  </div>
+                  <ConsultantReviewsWeb 
+                    consultantId={consultant.id}
+                    rating={consultant.rating}
+                    totalReviews={consultant.total_reviews}
+                  />
                 )}
               </div>
             </div>

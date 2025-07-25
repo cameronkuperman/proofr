@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../../../../../lib/supabase'
-import { useAuthContext } from '../../../contexts/AuthContext'
+import { getCurrentUser, type UserType } from '../../../../../lib/auth-helpers'
 import type { RealtimePostgresChangesPayload } from '@supabase/supabase-js'
 
 export interface Conversation {
@@ -35,14 +35,25 @@ export interface Conversation {
 }
 
 export function useConversations() {
-  const { user, userType } = useAuthContext()
+  const [user, setUser] = useState<any>(null)
+  const [userType, setUserType] = useState<UserType | null>(null)
   const [conversations, setConversations] = useState<Conversation[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
+    getCurrentUser().then(userData => {
+      if (userData) {
+        setUser(userData)
+        setUserType(userData.userType as UserType)
+      } else {
+        setLoading(false)
+      }
+    })
+  }, [])
+
+  useEffect(() => {
     if (!user?.id) {
-      setLoading(false)
       return
     }
 
@@ -115,7 +126,7 @@ export function useConversations() {
             ? `student_id=eq.${user.id}`
             : `consultant_id=eq.${user.id}`
         },
-        (payload: RealtimePostgresChangesPayload<any>) => {
+        (_payload: RealtimePostgresChangesPayload<any>) => {
           fetchConversations() // Refetch for simplicity
         }
       )
@@ -177,7 +188,7 @@ export function useConversations() {
   const getOrCreateConversation = async (consultantId: string, bookingId?: string) => {
     try {
       // First check if conversation exists
-      const { data: existing, error: checkError } = await supabase
+      const { data: existing } = await supabase
         .from('conversations')
         .select('*')
         .eq('student_id', user?.id)

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { supabase } from '../../../../../lib/supabase'
 import type { ConsultantWithServices, ConsultantFilters } from '../types/consultant.types'
 
@@ -6,14 +6,42 @@ export function useConsultants(filters?: ConsultantFilters) {
   const [consultants, setConsultants] = useState<ConsultantWithServices[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [isSearching, setIsSearching] = useState(false)
+  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const previousSearchRef = useRef<string>('')
 
   useEffect(() => {
-    fetchConsultants()
+    // Handle search with debouncing
+    if (filters?.search !== undefined && filters.search !== previousSearchRef.current) {
+      previousSearchRef.current = filters.search
+      
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current)
+      }
+      
+      setIsSearching(true)
+      
+      searchTimeoutRef.current = setTimeout(() => {
+        fetchConsultants()
+      }, 300) // 300ms debounce
+      
+      return () => {
+        if (searchTimeoutRef.current) {
+          clearTimeout(searchTimeoutRef.current)
+        }
+      }
+    } else if (!filters?.search || filters.search === '') {
+      // For non-search filter changes, fetch immediately
+      fetchConsultants()
+    }
   }, [filters])
 
   const fetchConsultants = async () => {
     try {
-      setLoading(true)
+      // Only show loading for initial load or when not searching
+      if (consultants.length === 0 || !isSearching) {
+        setLoading(true)
+      }
       setError(null)
 
       // Start with base query using the active_consultants view
@@ -99,6 +127,7 @@ export function useConsultants(filters?: ConsultantFilters) {
       setError(err instanceof Error ? err.message : 'Failed to fetch consultants')
     } finally {
       setLoading(false)
+      setIsSearching(false)
     }
   }
 

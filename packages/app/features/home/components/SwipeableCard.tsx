@@ -84,6 +84,17 @@ export function SwipeableCard({
     superLikeOpacity.value = withTiming(0, { duration: 200 })
   }, [])
 
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      'worklet'
+      // Cancel any ongoing animations
+      translateX.value = 0
+      translateY.value = 0
+      opacity.value = 1
+    }
+  }, [])
+
   // Swipe card off screen
   const swipeAway = useCallback((direction: 'left' | 'right' | 'up') => {
     'worklet'
@@ -93,27 +104,20 @@ export function SwipeableCard({
 
     translateX.value = withTiming(x, { duration: 300 })
     translateY.value = withTiming(y, { duration: 300 })
-    opacity.value = withTiming(0, { duration: 300 }, () => {
+    opacity.value = withTiming(0, { duration: 300 }, (finished) => {
+      if (!finished) return
+      
       // Run callbacks on JS thread
       if (direction === 'left') runOnJS(onSwipeLeft)()
       else if (direction === 'right') runOnJS(onSwipeRight)()
       else if (direction === 'up') runOnJS(onSwipeUp)()
-      
-      // Reset after callback
-      runOnJS(() => {
-        setTimeout(() => {
-          translateX.value = 0
-          translateY.value = 0
-          opacity.value = 1
-          resetPosition()
-        }, 50)
-      })()
     })
   }, [onSwipeLeft, onSwipeRight, onSwipeUp])
 
   // Modern gesture handling - all on UI thread
   const gesture = Gesture.Pan()
     .enabled(isFirst)
+    .minDistance(10) // Prevent accidental swipes
     .onUpdate((event) => {
       'worklet'
       translateX.value = event.translationX
@@ -162,7 +166,7 @@ export function SwipeableCard({
       // Check for swipe based on position OR velocity
       const shouldSwipeRight = event.translationX > SWIPE_THRESHOLD || velocityX > SWIPE_VELOCITY_THRESHOLD
       const shouldSwipeLeft = event.translationX < -SWIPE_THRESHOLD || velocityX < -SWIPE_VELOCITY_THRESHOLD
-      const shouldSwipeUp = event.translationY < -SWIPE_THRESHOLD && absX < SWIPE_THRESHOLD && velocityY < -SWIPE_VELOCITY_THRESHOLD / 2
+      const shouldSwipeUp = event.translationY < -SWIPE_THRESHOLD && absX < SWIPE_THRESHOLD
 
       if (shouldSwipeUp) {
         swipeAway('up')
@@ -171,52 +175,21 @@ export function SwipeableCard({
       } else if (shouldSwipeLeft) {
         swipeAway('left')
       } else {
-        // Spring back with decay for natural feel
-        if (Math.abs(velocityX) > 100 || Math.abs(velocityY) > 100) {
-          translateX.value = withDecay({
-            velocity: velocityX,
-            clamp: [-SWIPE_THRESHOLD / 2, SWIPE_THRESHOLD / 2],
-          }, () => {
-            translateX.value = withSpring(0, springConfig)
-          })
-          translateY.value = withDecay({
-            velocity: velocityY,
-            clamp: [-SWIPE_THRESHOLD / 2, SWIPE_THRESHOLD / 2],
-          }, () => {
-            translateY.value = withSpring(0, springConfig)
-          })
-        } else {
-          resetPosition()
-        }
+        // Simple spring back without decay to avoid crashes
+        resetPosition()
       }
     })
 
-  // Tap gesture for viewing profile or double tap to like
+  // Tap gesture for viewing profile
   const tapGesture = Gesture.Tap()
     .enabled(isFirst)
     .onEnd(() => {
       'worklet'
-      const now = Date.now()
-      const timeSinceLastTap = now - lastTapTime.value
-      
-      if (timeSinceLastTap < 300) {
-        // Double tap - like
-        swipeAway('right')
-      } else {
-        lastTapTime.value = now
-        // Single tap - wait to see if double tap
-        runOnJS(() => {
-          setTimeout(() => {
-            if (Date.now() - lastTapTime.value >= 300) {
-              onViewProfile()
-            }
-          }, 300)
-        })()
-      }
+      runOnJS(onViewProfile)()
     })
 
-  // Composed gesture
-  const composedGesture = Gesture.Simultaneous(tapGesture, gesture)
+  // Composed gesture with exclusive handling
+  const composedGesture = Gesture.Race(gesture, tapGesture)
 
   // Animated styles - reactive to shared values
   const cardStyle = useAnimatedStyle(() => {

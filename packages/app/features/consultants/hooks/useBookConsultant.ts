@@ -144,6 +144,31 @@ export function useBookConsultant() {
           created_at: now.toISOString()
         })
 
+      // Create conversation for messaging
+      const { data: conversation } = await supabase
+        .from('conversations')
+        .insert({
+          student_id: user.id,
+          consultant_id: consultantId,
+          booking_id: data.id,
+          last_message_at: now.toISOString(),
+          last_message_preview: `New booking: ${service.title}`
+        })
+        .select()
+        .single()
+
+      if (conversation) {
+        // Send initial system message
+        await supabase
+          .from('messages')
+          .insert({
+            conversation_id: conversation.id,
+            sender_id: user.id,
+            content: `Hi! I just booked your ${service.title} service. ${formData.special_instructions || "Looking forward to working with you!"}`,
+            created_at: now.toISOString()
+          })
+      }
+
       return data
     } catch (err) {
       console.error('Error creating booking:', err)
