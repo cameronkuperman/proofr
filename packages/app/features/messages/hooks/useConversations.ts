@@ -63,27 +63,7 @@ export function useConversations() {
         
         let query = supabase
           .from('conversations')
-          .select(`
-            *,
-            student:students!student_id (
-              id,
-              name,
-              profile_image_url
-            ),
-            consultant:consultants!consultant_id (
-              id,
-              name,
-              profile_image_url,
-              current_college,
-              verification_status
-            ),
-            booking:bookings!booking_id (
-              id,
-              service:services!service_id (
-                title
-              )
-            )
-          `)
+          .select('*')
           .eq(isStudent ? 'student_id' : 'consultant_id', user.id)
           .eq('is_archived', false)
           .order('last_message_at', { ascending: false })
@@ -92,20 +72,17 @@ export function useConversations() {
 
         if (error) throw error
 
-        // Transform the data to handle dates and nested relationships
+        // Transform the data to handle dates
         const transformedData = data?.map(conv => ({
           ...conv,
           last_message_at: new Date(conv.last_message_at),
-          created_at: new Date(conv.created_at),
-          student: conv.student ? conv.student[0] : undefined,
-          consultant: conv.consultant ? conv.consultant[0] : undefined,
-          booking: conv.booking ? conv.booking[0] : undefined
+          created_at: new Date(conv.created_at)
         })) || []
 
         setConversations(transformedData)
-      } catch (err) {
+      } catch (err: any) {
         console.error('Error fetching conversations:', err)
-        setError(err.message || 'Failed to load conversations')
+        setError(err?.message || 'Failed to load conversations')
       } finally {
         setLoading(false)
       }
@@ -152,7 +129,7 @@ export function useConversations() {
 
       // Update local state
       setConversations(prev => prev.filter(c => c.id !== conversationId))
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error archiving conversation:', err)
       throw err
     }
@@ -179,7 +156,7 @@ export function useConversations() {
             : c
         )
       )
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error marking as read:', err)
       throw err
     }
@@ -211,7 +188,7 @@ export function useConversations() {
       if (createError) throw createError
 
       return newConv
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error getting/creating conversation:', err)
       throw err
     }

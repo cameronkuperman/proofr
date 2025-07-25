@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { supabase } from '../../../../../../lib/supabase'
 import { useRouter } from 'next/navigation'
 import { LogoutButton } from '../../../../../../lib/components/LogoutButton'
+import { useConversations } from '../../../../../../packages/app/features/messages/hooks/useConversations'
+import { useMessages, type Message } from '../../../../../../packages/app/features/messages/hooks/useMessages'
 
 // Helper functions
 const getTimeAgo = (date: Date) => {
@@ -34,8 +36,8 @@ const getCategoryGradient = (category: string) => {
   return gradients[category as keyof typeof gradients] || gradients.other
 }
 
-// Types
-interface Conversation {
+// Types  
+type Conversation = {
   id: string
   consultant_id: string
   consultant_name: string
@@ -49,17 +51,6 @@ interface Conversation {
   status: 'active' | 'archived'
   university?: string
   is_online?: boolean
-}
-
-interface Message {
-  id: string
-  conversation_id: string
-  sender_id: string
-  sender_type: 'student' | 'consultant'
-  content: string
-  created_at: Date
-  is_read: boolean
-  attachments?: any[]
 }
 
 // Components
@@ -282,19 +273,24 @@ const MessageBubble = ({ message, isOwn }: { message: Message, isOwn: boolean })
 }
 
 export default function StudentMessages() {
-  const [selectedConversation, setSelectedConversation] = useState<string | null>(null)
-  const [conversations, setConversations] = useState<Conversation[]>([])
-  const [messages, setMessages] = useState<Message[]>([])
-  const [newMessage, setNewMessage] = useState('')
-  const [isTyping, setIsTyping] = useState(false)
-  const [loading, setLoading] = useState(true)
-  const [currentUser, setCurrentUser] = useState<any>(null)
-  const [searchQuery, setSearchQuery] = useState('')
-  const [unreadTotal, setUnreadTotal] = useState(0)
-  
   const router = useRouter()
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  
+  const [selectedConversation, setSelectedConversation] = useState<string | null>(null)
+  const [newMessage, setNewMessage] = useState('')
+  const [isTyping, setIsTyping] = useState(false)
+  const [currentUser, setCurrentUser] = useState<any>(null)
+  const [searchQuery, setSearchQuery] = useState('')
+  
+  // Use real hooks for conversations
+  const { conversations: dbConversations, loading: convLoading, error: convError } = useConversations()
+  
+  // Use real hook for messages when a conversation is selected
+  const { messages, loading: msgLoading, sendMessage, sending } = useMessages({
+    conversationId: selectedConversation || '',
+    onNewMessage: () => scrollToBottom()
+  })
 
   // Auto-scroll to bottom of messages
   const scrollToBottom = () => {
@@ -305,190 +301,68 @@ export default function StudentMessages() {
     scrollToBottom()
   }, [messages])
 
-  // Load user and conversations
+  // Load user
   useEffect(() => {
-    loadConversations()
-    
-    // Set up real-time subscriptions
-    const conversationChannel = supabase
-      .channel('conversations')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'conversations',
-          filter: `student_id=eq.${currentUser?.id}`
-        },
-        () => {
-          loadConversations()
-        }
-      )
-      .subscribe()
+    loadUser()
+  }, [])
 
-    return () => {
-      conversationChannel.unsubscribe()
-    }
-  }, [currentUser])
-
-  // Load messages when conversation is selected
-  useEffect(() => {
-    if (selectedConversation) {
-      loadMessages(selectedConversation)
-      
-      // Set up real-time subscription for messages
-      const messageChannel = supabase
-        .channel(`messages:${selectedConversation}`)
-        .on(
-          'postgres_changes',
-          {
-            event: 'INSERT',
-            schema: 'public',
-            table: 'messages',
-            filter: `conversation_id=eq.${selectedConversation}`
-          },
-          (payload) => {
-            setMessages(prev => [...prev, payload.new as Message])
-            scrollToBottom()
-          }
-        )
-        .subscribe()
-
-      return () => {
-        messageChannel.unsubscribe()
-      }
-    }
-  }, [selectedConversation])
-
-  const loadConversations = async () => {
+  const loadUser = async () => {
     try {
-      // Get current user
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) {
         router.push('/login')
         return
       }
       setCurrentUser(user)
-
-      // Mock data for now - replace with actual Supabase query
-      const mockConversations: Conversation[] = [
-        {
-          id: '1',
-          consultant_id: 'consultant-1',
-          consultant_name: 'Sarah Chen',
-          is_verified: true,
-          service_type: 'Essay Review',
-          service_category: 'essay',
-          last_message: 'I\'ve reviewed your essay and left detailed feedback on the structure',
-          last_message_time: new Date(Date.now() - 30 * 60 * 1000),
-          unread_count: 2,
-          status: 'active',
-          university: 'Harvard University',
-          is_online: true
-        },
-        {
-          id: '2',
-          consultant_id: 'consultant-2',
-          consultant_name: 'Michael Park',
-          is_verified: true,
-          service_type: 'SAT Prep',
-          service_category: 'sat',
-          last_message: 'Great job on the practice problems!',
-          last_message_time: new Date(Date.now() - 2 * 60 * 60 * 1000),
-          unread_count: 0,
-          status: 'active',
-          university: 'MIT',
-          is_online: false
-        },
-        {
-          id: '3',
-          consultant_id: 'consultant-3',
-          consultant_name: 'Emily Rodriguez',
-          is_verified: false,
-          service_type: 'Interview Prep',
-          service_category: 'interview',
-          last_message: 'Let\'s schedule your mock interview for tomorrow',
-          last_message_time: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
-          unread_count: 1,
-          status: 'active',
-          university: 'Stanford',
-          is_online: true
-        }
-      ]
-
-      setConversations(mockConversations)
-      setUnreadTotal(mockConversations.reduce((sum, conv) => sum + conv.unread_count, 0))
-      setLoading(false)
     } catch (error) {
-      console.error('Error loading conversations:', error)
-      setLoading(false)
+      console.error('Error loading user:', error)
     }
   }
 
-  const loadMessages = async (conversationId: string) => {
-    try {
-      // Mock data for now - replace with actual Supabase query
-      const mockMessages: Message[] = [
-        {
-          id: '1',
-          conversation_id: conversationId,
-          sender_id: 'consultant-1',
-          sender_type: 'consultant',
-          content: 'Hi! I\'ve received your essay draft. Let me review it and provide comprehensive feedback.',
-          created_at: new Date(Date.now() - 2 * 60 * 60 * 1000),
-          is_read: true
-        },
-        {
-          id: '2',
-          conversation_id: conversationId,
-          sender_id: currentUser?.id || '',
-          sender_type: 'student',
-          content: 'Thank you so much! I\'m particularly worried about the introduction - does it grab attention?',
-          created_at: new Date(Date.now() - 1.5 * 60 * 60 * 1000),
-          is_read: true
-        },
-        {
-          id: '3',
-          conversation_id: conversationId,
-          sender_id: 'consultant-1',
-          sender_type: 'consultant',
-          content: 'I\'ve reviewed your essay and left detailed feedback on the structure. Your introduction is good but could be stronger.\n\nI suggest starting with a more vivid scene that shows your passion rather than telling it. The current opening is a bit generic.',
-          created_at: new Date(Date.now() - 30 * 60 * 1000),
-          is_read: false,
-          attachments: [{ name: 'Essay_Feedback_v1.docx', size: '2.4 MB' }]
-        }
-      ]
-
-      setMessages(mockMessages)
-    } catch (error) {
-      console.error('Error loading messages:', error)
-    }
+  // Helper function to get service category
+  const getServiceCategory = (serviceType?: string): string => {
+    if (!serviceType) return 'other'
+    const type = serviceType.toLowerCase()
+    if (type.includes('essay')) return 'essay'
+    if (type.includes('sat')) return 'sat'
+    if (type.includes('act')) return 'act'
+    if (type.includes('interview')) return 'interview'
+    if (type.includes('strategy')) return 'strategy'
+    if (type.includes('scholarship')) return 'scholarship'
+    return 'other'
   }
+
+  // Transform database conversations to UI format
+  const conversations: Conversation[] = dbConversations.map(conv => ({
+    id: conv.id,
+    consultant_id: conv.consultant_id,
+    consultant_name: conv.consultant?.name || 'Consultant',
+    consultant_avatar: conv.consultant?.profile_image_url,
+    is_verified: conv.consultant?.verification_status === 'approved',
+    service_type: conv.booking?.service?.title || 'Service',
+    service_category: getServiceCategory(conv.booking?.service?.service_type),
+    last_message: conv.last_message_preview || 'Start a conversation',
+    last_message_time: conv.last_message_at,
+    unread_count: conv.student_unread_count,
+    status: conv.is_archived ? 'archived' : 'active',
+    university: conv.consultant?.current_college,
+    is_online: false // Would need to implement online status
+  }))
+  
+  const unreadTotal = conversations.reduce((sum, conv) => sum + conv.unread_count, 0)
+  const loading = convLoading
 
   const handleSendMessage = async () => {
     if (!newMessage.trim() || !selectedConversation || !currentUser) return
 
     try {
-      const tempMessage: Message = {
-        id: Date.now().toString(),
-        conversation_id: selectedConversation,
-        sender_id: currentUser.id,
-        sender_type: 'student',
-        content: newMessage.trim(),
-        created_at: new Date(),
-        is_read: false
-      }
-
-      // Optimistically add message
-      setMessages(prev => [...prev, tempMessage])
+      await sendMessage(newMessage.trim())
       setNewMessage('')
       
       // Reset textarea height
       if (textareaRef.current) {
         textareaRef.current.style.height = 'auto'
       }
-
-      // TODO: Send to Supabase
     } catch (error) {
       console.error('Error sending message:', error)
     }
@@ -617,7 +491,18 @@ export default function StudentMessages() {
               </AnimatePresence>
             )}
             
-            {!loading && filteredConversations.length === 0 && (
+            {convError && (
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="p-8 text-center"
+              >
+                <p className="text-red-500 text-sm mb-2">Error loading conversations</p>
+                <p className="text-gray-500 dark:text-gray-400 text-xs">{convError}</p>
+              </motion.div>
+            )}
+            
+            {!loading && !convError && filteredConversations.length === 0 && (
               <motion.div 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -700,6 +585,15 @@ export default function StudentMessages() {
               {/* Messages Area */}
               <div className="flex-1 overflow-y-auto px-6 py-6">
                 <div className="max-w-4xl mx-auto">
+                  {msgLoading && (
+                    <div className="flex items-center justify-center h-32">
+                      <motion.div 
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                        className="w-8 h-8 border-3 border-gray-300 border-t-proofr-cyan rounded-full"
+                      />
+                    </div>
+                  )}
                   {/* Service context */}
                   <motion.div 
                     initial={{ scale: 0.9, opacity: 0 }}
@@ -825,7 +719,7 @@ export default function StudentMessages() {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={handleSendMessage}
-                    disabled={!newMessage.trim()}
+                    disabled={!newMessage.trim() || sending}
                     className={`p-3 rounded-2xl transition-all flex items-center justify-center ${
                       newMessage.trim()
                         ? 'bg-gradient-to-r from-proofr-cyan to-blue-500 text-white shadow-lg shadow-proofr-cyan/25 hover:shadow-xl'
