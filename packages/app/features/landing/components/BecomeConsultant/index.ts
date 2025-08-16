@@ -1,0 +1,8 @@
+export { BecomeConsultantHero } from './BecomeConsultantHero'
+export { BenefitsSection } from './BenefitsSection'
+export { HowItWorksConsultant } from './HowItWorksConsultant'
+export { EarningsCalculator } from './EarningsCalculator'
+export { VerificationSection } from './VerificationSection'
+export { SuccessStories } from './SuccessStories'
+export { FAQSection } from './FAQSection'
+export { CTABottom } from './CTABottom'

@@ -3,18 +3,24 @@
 @tailwind utilities;
 
 :root {
-  /* Sunset Academic Color Scheme */
-  --color-primary: #CC6B47;     /* burnt orange */
-  --color-accent: #E8956B;      /* peach */
-  --color-bg: #FFFAF6;          /* cream */
-  --color-text: #3A1F0B;        /* coffee */
-  --color-text-muted: #8B7355;  /* warm muted */
-  --color-border: #F4E5D7;      /* warm border */
+  /* Modern Deep Blue with Sunset Accent Theme */
+  --color-primary: #1E40AF;     /* deep blue */
+  --color-primary-dark: #1E3A8A; /* darker blue for hover */
+  --color-accent: #F59E0B;      /* sunset amber */
+  --color-bg: #F8FAFC;          /* light blue-gray */
+  --color-text: #0F172A;        /* dark blue-gray */
+  --color-text-muted: #64748B;  /* muted blue-gray */
+  --color-border: #E2E8F0;      /* light blue-gray border */
+  
+  /* RGB values for Next.js compatibility */
+  --foreground-rgb: 15, 23, 42;      /* matches --color-text */
+  --background-start-rgb: 248, 250, 252; /* matches --color-bg */
+  --background-end-rgb: 241, 245, 249;   /* slightly darker for gradient */
   
   /* Legacy variables for compatibility */
-  --color-light-bg: #FFFAF6;
-  --color-neutral-text: #3A1F0B;
-  --color-muted-grey: #F4E5D7;
+  --color-light-bg: #F8FAFC;
+  --color-neutral-text: #0F172A;
+  --color-muted-grey: #E2E8F0;
 }
 
 /* Global CSS Reset for Full Screen Coverage */

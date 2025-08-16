@@ -148,6 +148,250 @@ export function HowItWorksScreen() {
             }
           }),
           
+          // Animated School Icons with SVG Logos
+          ...[
+            { 
+              name: 'Harvard', 
+              color: '#A51C30', 
+              x: '12%', 
+              y: '25%', 
+              delay: 0,
+              logo: React.createElement('svg', {
+                width: '45',
+                height: '45',
+                viewBox: '0 0 45 45',
+                fill: 'white'
+              }, [
+                // Simplified Harvard Shield
+                React.createElement('path', {
+                  key: 'shield',
+                  d: 'M22.5 5 L35 12 L35 28 C35 33, 30 38, 22.5 40 C15 38, 10 33, 10 28 L10 12 Z',
+                  stroke: 'white',
+                  strokeWidth: '2',
+                  fill: 'none'
+                }),
+                React.createElement('text', {
+                  key: 'text',
+                  x: '22.5',
+                  y: '25',
+                  textAnchor: 'middle',
+                  fontSize: '8',
+                  fontWeight: 'bold'
+                }, 'VERITAS')
+              ])
+            },
+            { 
+              name: 'MIT', 
+              color: '#750014', 
+              x: '78%', 
+              y: '20%', 
+              delay: 0.2,
+              logo: React.createElement('svg', {
+                width: '45',
+                height: '45',
+                viewBox: '0 0 45 45',
+                fill: 'white'
+              }, [
+                // MIT's iconic three bars
+                React.createElement('rect', { key: 'bar1', x: '8', y: '15', width: '8', height: '20' }),
+                React.createElement('rect', { key: 'bar2', x: '18.5', y: '15', width: '8', height: '20' }),
+                React.createElement('rect', { key: 'bar3', x: '29', y: '15', width: '8', height: '20' })
+              ])
+            },
+            { 
+              name: 'Stanford', 
+              color: '#8C1515', 
+              x: '85%', 
+              y: '68%', 
+              delay: 0.4,
+              logo: React.createElement('svg', {
+                width: '45',
+                height: '45',
+                viewBox: '0 0 45 45',
+                fill: 'white'
+              }, [
+                // Simplified Stanford Tree
+                React.createElement('path', {
+                  key: 'tree',
+                  d: 'M22.5 10 C18 10, 15 13, 15 17 C12 17, 10 20, 10 24 C10 28, 13 30, 17 30 L20 30 L20 38 L25 38 L25 30 L28 30 C32 30, 35 28, 35 24 C35 20, 33 17, 30 17 C30 13, 27 10, 22.5 10',
+                  fill: 'white'
+                })
+              ])
+            },
+            { 
+              name: 'Yale', 
+              color: '#00356B', 
+              x: '8%', 
+              y: '65%', 
+              delay: 0.6,
+              logo: React.createElement('svg', {
+                width: '45',
+                height: '45',
+                viewBox: '0 0 45 45',
+                fill: 'white'
+              }, [
+                // Simplified Yale Book
+                React.createElement('rect', {
+                  key: 'book',
+                  x: '10',
+                  y: '12',
+                  width: '25',
+                  height: '21',
+                  stroke: 'white',
+                  strokeWidth: '2',
+                  fill: 'none',
+                  rx: '2'
+                }),
+                React.createElement('line', {
+                  key: 'spine',
+                  x1: '22.5',
+                  y1: '12',
+                  x2: '22.5',
+                  y2: '33',
+                  stroke: 'white',
+                  strokeWidth: '2'
+                }),
+                React.createElement('text', {
+                  key: 'text',
+                  x: '22.5',
+                  y: '24',
+                  textAnchor: 'middle',
+                  fontSize: '10',
+                  fontWeight: 'bold'
+                }, 'Y')
+              ])
+            },
+            { 
+              name: 'Princeton', 
+              color: '#FF6900', 
+              x: '20%', 
+              y: '45%', 
+              delay: 0.8,
+              logo: React.createElement('svg', {
+                width: '45',
+                height: '45',
+                viewBox: '0 0 45 45',
+                fill: 'white'
+              }, [
+                // Princeton Shield with chevron
+                React.createElement('path', {
+                  key: 'shield',
+                  d: 'M22.5 8 L32 13 L32 25 C32 30, 28 34, 22.5 36 C17 34, 13 30, 13 25 L13 13 Z',
+                  stroke: 'white',
+                  strokeWidth: '2',
+                  fill: 'none'
+                }),
+                React.createElement('path', {
+                  key: 'chevron',
+                  d: 'M22.5 20 L17 25 L19 27 L22.5 23.5 L26 27 L28 25 Z',
+                  fill: 'white'
+                })
+              ])
+            },
+            { 
+              name: 'Columbia', 
+              color: '#003DA5', 
+              x: '75%', 
+              y: '42%', 
+              delay: 1,
+              logo: React.createElement('svg', {
+                width: '45',
+                height: '45',
+                viewBox: '0 0 45 45',
+                fill: 'white'
+              }, [
+                // Columbia Crown
+                React.createElement('path', {
+                  key: 'crown',
+                  d: 'M12 25 L12 20 L15 15 L18 20 L22.5 15 L27 20 L30 15 L33 20 L33 25 L30 28 L15 28 Z',
+                  fill: 'white'
+                }),
+                React.createElement('circle', { key: 'gem1', cx: '15', cy: '15', r: '2' }),
+                React.createElement('circle', { key: 'gem2', cx: '22.5', cy: '15', r: '2' }),
+                React.createElement('circle', { key: 'gem3', cx: '30', cy: '15', r: '2' })
+              ])
+            },
+          ].map((school, index) => 
+            React.createElement(
+              'div',
+              {
+                key: `school-icon-${index}`,
+                style: {
+                  position: 'absolute' as const,
+                  left: school.x,
+                  top: school.y,
+                  width: '80px',
+                  height: '80px',
+                  background: school.color,
+                  borderRadius: '16px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: '0 6px 24px rgba(0,0,0,0.15)',
+                  animation: `schoolFloat ${6 + index}s ease-in-out ${school.delay}s infinite, schoolFadeIn 1s ease-out ${school.delay}s forwards, schoolBreath ${2.5 + index * 0.5}s ease-in-out ${school.delay + 1}s infinite`,
+                  opacity: 0,
+                  transform: 'scale(0)',
+                  zIndex: 1,
+                }
+              },
+              school.logo
+            )
+          ),
+          
+          // Add keyframes for school animations
+          React.createElement('style', {
+            key: 'school-animation-style',
+            dangerouslySetInnerHTML: {
+              __html: `
+                @keyframes schoolFadeIn {
+                  0% {
+                    transform: scale(0) rotate(0deg);
+                    opacity: 0;
+                  }
+                  50% {
+                    transform: scale(1.1) rotate(10deg);
+                    opacity: 0.5;
+                  }
+                  100% {
+                    transform: scale(1) rotate(0deg);
+                    opacity: 0.8;
+                  }
+                }
+                
+                @keyframes schoolFloat {
+                  0%, 100% {
+                    transform: translateY(0px) translateX(0px);
+                  }
+                  25% {
+                    transform: translateY(-15px) translateX(10px);
+                  }
+                  50% {
+                    transform: translateY(0px) translateX(-10px);
+                  }
+                  75% {
+                    transform: translateY(15px) translateX(5px);
+                  }
+                }
+                
+                @keyframes schoolBreath {
+                  0%, 100% {
+                    transform: scale(1);
+                  }
+                  50% {
+                    transform: scale(1.15);
+                  }
+                }
+                
+                @media (max-width: 768px) {
+                  .school-icon {
+                    width: 60px !important;
+                    height: 60px !important;
+                  }
+                }
+              `
+            }
+          }),
+          
           React.createElement(
             'div',
             {
@@ -174,7 +418,7 @@ export function HowItWorksScreen() {
                     lineHeight: '1.1'
                   }
                 },
-                "You're dream school awaits."
+                "Your dream school awaits."
               ),
               React.createElement(
                 'p',
