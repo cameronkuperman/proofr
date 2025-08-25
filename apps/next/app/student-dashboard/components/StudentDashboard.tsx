@@ -293,18 +293,38 @@ export default function StudentDashboard() {
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-6">
                 <span className="text-sm font-medium text-cyan-800">Active Orders:</span>
-                {activeBookings.map((booking) => (
-                  <div key={booking.id} className="flex items-center space-x-2 text-sm">
-                    <img 
-                      src={booking.consultants?.profile_image_url || '/api/placeholder/32/32'} 
-                      alt={booking.consultants?.name}
-                      className="h-6 w-6 rounded-full"
-                    />
-                    <span className="text-gray-700">{booking.services?.title || 'Service'}</span>
-                    <span className="text-gray-500">•</span>
-                    <span className="text-cyan-600 font-medium">{booking.status}</span>
-                  </div>
-                ))}
+                {activeBookings.map((booking) => {
+                  const getInitials = (name: string) => {
+                    return name
+                      ?.split(' ')
+                      .map(word => word[0])
+                      .join('')
+                      .toUpperCase()
+                      .slice(0, 2) || 'C'
+                  }
+                  
+                  return (
+                    <div key={booking.id} className="flex items-center space-x-2 text-sm">
+                      {booking.consultants?.profile_image_url ? (
+                        <img 
+                          src={booking.consultants.profile_image_url} 
+                          alt={booking.consultants?.name}
+                          className="h-6 w-6 rounded-full object-cover"
+                        />
+                      ) : (
+                        <div 
+                          className="h-6 w-6 rounded-full flex items-center justify-center text-white text-xs font-semibold"
+                          style={{ backgroundColor: '#0055FE' }}
+                        >
+                          {getInitials(booking.consultants?.name || 'Consultant')}
+                        </div>
+                      )}
+                      <span className="text-gray-700">{booking.services?.title || 'Service'}</span>
+                      <span className="text-gray-500">•</span>
+                      <span className="text-cyan-600 font-medium">{booking.status}</span>
+                    </div>
+                  )
+                })}
               </div>
               <button 
                 onClick={() => router.push('/bookings')}
@@ -341,7 +361,8 @@ export default function StudentDashboard() {
               <select 
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                className="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 bg-white text-gray-900"
+                style={{ backgroundColor: 'white', color: '#111827' }}
               >
                 <option value="best-match">Best Match</option>
                 <option value="price-low">Price: Low to High</option>

@@ -38,7 +38,19 @@ export function FAQSection() {
             <button
               key={index}
               onClick={() => setOpenIndex(openIndex === index ? null : index)}
-              className="w-full text-left bg-white p-6 rounded-xl border border-gray-200 hover:border-primary transition-colors"
+              className="w-full text-left bg-white p-6 rounded-xl border border-gray-200 transition-colors"
+              style={{
+                borderWidth: '1px',
+                borderStyle: 'solid',
+                borderColor: '#e5e7eb',
+                transition: 'border-color 0.2s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = '#0055FE'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = '#e5e7eb'
+              }}
             >
               <div className="flex justify-between items-center">
                 <h3 className="text-lg font-semibold text-gray-900 pr-4">

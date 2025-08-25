@@ -2,10 +2,9 @@
 
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { BookingModalWeb } from './BookingModal.web'
 import { ConsultantReviewsWeb } from './ConsultantReviews.web'
-import type { ConsultantWithServices, Service } from '../types/consultant.types'
-import { getUniversityColor, getContrastTextColor } from '../../../utils/colorUtils'
+import type { ConsultantWithServices } from '../types/consultant.types'
+import { Avatar } from '../../../components/Avatar'
 
 interface ConsultantProfileProps {
   consultant: ConsultantWithServices
@@ -14,30 +13,18 @@ interface ConsultantProfileProps {
 
 export function ConsultantProfile({ consultant, initialBookingOpen = false }: ConsultantProfileProps) {
   const router = useRouter()
-  const [selectedService, setSelectedService] = useState<Service | null>(null)
-  const [showBookingModal, setShowBookingModal] = useState(false)
+  // Removed unused booking modal state since we redirect to appointments page
   const [activeTab, setActiveTab] = useState<'about' | 'services' | 'reviews'>('services')
 
-  // Auto-open booking modal if requested
+  // Auto-redirect to appointments if requested
   React.useEffect(() => {
     if (initialBookingOpen && consultant.services?.length > 0) {
-      // Select the first service automatically
-      setSelectedService(consultant.services[0])
-      setShowBookingModal(true)
+      // Redirect to appointments with first service
+      router.push(`/appointments?consultant=${consultant.id}&service=${consultant.services[0].id}`)
     }
-  }, [initialBookingOpen, consultant.services])
+  }, [initialBookingOpen, consultant.services, consultant.id, router])
 
-  // Get initials for avatar
-  const getInitials = (name: string) => {
-    return name.split(' ').map(word => word[0]).join('').toUpperCase().slice(0, 2)
-  }
-
-  // Get avatar style with proper contrast
-  const getAvatarStyle = (college: string) => {
-    const bgColor = getUniversityColor(college)
-    const textColorClass = getContrastTextColor(bgColor)
-    return { backgroundColor: bgColor, textColorClass }
-  }
+  // Removed getInitials and getAvatarStyle - now using Avatar component
 
   return (
     <>
@@ -71,20 +58,15 @@ export function ConsultantProfile({ consultant, initialBookingOpen = false }: Co
               <div className="flex items-start gap-6">
                 {/* Avatar */}
                 <div className="flex-shrink-0">
-                  {consultant.profile_image_url ? (
-                    <img 
-                      src={consultant.profile_image_url}
-                      alt={consultant.name}
-                      className="w-32 h-32 rounded-xl object-cover"
-                    />
-                  ) : (
-                    <div 
-                      className={`w-32 h-32 rounded-xl flex items-center justify-center text-3xl font-bold ${getAvatarStyle(consultant.current_college).textColorClass}`}
-                      style={{ backgroundColor: getAvatarStyle(consultant.current_college).backgroundColor }}
-                    >
-                      {getInitials(consultant.name)}
-                    </div>
-                  )}
+                  <Avatar
+                    name={consultant.name}
+                    imageUrl={consultant.profile_image_url}
+                    size="2xl"
+                    rounded="lg"
+                    verified={consultant.verification_status === 'approved'}
+                    className="w-32 h-32"
+                    useGradient={true}
+                  />
                   {consultant.is_available && (
                     <div className="mt-3 flex items-center justify-center gap-2">
                       <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
@@ -216,12 +198,11 @@ export function ConsultantProfile({ consultant, initialBookingOpen = false }: Co
                             <p className="text-2xl font-bold text-gray-900">${Math.min(...service.prices)}</p>
                             <button 
                               onClick={() => {
-                                setSelectedService(service)
-                                setShowBookingModal(true)
+                                router.push(`/appointments?consultant=${consultant.id}&service=${service.id}`)
                               }}
                               className="mt-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
                             >
-                              Select
+                              Book Now
                             </button>
                           </div>
                         </div>
@@ -261,8 +242,7 @@ export function ConsultantProfile({ consultant, initialBookingOpen = false }: Co
                       <button
                         key={service.id}
                         onClick={() => {
-                          setSelectedService(service)
-                          setShowBookingModal(true)
+                          router.push(`/appointments?consultant=${consultant.id}&service=${service.id}`)
                         }}
                         className="w-full text-left p-3 border rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-all"
                       >
@@ -273,10 +253,17 @@ export function ConsultantProfile({ consultant, initialBookingOpen = false }: Co
                   </div>
 
                   <button 
-                    onClick={() => setActiveTab('services')}
+                    onClick={() => {
+                      // If only one service, go directly to appointments
+                      if (consultant.services.length === 1) {
+                        router.push(`/appointments?consultant=${consultant.id}&service=${consultant.services[0].id}`)
+                      } else {
+                        setActiveTab('services')
+                      }
+                    }}
                     className="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
                   >
-                    View All Services ({consultant.services.length})
+                    {consultant.services.length === 1 ? 'Book Now' : `View All Services (${consultant.services.length})`}
                   </button>
 
                   <div className="text-center text-sm text-gray-500 pt-2">
@@ -294,23 +281,7 @@ export function ConsultantProfile({ consultant, initialBookingOpen = false }: Co
       </div>
       </div>
 
-      {/* Booking Modal */}
-      {showBookingModal && selectedService && (
-        <BookingModalWeb
-          consultant={consultant}
-          service={selectedService}
-          visible={showBookingModal}
-          onClose={() => {
-            setShowBookingModal(false)
-            setSelectedService(null)
-          }}
-          onSuccess={(bookingId) => {
-            setShowBookingModal(false)
-            setSelectedService(null)
-            router.push(`/bookings/${bookingId}`)
-          }}
-        />
-      )}
+      {/* Booking now handled via appointments page */}
     </>
   )
 }

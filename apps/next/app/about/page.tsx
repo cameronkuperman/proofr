@@ -210,7 +210,7 @@ export default function AboutPage() {
             transition={{ duration: 0.8 }}
           >
             <motion.span 
-              className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent"
+              className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent inline-block py-2 leading-tight"
               style={{ opacity: priceOpacity }}
             >
               College admissions shouldn&apos;t cost $50,000
@@ -218,10 +218,12 @@ export default function AboutPage() {
           </motion.h1>
           
           <motion.h2 
-            className="text-3xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-blue-600 to-pink-600 bg-clip-text text-transparent"
+            className="text-3xl md:text-5xl lg:text-6xl font-bold"
             style={{ opacity: storyOpacity }}
           >
-            Every story deserves its shot
+            <span className="bg-gradient-to-r from-blue-600 to-pink-600 bg-clip-text text-transparent inline-block py-2 leading-tight">
+              Every story deserves its shot
+            </span>
           </motion.h2>
           
           {/* Animated price comparison */}
@@ -444,7 +446,7 @@ export default function AboutPage() {
             <div className="relative backdrop-blur-xl bg-white/40 rounded-3xl border border-white/20 shadow-2xl overflow-hidden">
               <div className="grid md:grid-cols-2">
                 <div className="p-12 bg-gray-900/5 backdrop-blur-md">
-                  <h3 className="text-2xl font-bold mb-6 text-gray-700">The Old Way</h3>
+                  <h3 className="text-2xl font-bold mb-6 text-gray-700 py-1">The Old Way</h3>
                   <ul className="space-y-6">
                     {[
                       { text: 'Exclusive firms', stat: 'Top 1% only' },
@@ -475,7 +477,11 @@ export default function AboutPage() {
                   </ul>
                 </div>
                 <div className="p-12 bg-gradient-to-br from-purple-500/10 to-blue-500/10 backdrop-blur-md">
-                  <h3 className="text-2xl font-bold mb-6 bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">Our Way</h3>
+                  <h3 className="text-2xl font-bold mb-6">
+                    <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent inline-block py-1 leading-tight">
+                      Our Way
+                    </span>
+                  </h3>
                   <ul className="space-y-6">
                     {[
                       { text: 'Peer consultants', stat: 'Recent grads' },
@@ -559,7 +565,11 @@ export default function AboutPage() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-purple-700 to-blue-700 bg-clip-text text-transparent">Your Story, Our Mission</h2>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              <span className="bg-gradient-to-r from-purple-700 to-blue-700 bg-clip-text text-transparent inline-block py-2 leading-tight">
+                Your Story, Our Mission
+              </span>
+            </h2>
             <p className="text-xl text-gray-700 max-w-3xl mx-auto mb-12 leading-[1.7] font-light">
               Type your dream school and watch the magic happen
             </p>
@@ -818,7 +828,11 @@ export default function AboutPage() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-blue-700 to-purple-700 bg-clip-text text-transparent">Your Story, Amplified</h2>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              <span className="bg-gradient-to-r from-blue-700 to-purple-700 bg-clip-text text-transparent inline-block py-2 leading-tight">
+                Your Story, Amplified
+              </span>
+            </h2>
             <p className="text-xl text-gray-700 max-w-3xl mx-auto leading-[1.8] font-light">
               Whether English is your second language, you&apos;re first-gen, or just need someone who gets it—we match you with consultants who&apos;ve walked your path.
             </p>
@@ -895,7 +909,11 @@ export default function AboutPage() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-purple-700 via-blue-700 to-pink-700 bg-clip-text text-transparent">The Proofr Promise</h2>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              <span className="bg-gradient-to-r from-purple-700 via-blue-700 to-pink-700 bg-clip-text text-transparent inline-block py-2 leading-tight">
+                The Proofr Promise
+              </span>
+            </h2>
             <p className="text-xl text-gray-600 mb-4">No student left behind. Our scholarship programs ensure everyone gets their shot.</p>
             <motion.p 
               className="text-lg text-gray-700 font-medium max-w-3xl mx-auto"
@@ -1025,7 +1043,11 @@ export default function AboutPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-purple-700 to-pink-700 bg-clip-text text-transparent">Ready to Change Your Story?</h2>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              <span className="bg-gradient-to-r from-purple-700 to-pink-700 bg-clip-text text-transparent inline-block py-2 leading-tight">
+                Ready to Change Your Story?
+              </span>
+            </h2>
             <p className="text-xl text-gray-700 mb-12 leading-[1.7] font-light">
               Join thousands of students and consultants building a more equitable future for college admissions.
             </p>

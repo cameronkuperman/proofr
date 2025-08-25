@@ -222,24 +222,18 @@ export function OnboardingScreen() {
           <div style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '12px'
+            gap: '0px'
           }}>
-            <div style={{
-              width: '42px',
-              height: '42px',
-              background: '#2c3e50',
-              borderRadius: '12px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              boxShadow: '0 4px 12px rgba(44, 62, 80, 0.25)'
-            }}>
-              <span style={{
-                color: 'white',
-                fontSize: '20px',
-                fontWeight: '600'
-              }}>📝</span>
-            </div>
+            <img 
+              src="/images/proofr-logo.png" 
+              alt="Proofr Logo" 
+              style={{
+                width: '130px',
+                height: '130px',
+                objectFit: 'contain',
+                marginRight: '-10px'
+              }}
+            />
             <span style={{
               fontSize: '32px',
               fontWeight: '800',
@@ -291,7 +285,7 @@ export function OnboardingScreen() {
                 margin: '0 auto 16px auto',
                 boxShadow: '0 8px 24px rgba(59, 130, 246, 0.3)'
               }}>
-                <span style={{ fontSize: '24px' }}>🎓</span>
+                <span style={{ fontSize: '24px' }}>📝</span>
               </div>
               <h2 style={{
                 fontSize: '28px',

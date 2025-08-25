@@ -1,0 +1,15 @@
+{
+  "name": "New Booking Request",
+  "subject": "💰 New booking from {{student_name}}!",
+  "variables": [
+    "consultant_name",
+    "student_name",
+    "service_title",
+    "service_type",
+    "price",
+    "earnings",
+    "delivery_date",
+    "booking_id"
+  ],
+  "description": "Sent to consultants when they receive a new booking request"
+}

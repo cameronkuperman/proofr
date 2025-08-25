@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { supabase } from '../../../../lib/supabase' 
 import { NavigationBar } from 'app/features/landing/components/NavigationBar'
 import ConsultantCard from '../../components/ConsultantCard'
@@ -48,6 +49,7 @@ const SUGGESTED_TAGS = [
 
 
 export default function BrowseConsultants() {
+  const router = useRouter()
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedUniversity, setSelectedUniversity] = useState('all')
   const [selectedService, setSelectedService] = useState('')
@@ -58,7 +60,6 @@ export default function BrowseConsultants() {
   const [consultants, setConsultants] = useState([])
 useEffect(() => {
   const fetchConsultants = async () => {
-    console.log('Fetching consultants from Supabase...')
     
     // Use the active_consultants view which joins users and filters approved consultants
     const { data, error } = await supabase
@@ -76,13 +77,11 @@ useEffect(() => {
       .order('rating', { ascending: false })
     
     if (error) {
-      console.error('Supabase error:', error)
+      // Error handled by UI
       return
     }
     
     if (data && data.length > 0) {
-      console.log('Fetched consultants:', data.length)
-      console.log('First consultant:', data[0])
       
       // Transform data to match existing component expectations
       const transformedData = data.map(consultant => ({
@@ -195,8 +194,7 @@ useEffect(() => {
             />
             <button 
               onClick={() => {
-                // Trigger search or focus - could add analytics here
-                console.log('Search triggered for:', searchQuery)
+                // Search is reactive, button is for UX
               }}
               className="bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-500 dark:to-blue-600 text-white border-none rounded-2xl px-8 py-4 font-bold text-sm cursor-pointer transition-all uppercase tracking-wide shadow-lg hover:shadow-xl hover:scale-105"
             >
@@ -206,11 +204,11 @@ useEffect(() => {
         </div>
       </div>
 
-      {/* Filters and Controls */}
-      <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-700 py-6 sticky top-16 z-10 shadow-lg">
+      {/* Filters and Controls - Reduced padding */}
+      <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-700 py-3 sticky top-16 z-10 shadow-lg">
         <div className="max-w-6xl mx-auto px-5">
           {/* Verified Toggle */}
-          <div className="mb-5 flex items-center justify-between">
+          <div className="mb-3 flex items-center justify-between">
             <label className="flex items-center gap-3 text-base text-gray-700 dark:text-gray-300 font-semibold cursor-pointer">
               <input
                 type="checkbox"
@@ -233,7 +231,7 @@ useEffect(() => {
               <select
                 value={selectedUniversity}
                 onChange={e => setSelectedUniversity(e.target.value)}
-                className="px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 text-sm font-medium bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 cursor-pointer outline-none focus:ring-2 focus:ring-blue-500"
+                className="px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 text-sm font-medium bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 cursor-pointer outline-none focus:ring-2 focus:ring-blue-500"
               >
                 {UNIVERSITY_FILTERS.map(opt => (
                   <option key={opt.value} value={opt.value} className="text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700">
@@ -246,7 +244,7 @@ useEffect(() => {
               <select
                 value={selectedService}
                 onChange={e => setSelectedService(e.target.value)}
-                className="px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 text-sm font-medium bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 cursor-pointer outline-none focus:ring-2 focus:ring-blue-500"
+                className="px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 text-sm font-medium bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 cursor-pointer outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="" className="text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700">All Services</option>
                 {SERVICE_TYPES.map(type => (
@@ -260,7 +258,7 @@ useEffect(() => {
               <select
                 value={JSON.stringify(selectedPrice)}
                 onChange={e => setSelectedPrice(JSON.parse(e.target.value))}
-                className="px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 text-sm font-medium bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 cursor-pointer outline-none focus:ring-2 focus:ring-blue-500"
+                className="px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 text-sm font-medium bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 cursor-pointer outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value={JSON.stringify([0, 10000])} className="text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700">
                   All Prices
@@ -276,7 +274,7 @@ useEffect(() => {
               <select
                 value={selectedAvailability}
                 onChange={e => setSelectedAvailability(e.target.value)}
-                className="px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 text-sm font-medium bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 cursor-pointer outline-none focus:ring-2 focus:ring-blue-500"
+                className="px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 text-sm font-medium bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 cursor-pointer outline-none focus:ring-2 focus:ring-blue-500"
               >
                 {AVAILABILITY_FILTERS.map(opt => (
                   <option key={opt.value} value={opt.value} className="text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700">
@@ -292,7 +290,7 @@ useEffect(() => {
               <select
                 value={sortBy}
                 onChange={e => setSortBy(e.target.value)}
-                className="px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 text-sm font-medium bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 cursor-pointer outline-none focus:ring-2 focus:ring-blue-500"
+                className="px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-600 text-sm font-medium bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 cursor-pointer outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="rating" className="text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700">Highest Rating</option>
                 <option value="reviews" className="text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700">Most Reviews</option>
@@ -302,19 +300,19 @@ useEffect(() => {
             </div>
           </div>
 
-          {/* Suggested Tags */}
-          <div className="mt-5 flex flex-wrap gap-2 items-center">
-            <span className="text-sm text-gray-600 dark:text-gray-400 font-medium mr-2">
-              Popular searches:
+          {/* Suggested Tags - Reduced to 5 for smaller menu */}
+          <div className="mt-4 flex flex-wrap gap-2 items-center">
+            <span className="text-xs text-gray-600 dark:text-gray-400 font-medium mr-2">
+              Quick search:
             </span>
-            {SUGGESTED_TAGS.slice(0, 8).map(tag => (
+            {SUGGESTED_TAGS.slice(0, 5).map(tag => (
               <button
                 key={tag}
                 onClick={() => setSearchQuery(tag)}
-                className={`rounded-full px-4 py-2 text-xs cursor-pointer font-semibold transition-all capitalize ${
+                className={`rounded-full px-3 py-1.5 text-xs cursor-pointer font-medium transition-all ${
                   searchQuery === tag 
-                    ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white border border-blue-600 shadow-lg hover:shadow-xl -translate-y-0.5' 
-                    : 'bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-600 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-600 shadow hover:from-blue-600 hover:to-blue-700 hover:text-white hover:-translate-y-0.5 hover:shadow-lg'
+                    ? 'bg-blue-600 text-white border border-blue-600 shadow-md' 
+                    : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-600 hover:bg-blue-600 hover:text-white hover:border-blue-600'
                 }`}
               >
                 {tag}
@@ -329,7 +327,7 @@ useEffect(() => {
           <ConsultantCard
             key={consultant.id}
             consultant={consultant}
-            onClick={() => console.log('Navigate to consultant profile:', consultant.id)}
+            onClick={() => router.push(`/consultants/${consultant.id}`)}
           />
         ))}
       </div>

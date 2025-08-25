@@ -179,3 +179,99 @@
     display: none;
   }
 }
+
+/* Mobile Menu Dropdown */
+.mobileMenu {
+  display: none;
+  position: fixed;
+  top: 70px;
+  left: 0;
+  right: 0;
+  background: rgba(255, 250, 246, 0.98);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(229, 231, 235, 0.3);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  animation: slideDown 0.3s ease;
+  z-index: 999;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mobileMenuContent {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.mobileNavLink {
+  padding: 0.75rem 1rem;
+  color: #6B7280;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1rem;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.mobileNavLink:hover {
+  background: rgba(37, 99, 235, 0.05);
+  color: #18181B;
+}
+
+.mobileAuthButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(229, 231, 235, 0.3);
+}
+
+.mobileSignInButton {
+  padding: 0.75rem 1rem;
+  text-align: center;
+  color: #6B7280;
+  text-decoration: none;
+  font-weight: 500;
+  border-radius: 8px;
+  border: 1px solid rgba(229, 231, 235, 0.5);
+  transition: all 0.2s ease;
+}
+
+.mobileSignInButton:hover {
+  background: rgba(37, 99, 235, 0.05);
+  color: #18181B;
+  border-color: #2563EB;
+}
+
+.mobileSignUpButton {
+  padding: 0.75rem 1rem;
+  text-align: center;
+  background: #18181B;
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.mobileSignUpButton:hover {
+  background: #374151;
+  transform: scale(1.02);
+}
+
+@media (max-width: 768px) {
+  .mobileMenu {
+    display: block;
+  }
+}

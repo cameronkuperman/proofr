@@ -1,0 +1,13 @@
+{
+  "name": "Booking Confirmation",
+  "subject": "Your booking with {{consultant_name}} is confirmed! 🎉",
+  "variables": [
+    "student_name",
+    "consultant_name",
+    "service_title",
+    "price",
+    "delivery_date",
+    "booking_id"
+  ],
+  "description": "Sent to students when they successfully create a booking"
+}

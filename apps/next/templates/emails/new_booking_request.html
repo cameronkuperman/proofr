@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Booking Request - Proofr</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333333;
+            background-color: #f7f7f7;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+        }
+        .header {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 600;
+        }
+        .content {
+            padding: 40px 30px;
+        }
+        .alert-box {
+            background: #f0fdf4;
+            border: 1px solid #86efac;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .alert-text {
+            color: #14532d;
+            font-weight: 600;
+            margin: 0;
+        }
+        .booking-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 25px;
+            margin: 30px 0;
+            border-left: 4px solid #10b981;
+        }
+        .booking-detail {
+            margin: 12px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+        .booking-label {
+            color: #6b7280;
+            font-size: 14px;
+        }
+        .booking-value {
+            color: #111827;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .earnings-highlight {
+            background: #fef3c7;
+            border: 1px solid #fcd34d;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 25px 0;
+            text-align: center;
+        }
+        .earnings-label {
+            color: #78350f;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        .earnings-amount {
+            color: #92400e;
+            font-size: 32px;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+        .earnings-note {
+            color: #92400e;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        .cta-button {
+            display: inline-block;
+            padding: 14px 32px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            margin: 30px 0;
+        }
+        .action-buttons {
+            text-align: center;
+            margin: 30px 0;
+        }
+        .button-accept {
+            display: inline-block;
+            padding: 14px 40px;
+            background: #10b981;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            margin: 0 10px;
+        }
+        .button-message {
+            display: inline-block;
+            padding: 14px 40px;
+            background: #6366f1;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            margin: 0 10px;
+        }
+        .tips-section {
+            background: #eff6ff;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 30px 0;
+        }
+        .tips-section h3 {
+            color: #1e40af;
+            margin-top: 0;
+        }
+        .tips-section ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        .tips-section li {
+            margin: 8px 0;
+            color: #374151;
+        }
+        .footer {
+            background: #f9fafb;
+            padding: 30px;
+            text-align: center;
+            border-top: 1px solid #e5e7eb;
+        }
+        .footer-text {
+            color: #6b7280;
+            font-size: 12px;
+            margin: 5px 0;
+        }
+        .footer-links {
+            margin: 15px 0;
+        }
+        .footer-link {
+            color: #10b981;
+            text-decoration: none;
+            margin: 0 10px;
+            font-size: 12px;
+        }
+        @media only screen and (max-width: 600px) {
+            .action-buttons {
+                text-align: left;
+            }
+            .button-accept, .button-message {
+                display: block;
+                margin: 10px 0;
+                text-align: center;
+            }
+            .booking-detail {
+                flex-direction: column;
+            }
+            .booking-value {
+                margin-top: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <h1>💰 New Booking Request!</h1>
+        </div>
+        
+        <div class="content">
+            <div class="alert-box">
+                <p class="alert-text">🎯 You have a new booking request from {{student_name}}!</p>
+            </div>
+            
+            <p>Hi {{consultant_name}},</p>
+            
+            <p>Great news! A student has booked your <strong>{{service_title}}</strong> service. Here are the details:</p>
+            
+            <div class="booking-card">
+                <h3 style="margin-top: 0; color: #111827;">Booking Details</h3>
+                
+                <div class="booking-detail">
+                    <span class="booking-label">Student:</span>
+                    <span class="booking-value">{{student_name}}</span>
+                </div>
+                
+                <div class="booking-detail">
+                    <span class="booking-label">Service:</span>
+                    <span class="booking-value">{{service_title}}</span>
+                </div>
+                
+                <div class="booking-detail">
+                    <span class="booking-label">Service Type:</span>
+                    <span class="booking-value">{{service_type}}</span>
+                </div>
+                
+                <div class="booking-detail">
+                    <span class="booking-label">Delivery Required By:</span>
+                    <span class="booking-value">{{delivery_date}}</span>
+                </div>
+                
+                <div class="booking-detail">
+                    <span class="booking-label">Booking ID:</span>
+                    <span class="booking-value">#{{booking_id}}</span>
+                </div>
+            </div>
+            
+            <div class="earnings-highlight">
+                <div class="earnings-label">Your Earnings</div>
+                <div class="earnings-amount">${{earnings}}</div>
+                <div class="earnings-note">After 20% platform fee</div>
+            </div>
+            
+            <div class="tips-section">
+                <h3>💡 Quick Tips for Success</h3>
+                <ul>
+                    <li>Review the student's requirements carefully</li>
+                    <li>Reach out if you need any clarification</li>
+                    <li>Deliver on or before the promised date</li>
+                    <li>Maintain professional communication throughout</li>
+                </ul>
+            </div>
+            
+            <div class="action-buttons">
+                <a href="{{platform_url}}/consultant-dashboard" class="button-accept">View in Dashboard</a>
+                <a href="{{platform_url}}/messages" class="button-message">Message Student</a>
+            </div>
+            
+            <p style="color: #6b7280; font-size: 14px;">
+                Remember: Delivering high-quality work on time leads to great reviews and more bookings!
+            </p>
+        </div>
+        
+        <div class="footer">
+            <div class="footer-links">
+                <a href="{{platform_url}}/consultant-dashboard" class="footer-link">Dashboard</a>
+                <a href="{{platform_url}}/bookings" class="footer-link">My Bookings</a>
+                <a href="{{platform_url}}/settings/notifications" class="footer-link">Email Preferences</a>
+                <a href="{{platform_url}}/help/consultant" class="footer-link">Consultant Help</a>
+            </div>
+            <p class="footer-text">
+                © {{current_year}} Proofr. All rights reserved.
+            </p>
+            <p class="footer-text">
+                Empowering consultants to help students succeed
+            </p>
+            <p class="footer-text">
+                <a href="{{platform_url}}/settings/notifications" style="color: #9ca3af;">Manage email preferences</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>

@@ -79,3 +79,15 @@ build/**
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+# Environment files
+.env
+.env.local
+.env.production
+.env.development
+.env.test
+.env*.local
+
+# Keep example files
+!.env.example
+!.env.sample

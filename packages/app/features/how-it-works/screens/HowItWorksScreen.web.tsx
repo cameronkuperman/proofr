@@ -148,7 +148,7 @@ export function HowItWorksScreen() {
             }
           }),
           
-          // Animated School Icons with SVG Logos
+          // Animated School Icons with Authentic Logos
           ...[
             { 
               name: 'Harvard', 
@@ -156,29 +156,17 @@ export function HowItWorksScreen() {
               x: '12%', 
               y: '25%', 
               delay: 0,
-              logo: React.createElement('svg', {
-                width: '45',
-                height: '45',
-                viewBox: '0 0 45 45',
+              logoImage: '/images/schools/harvard.jpg',
+              fallbackLogo: React.createElement('text', {
+                key: 'text',
+                x: '22.5',
+                y: '32',
+                textAnchor: 'middle',
+                fontSize: '28',
+                fontWeight: 'bold',
+                fontFamily: 'Georgia, serif',
                 fill: 'white'
-              }, [
-                // Simplified Harvard Shield
-                React.createElement('path', {
-                  key: 'shield',
-                  d: 'M22.5 5 L35 12 L35 28 C35 33, 30 38, 22.5 40 C15 38, 10 33, 10 28 L10 12 Z',
-                  stroke: 'white',
-                  strokeWidth: '2',
-                  fill: 'none'
-                }),
-                React.createElement('text', {
-                  key: 'text',
-                  x: '22.5',
-                  y: '25',
-                  textAnchor: 'middle',
-                  fontSize: '8',
-                  fontWeight: 'bold'
-                }, 'VERITAS')
-              ])
+              }, 'H')
             },
             { 
               name: 'MIT', 
@@ -186,17 +174,18 @@ export function HowItWorksScreen() {
               x: '78%', 
               y: '20%', 
               delay: 0.2,
-              logo: React.createElement('svg', {
-                width: '45',
-                height: '45',
-                viewBox: '0 0 45 45',
+              logoImage: '/images/schools/mit.png',
+              fallbackLogo: React.createElement('text', {
+                key: 'text',
+                x: '22.5',
+                y: '28',
+                textAnchor: 'middle',
+                fontSize: '16',
+                fontWeight: '900',
+                fontFamily: 'Arial Black, sans-serif',
+                letterSpacing: '-1',
                 fill: 'white'
-              }, [
-                // MIT's iconic three bars
-                React.createElement('rect', { key: 'bar1', x: '8', y: '15', width: '8', height: '20' }),
-                React.createElement('rect', { key: 'bar2', x: '18.5', y: '15', width: '8', height: '20' }),
-                React.createElement('rect', { key: 'bar3', x: '29', y: '15', width: '8', height: '20' })
-              ])
+              }, 'MIT')
             },
             { 
               name: 'Stanford', 
@@ -204,19 +193,13 @@ export function HowItWorksScreen() {
               x: '85%', 
               y: '68%', 
               delay: 0.4,
-              logo: React.createElement('svg', {
-                width: '45',
-                height: '45',
-                viewBox: '0 0 45 45',
-                fill: 'white'
-              }, [
-                // Simplified Stanford Tree
-                React.createElement('path', {
-                  key: 'tree',
-                  d: 'M22.5 10 C18 10, 15 13, 15 17 C12 17, 10 20, 10 24 C10 28, 13 30, 17 30 L20 30 L20 38 L25 38 L25 30 L28 30 C32 30, 35 28, 35 24 C35 20, 33 17, 30 17 C30 13, 27 10, 22.5 10',
-                  fill: 'white'
-                })
-              ])
+              logoImage: '/images/schools/stanford.png',
+              fallbackLogo: React.createElement('path', {
+                key: 'tree',
+                d: 'M22.5 8 C22.5 8, 20 10, 20 14 C18 14, 16 16, 16 18 C14 18, 12 20, 12 23 C12 26, 14 28, 17 28 L20 28 L20 35 L25 35 L25 28 L28 28 C31 28, 33 26, 33 23 C33 20, 31 18, 29 18 C29 16, 27 14, 25 14 C25 10, 22.5 8, 22.5 8',
+                fill: 'white',
+                stroke: 'none'
+              })
             },
             { 
               name: 'Yale', 
@@ -224,42 +207,17 @@ export function HowItWorksScreen() {
               x: '8%', 
               y: '65%', 
               delay: 0.6,
-              logo: React.createElement('svg', {
-                width: '45',
-                height: '45',
-                viewBox: '0 0 45 45',
+              logoImage: '/images/schools/yale.png',
+              fallbackLogo: React.createElement('text', {
+                key: 'text',
+                x: '22.5',
+                y: '32',
+                textAnchor: 'middle',
+                fontSize: '28',
+                fontWeight: 'bold',
+                fontFamily: 'Georgia, serif',
                 fill: 'white'
-              }, [
-                // Simplified Yale Book
-                React.createElement('rect', {
-                  key: 'book',
-                  x: '10',
-                  y: '12',
-                  width: '25',
-                  height: '21',
-                  stroke: 'white',
-                  strokeWidth: '2',
-                  fill: 'none',
-                  rx: '2'
-                }),
-                React.createElement('line', {
-                  key: 'spine',
-                  x1: '22.5',
-                  y1: '12',
-                  x2: '22.5',
-                  y2: '33',
-                  stroke: 'white',
-                  strokeWidth: '2'
-                }),
-                React.createElement('text', {
-                  key: 'text',
-                  x: '22.5',
-                  y: '24',
-                  textAnchor: 'middle',
-                  fontSize: '10',
-                  fontWeight: 'bold'
-                }, 'Y')
-              ])
+              }, 'Y')
             },
             { 
               name: 'Princeton', 
@@ -267,26 +225,17 @@ export function HowItWorksScreen() {
               x: '20%', 
               y: '45%', 
               delay: 0.8,
-              logo: React.createElement('svg', {
-                width: '45',
-                height: '45',
-                viewBox: '0 0 45 45',
+              logoImage: '/images/schools/princeton.png',
+              fallbackLogo: React.createElement('text', {
+                key: 'text',
+                x: '22.5',
+                y: '32',
+                textAnchor: 'middle',
+                fontSize: '28',
+                fontWeight: 'bold',
+                fontFamily: 'Georgia, serif',
                 fill: 'white'
-              }, [
-                // Princeton Shield with chevron
-                React.createElement('path', {
-                  key: 'shield',
-                  d: 'M22.5 8 L32 13 L32 25 C32 30, 28 34, 22.5 36 C17 34, 13 30, 13 25 L13 13 Z',
-                  stroke: 'white',
-                  strokeWidth: '2',
-                  fill: 'none'
-                }),
-                React.createElement('path', {
-                  key: 'chevron',
-                  d: 'M22.5 20 L17 25 L19 27 L22.5 23.5 L26 27 L28 25 Z',
-                  fill: 'white'
-                })
-              ])
+              }, 'P')
             },
             { 
               name: 'Columbia', 
@@ -294,22 +243,17 @@ export function HowItWorksScreen() {
               x: '75%', 
               y: '42%', 
               delay: 1,
-              logo: React.createElement('svg', {
-                width: '45',
-                height: '45',
-                viewBox: '0 0 45 45',
+              logoImage: '/images/schools/columbia.png',
+              fallbackLogo: React.createElement('text', {
+                key: 'text',
+                x: '22.5',
+                y: '32',
+                textAnchor: 'middle',
+                fontSize: '28',
+                fontWeight: 'bold',
+                fontFamily: 'Georgia, serif',
                 fill: 'white'
-              }, [
-                // Columbia Crown
-                React.createElement('path', {
-                  key: 'crown',
-                  d: 'M12 25 L12 20 L15 15 L18 20 L22.5 15 L27 20 L30 15 L33 20 L33 25 L30 28 L15 28 Z',
-                  fill: 'white'
-                }),
-                React.createElement('circle', { key: 'gem1', cx: '15', cy: '15', r: '2' }),
-                React.createElement('circle', { key: 'gem2', cx: '22.5', cy: '15', r: '2' }),
-                React.createElement('circle', { key: 'gem3', cx: '30', cy: '15', r: '2' })
-              ])
+              }, 'C')
             },
           ].map((school, index) => 
             React.createElement(
@@ -332,9 +276,25 @@ export function HowItWorksScreen() {
                   opacity: 0,
                   transform: 'scale(0)',
                   zIndex: 1,
+                  overflow: 'hidden'
                 }
               },
-              school.logo
+              school.logoImage ? 
+                React.createElement('img', {
+                  src: school.logoImage,
+                  alt: school.name,
+                  style: {
+                    width: '55px',
+                    height: '55px',
+                    objectFit: 'contain'
+                  }
+                }) :
+                React.createElement('svg', {
+                  width: '45',
+                  height: '45',
+                  viewBox: '0 0 45 45',
+                  fill: 'white'
+                }, school.fallbackLogo)
             )
           ),
           

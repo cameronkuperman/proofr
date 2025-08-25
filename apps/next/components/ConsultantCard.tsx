@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { BookingModalWeb } from '../../../packages/app/features/consultants/components/BookingModal.web'
 import ServiceSelectionModal from './ServiceSelectionModal'
 import type { ConsultantWithServices, Service } from '../../../packages/app/features/consultants/types/consultant.types'
-import { getUniversityColor, getContrastTextColor } from '../../../packages/app/utils/colorUtils'
+import { Avatar } from '../../../packages/app/components/Avatar'
 
 interface ConsultantCardProps {
   consultant: {
@@ -36,22 +36,7 @@ export default function ConsultantCard({ consultant }: ConsultantCardProps) {
   const [showServiceSelection, setShowServiceSelection] = useState(false)
   const [selectedService, setSelectedService] = useState<Service | null>(null)
   
-  // Get initials for avatar
-  const getInitials = (name: string) => {
-    return name
-      .split(' ')
-      .map(word => word[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2)
-  }
-
-  // Get avatar text color based on background
-  const getAvatarStyle = (college: string) => {
-    const bgColor = getUniversityColor(college)
-    const textColorClass = getContrastTextColor(bgColor)
-    return { backgroundColor: bgColor, textColorClass }
-  }
+  // Removed getInitials and getAvatarStyle - now using Avatar component
 
   // Calculate min price
   const minPrice = consultant.services?.length 
@@ -74,31 +59,16 @@ export default function ConsultantCard({ consultant }: ConsultantCardProps) {
       <div className="px-6 pt-5 pb-3">
         <div className="flex items-start gap-4">
           {/* Left: Avatar */}
-          <div className="relative flex-shrink-0">
-            {consultant.profile_image_url ? (
-              <img 
-                src={consultant.profile_image_url}
-                alt={consultant.name}
-                className="w-16 h-16 rounded-lg object-cover"
-              />
-            ) : (
-              <div 
-                className={`w-16 h-16 rounded-lg flex items-center justify-center text-lg font-bold ${getAvatarStyle(consultant.current_college).textColorClass}`}
-                style={{ backgroundColor: getAvatarStyle(consultant.current_college).backgroundColor }}
-              >
-                {getInitials(consultant.name)}
-              </div>
-            )}
-            {consultant.verification_status === 'approved' && (
-              <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-0.5">
-                <div className="bg-blue-500 rounded-full p-1">
-                  <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
-                </div>
-              </div>
-            )}
-          </div>
+          <Avatar
+            name={consultant.name}
+            imageUrl={consultant.profile_image_url}
+            size="xl"
+            rounded="lg"
+            verified={consultant.verification_status === 'approved'}
+            online={consultant.is_available}
+            className="flex-shrink-0"
+            useGradient={true}
+          />
 
           {/* Middle: Info */}
           <div className="flex-1 min-w-0">

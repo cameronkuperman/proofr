@@ -26,7 +26,16 @@ export function EarningsCalculator() {
                 value={hourlyRate}
                 onChange={(e) => setHourlyRate(e.target.value)}
                 placeholder="120"
-                className="w-full text-2xl p-4 border-2 border-gray-200 rounded-lg focus:border-primary focus:outline-none"
+                className="w-full text-2xl p-4 border-2 border-gray-200 rounded-lg focus:outline-none"
+                style={{
+                  transition: 'border-color 0.2s ease'
+                }}
+                onFocus={(e) => {
+                  e.currentTarget.style.borderColor = '#0055FE'
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.borderColor = '#e5e7eb'
+                }}
               />
             </div>
 
@@ -39,7 +48,16 @@ export function EarningsCalculator() {
                 value={hoursPerWeek}
                 onChange={(e) => setHoursPerWeek(e.target.value)}
                 placeholder="10"
-                className="w-full text-2xl p-4 border-2 border-gray-200 rounded-lg focus:border-primary focus:outline-none"
+                className="w-full text-2xl p-4 border-2 border-gray-200 rounded-lg focus:outline-none"
+                style={{
+                  transition: 'border-color 0.2s ease'
+                }}
+                onFocus={(e) => {
+                  e.currentTarget.style.borderColor = '#0055FE'
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.borderColor = '#e5e7eb'
+                }}
               />
             </div>
           </div>
@@ -52,19 +70,19 @@ export function EarningsCalculator() {
             <div className="space-y-4">
               <div className="flex justify-between items-center">
                 <span className="text-lg text-gray-600">Weekly:</span>
-                <span className="text-2xl font-bold text-primary">
+                <span className="text-2xl font-bold" style={{ color: '#0055FE' }}>
                   ${weeklyEarnings.toFixed(0)}
                 </span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-lg text-gray-600">Monthly:</span>
-                <span className="text-2xl font-bold text-primary">
+                <span className="text-2xl font-bold" style={{ color: '#0055FE' }}>
                   ${monthlyEarnings.toFixed(0)}
                 </span>
               </div>
               <div className="flex justify-between items-center pt-4 border-t border-gray-200">
                 <span className="text-xl font-semibold text-gray-900">Yearly:</span>
-                <span className="text-3xl font-bold text-primary">
+                <span className="text-3xl font-bold" style={{ color: '#0055FE' }}>
                   ${yearlyEarnings.toFixed(0)}
                 </span>
               </div>

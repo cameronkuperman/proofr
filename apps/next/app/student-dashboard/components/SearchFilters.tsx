@@ -53,7 +53,8 @@ export default function SearchFilters({ filters, setFilters, consultants }: Sear
         <select
           value={filters.school}
           onChange={(e) => updateFilter('school', e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500"
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 bg-white text-gray-900"
+          style={{ backgroundColor: 'white', color: '#111827' }}
         >
           <option value="">All Universities</option>
           {schools.map(school => (
@@ -70,7 +71,8 @@ export default function SearchFilters({ filters, setFilters, consultants }: Sear
         <select
           value={filters.service}
           onChange={(e) => updateFilter('service', e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500"
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 bg-white text-gray-900"
+          style={{ backgroundColor: 'white', color: '#111827' }}
         >
           <option value="">All Services</option>
           <option value="essay_review">Essay Review</option>

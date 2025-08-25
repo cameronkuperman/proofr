@@ -8,7 +8,7 @@ export function CTABottom() {
   }
 
   return (
-    <section className="py-20 px-4 sm:px-6 lg:px-8 bg-primary">
+    <section className="py-20 px-4 sm:px-6 lg:px-8" style={{ background: '#0055FE' }}>
       <div className="max-w-4xl mx-auto text-center">
         <h2 className="text-4xl sm:text-5xl font-bold text-white mb-6">
           Ready to Start Earning?
@@ -20,7 +20,23 @@ export function CTABottom() {
 
         <button
           onClick={handleGetStarted}
-          className="px-10 py-4 bg-white text-primary font-bold text-lg rounded-lg hover:bg-gray-100 transition-colors"
+          style={{
+            background: 'white',
+            color: '#0055FE',
+            padding: '16px 40px',
+            fontWeight: 'bold',
+            fontSize: '18px',
+            borderRadius: '8px',
+            transition: 'all 0.2s ease'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = '#f3f4f6'
+            e.currentTarget.style.transform = 'translateY(-2px)'
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = 'white'
+            e.currentTarget.style.transform = 'translateY(0)'
+          }}
         >
           Become a Consultant
         </button>
